@@ -1,0 +1,110 @@
+---
+- hosts: localhost
+  vars_files:
+    - "{{ playbook_dir }}/../secrets.yml"
+  vars:
+    version: "{{ ansible_date_time.epoch }}"
+  tasks:
+    - name: Create a k8s namespace
+      k8s:
+        name: ps2alerts
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Create Database secrets in K8s
+      k8s:
+        state: present
+        namespace: ps2alerts
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: ps2alerts-db-secret
+          type: Opaque
+          data:
+            MYSQL_ROOT_PASSWORD: "{{ database.root_password | b64encode }}"
+
+    - name: Create Database K8s Service
+      k8s:
+        state: present
+        namespace: ps2alerts
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: ps2alerts-db
+            labels:
+              app: ps2alerts-db
+          spec:
+            ports:
+              - port: 3306
+            selector:
+              app: ps2alerts
+              tier: mysql
+
+    - name: Create Database K8s Volume Claim
+      k8s:
+        state: present
+        namespace: ps2alerts
+        definition:
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: mysql-pv-claim-ps2alerts
+            labels:
+              app: ps2alerts
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 20Gi
+
+    - name: Create Database Deployment
+      k8s:
+        state: present
+        namespace: ps2alerts
+        definition:
+          apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+          kind: Deployment
+          metadata:
+            name: mysql-ps2alerts
+            labels:
+              app: ps2alerts
+          spec:
+            selector:
+              matchLabels:
+                app: ps2alerts
+                tier: mysql
+            strategy:
+              type: Recreate
+            template:
+              metadata:
+                labels:
+                  app: ps2alerts
+                  tier: mysql
+              spec:
+                containers:
+                  - image: mariadb:10.5
+                    name: mysql
+                    env:
+                      - name: MYSQL_ROOT_PASSWORD
+                        valueFrom:
+                          secretKeyRef:
+                            name: ps2alerts-db-secret
+                            key: MYSQL_ROOT_PASSWORD
+                    ports:
+                      - containerPort: 3306
+                        name: mysql
+                    lifecycle:
+                      postStart:
+                        exec:
+                          command: ["bin/sh", "-c", sed -i 's/#bind-address=0.0.0.0/bind-address=0.0.0.0/g' /etc/mysql/my.cnf]
+                    volumeMounts:
+                      - name: mysql-persistent-storage-ps2alerts
+                        mountPath: /var/lib/mysql
+                volumes:
+                  - name: mysql-persistent-storage-ps2alerts
+                    persistentVolumeClaim:
+                      claimName: mysql-pv-claim-ps2alerts

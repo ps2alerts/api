@@ -1,0 +1,39 @@
+{
+    "name": "PS2Alerts/Api",
+    "authors": [
+        {
+            "name": "Matt Cavanagh",
+            "email": "maelstrome26@gmail.com"
+        }
+    ],
+    "require": {
+        "josegonzalez/dotenv": "^1.0",
+        "league/container": "^2.4",
+        "league/event": "^2.1",
+        "league/route": "^3.0",
+        "cocur/slugify": "^1.2",
+        "twig/twig": "^1.20",
+        "predis/predis": "^1.0",
+        "aura/sql": "^2.5",
+        "aura/sqlquery": "^2.6",
+        "monolog/monolog": "^1",
+        "ramsey/uuid": "^3.1",
+        "league/fractal": "^0.13.0",
+        "guiguiboy/php-cli-progress-bar": "dev-master",
+        "symfony/console": "^3.1",
+        "guzzlehttp/guzzle": "^6.2",
+        "zendframework/zend-diactoros": "^1.4",
+        "bugsnag/bugsnag": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ps2alerts\\Api\\": "src"
+        },
+        "psr-0": {
+            "": "tests/"
+        }
+    }
+}

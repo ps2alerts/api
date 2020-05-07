@@ -1,0 +1,6 @@
+root_dir: "{{ playbook_dir }}/../../"
+site_dir: "{{ root_dir }}/site"
+app_dir: "{{ root_dir }}/site/app"
+db_dir: "/data/ps2alerts/mysql"
+redis_dir: "/data/ps2alerts/redis"
+census_service_id: "12345"

@@ -1,0 +1,205 @@
+---
+- hosts: localhost
+  vars_files:
+    - "{{ playbook_dir }}/../secrets.yml"
+  vars:
+    version: "{{ ansible_date_time.epoch }}"
+  tasks:
+    # Creds located in secrets.yml. Good luck cracking 256bit encryption without the password ;)
+    - name: Log into docker hub
+      docker_login:
+        username: "{{ dockerhub.username }}"
+        password: "{{ dockerhub.password }}"
+
+    - name: Build base docker image and upload to Docker Hub
+      docker_image:
+        name: maelstromeous/applications
+        state: present
+        source: build
+        tag: ps2alerts-api-base
+        force_source: yes
+        force_tag: yes
+        push: yes
+        build:
+          pull: no
+          path: "{{ playbook_dir }}/../base"
+      register: base_build
+
+    - name: Build staging docker image and upload to Docker Hub
+      docker_image:
+        name: maelstromeous/applications
+        state: present
+        source: build
+        tag: "ps2alerts-api-staging-{{ version }}"
+        force_source: yes
+        force_tag: yes
+        push: yes
+        timeout: 120
+        build:
+          pull: yes
+          path: "{{ playbook_dir }}/../../" # Root of the project for access to /site
+          dockerfile: "provisioning/staging/Dockerfile"
+      register: image_build
+
+    - name: Create secrets in K8s
+      k8s:
+        state: present
+        namespace: ps2alerts
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: ps2alerts-api-staging-secret
+          type: Opaque
+          data:
+            DB_HOST: "{{ database.host | b64encode }}"
+            DB_USER: "{{ database.user | b64encode }}"
+            DB_PASS: "{{ database.pass | b64encode }}"
+            DB_NAME: "{{ database.staging.schema | b64encode }}"
+            REDIS_HOST: "{{ redis.host | b64encode }}"
+            REDIS_PASS: "{{ redis.password | b64encode }}"
+            CENSUS_SERVICE_ID: "{{ census_service_id | b64encode }}"
+
+    - name: Create API K8s Service
+      k8s:
+        state: present
+        namespace: ps2alerts
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: ps2alerts-api-staging
+            labels:
+              app: ps2alerts-api-staging
+          spec:
+            type: ClusterIP
+            selector:
+              app: ps2alerts-api-staging
+            ports:
+              - port: 80
+                targetPort: 80
+
+    - name: Create API K8s Deployment
+      k8s:
+        state: present
+        namespace: ps2alerts
+        force: yes
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: ps2alerts-api-staging
+            labels:
+              app: ps2alerts-api-staging
+          spec:
+            replicas: 1
+            revisionHistoryLimit: 1
+            selector:
+              matchLabels:
+                app: ps2alerts-api-staging
+            template:
+              metadata:
+                labels:
+                  app: ps2alerts-api-staging
+              spec:
+                imagePullSecrets:
+                  - name: regcred
+                containers:
+                  - name: ps2alerts-api-staging
+                    image: "ps2alerts-api-staging-{{ version }}"
+                    ports:
+                      - containerPort: 80
+                    env:
+                      - name: ENVIRONMENT
+                        value: "staging"
+                      - name: VERSION
+                        value: "{{ version }}"
+                      - name: BASE_URL
+                        value: "https://staging.api.ps2alerts.com"
+                      - name: DB_HOST
+                        valueFrom:
+                          secretKeyRef:
+                            name: ps2alerts-api-staging-secret
+                            key: DB_HOST
+                      - name: DB_USER
+                        valueFrom:
+                          secretKeyRef:
+                            name: ps2alerts-api-staging-secret
+                            key: DB_USER
+                      - name: DB_PASS
+                        valueFrom:
+                          secretKeyRef:
+                            name: ps2alerts-api-staging-secret
+                            key: DB_PASS
+                      - name: DB_NAME
+                        valueFrom:
+                          secretKeyRef:
+                            name: ps2alerts-api-staging-secret
+                            key: DB_NAME
+                      - name: DB_NAME_DATA
+                        value: "ps2alerts_data"
+                      - name: DB_NAME_ARCHIVE
+                        value: "ps2alertsArchive"
+                      - name: REDIS_HOST
+                        valueFrom:
+                          secretKeyRef:
+                            name: ps2alerts-api-staging-secret
+                            key: REDIS_HOST
+                      - name: REDIS_PASS
+                        valueFrom:
+                          secretKeyRef:
+                            name: ps2alerts-api-staging-secret
+                            key: REDIS_PASS
+                      - name: CENUS_SERVICE_ID
+                        valueFrom:
+                          secretKeyRef:
+                            name: ps2alerts-api-staging-secret
+                            key: CENUS_SERVICE_ID
+
+    - name: Create K8s LetsEncrypt certificate issuer
+      k8s:
+        state: present
+        namespace: ps2alerts
+        definition:
+          apiVersion: cert-manager.io/v1alpha2
+          kind: ClusterIssuer
+          metadata:
+            name: ps2alerts-api-staging-letsencrypt
+          spec:
+            acme:
+              email: matt@mattcavanagh.me
+              server: https://acme-v02.api.letsencrypt.org/directory
+              privateKeySecretRef:
+                name: ps2alerts-api-staging-letsencrypt
+              solvers:
+                - http01:
+                  ingress:
+                    class: nginx
+
+    - name: Create K8s TLS Ingress using preexisting Load Balancer
+      k8s:
+        state: present
+        namespace: ps2alerts
+        definition:
+          apiVersion: extensions/v1beta1
+          kind: Ingress
+          metadata:
+            name: ps2alerts-api-staging-ingress
+            annotations:
+              kubernetes.io/ingress.class: nginx
+              cert-manager.io/cluster-issuer: ps2alerts-api-staging-letsencrypt
+              nginx.ingress.kubernetes.io/proxy-body-size: 10m
+          spec:
+            tls:
+              - hosts:
+                - staging.api.ps2alerts.com
+                secretName: ps2alerts-api-staging-letsencrypt
+            rules:
+              - host: staging.api.ps2alerts.com
+                http:
+                  paths:
+                    - backend:
+                        serviceName: ps2alerts-api-staging
+                        servicePort: 80
+                imagePullSecrets:
+                  - name: regcred

@@ -1,0 +1,90 @@
+---
+- hosts: localhost
+  vars_files:
+    - "{{ playbook_dir }}/../vars.yml"
+#    - "{{ playbook_dir }}/../secrets.yml"
+  tasks:
+    - name: Install docker
+      pip:
+        name: docker
+        state: present
+
+    - name: Create docker network
+      docker_network:
+        name: ps2alerts
+        state: present
+
+    - name: Build Base image (grab a snickers)
+      docker_image:
+        name: ps2alerts:base # local image
+        state: present
+        source: build
+        force_source: yes
+        build:
+          pull: no
+          path: "{{ playbook_dir }}/../base"
+
+    - name: Build Dev image
+      docker_image:
+        name: maelstromeous/applications
+        state: present
+        source: build
+        tag: ps2alerts-api
+        force_source: yes
+        build:
+          pull: no
+          path: "{{ playbook_dir }}"
+
+    - name: Start Dev Image
+      docker_container:
+        name: ps2alerts-api
+        image: maelstromeous/applications:ps2alerts-api
+        state: started
+        restart: yes
+        volumes:
+          - "{{ root_dir }}/app:/var/www/html:rw"
+        ports:
+          - 80:80
+          - 443:443
+        networks:
+          - name: "ps2alerts"
+        env:
+          ENVIRONMENT: "development"
+          VERSION: "12345"
+          DB_USER: "root"
+          DB_PASS: "foobar"
+          DB_HOST: "ps2alerts-db"
+          DB_NAME: "ps2alertsWS"
+          DB_NAME_DATA: "ps2alerts_data"
+          DB_NAME_ARCHIVE: "ps2alertsArchive"
+          REDIS_ENABLED: "1"
+          REDIS_HOST: "ps2alerts-api-redis"
+          REDIS_DB: "1"
+          BASE_URL: "http://dev.api.ps2alerts.com"
+          CENSUS_SERVICE_ID: "{{ census_service_id }}"
+
+    - name: Start Database
+      docker_container:
+        name: ps2alerts-db
+        image: mariadb:10.3
+        state: started
+        volumes:
+          - "{{ db_dir }}:/var/lib/mysql"
+        env:
+          MYSQL_ROOT_PASSWORD: foobar
+        ports:
+          - 3306:3306
+        networks:
+          - name: "ps2alerts"
+
+    - name: Start Redis
+      docker_container:
+        name: ps2alerts-api-redis
+        image: redis:5
+        state: started
+        volumes:
+          - "{{ redis_dir }}:/data"
+        ports:
+          - 6379:6379
+        networks:
+          - name: "ps2alerts"
