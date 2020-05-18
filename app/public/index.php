@@ -3,6 +3,8 @@
 include __DIR__ . '/../vendor/autoload.php';
 
 use League\Route\Http\Exception\NotFoundException;
+use Psr\Log\LoggerInterface;
+use Zend\Diactoros\Response;
 
 // Bugsnag
 if ($_ENV['ENVIRONMENT'] !== 'development') {
@@ -30,7 +32,7 @@ try {
     // Send the response to the client
     $container->get('Zend\Diactoros\Response\SapiEmitter')->emit($response);
 } catch (NotFoundException $e) {
-    /** @var \Zend\Diactoros\Response $response */
+    /** @var Response $response */
     $response = $container->get('Zend\Diactoros\Response');
 
     $response = $response->withStatus(404);
@@ -38,7 +40,7 @@ try {
         $container->get('Twig_Environment')->render('404.html')
     );
 } catch (\Exception $e) {
-    /** @var \Psr\Log\LoggerInterface $logger */
+    /** @var LoggerInterface $logger */
     $logger = $container->get('Monolog\Logger');
 
     $logger->addDebug('Exception: ');
@@ -49,7 +51,7 @@ try {
     } else {
         $logger->addError(":warning: Exception IN API: \n\n" . $e->getMessage());
 
-        /** @var \Zend\Diactoros\Response $response */
+        /** @var Response $response */
         $response = $container->get('Zend\Diactoros\Response');
 
         $response->getBody()->write(
