@@ -14,7 +14,7 @@
         name: ps2alerts
         state: present
 
-    - name: Build Base image (grab a snickers)
+    - name: Build API Base image (grab a snickers)
       docker_image:
         name: ps2alerts/api # local image
         state: present
@@ -25,7 +25,7 @@
           pull: no
           path: "{{ playbook_dir }}/../base"
 
-    - name: Build Dev image
+    - name: Build API Dev image
       docker_image:
         name: ps2alerts/api
         state: present
@@ -40,7 +40,7 @@
       command: "id -u {{ ansible_user_id }}"
       register: id
 
-    - name: Run Composer
+    - name: Run Composer for API
       docker_container:
         name: composer
         image: composer/composer
@@ -49,7 +49,7 @@
         user: "{{ id.stdout }}:{{ id.stdout }}"
         command: install
 
-    - name: Start Dev Image
+    - name: Start API Dev Image
       docker_container:
         name: ps2alerts-api
         image: ps2alerts/api:dev
@@ -76,4 +76,3 @@
           REDIS_DB: "1"
           BASE_URL: "http://dev.api.ps2alerts.com"
           CENSUS_SERVICE_ID: "{{ census_service_id }}"
-
