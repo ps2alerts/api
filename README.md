@@ -1,11 +1,11 @@
-# ps2alerts-api
-API system behind PS2Alerts
+# ps2alerts/api
+API system behind PS2Alerts.
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Maelstromeous/ps2alerts-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Maelstromeous/ps2alerts-api/?branch=master)
+THIS PROJECT IS UNDERGOING A VAST RE-REWITE. If you wish to contribute, please join our Discord located at: https://discord.gg/7xF65ap
 
 # Starting the module
 
-Please read the Stack module README.md in order to get the requirements to run this project.
+Please see the [ps2alerts/stack](https://github.com/ps2alerts/stack) repository for information on how to install the dev environment and start this module.
 
 ## Development Environment
 
@@ -13,7 +13,9 @@ Please read the Stack module README.md in order to get the requirements to run t
 
 Firstly you need to configure your `vars.local` file in order to load the project and inject the required config. Copy the `provisioning/vars-local.yml.dist` file to `provisioning/vars-local.yml` and configure it to your specification.
 
-To start the development environment up, run the following command (from this directory):
+To start the development environment up on it's own, run the following command (from this directory):
 
 `ansible-playbook provisioning/dev/start.yml`
+
+Otherwise, use the `ps2alerts-start` command as provided by the stack install process.
 
