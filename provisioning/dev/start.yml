@@ -16,9 +16,10 @@
 
     - name: Build Base image (grab a snickers)
       docker_image:
-        name: ps2alerts:base # local image
+        name: ps2alerts/api # local image
         state: present
         source: build
+        tag: base
         force_source: yes
         build:
           pull: no
@@ -26,10 +27,10 @@
 
     - name: Build Dev image
       docker_image:
-        name: maelstromeous/applications
+        name: ps2alerts/api
         state: present
         source: build
-        tag: ps2alerts-api
+        tag: dev
         force_source: yes
         build:
           pull: no
@@ -38,11 +39,11 @@
     - name: Start Dev Image
       docker_container:
         name: ps2alerts-api
-        image: maelstromeous/applications:ps2alerts-api
+        image: ps2alerts/api:dev
         state: started
         restart: yes
         volumes:
-          - "{{ root_dir }}/app:/var/www/html:rw"
+          - "{{ playbook_dir }}/../../app:/var/www/html:rw"
         ports:
           - 80:80
           - 443:443
@@ -63,28 +64,3 @@
           BASE_URL: "http://dev.api.ps2alerts.com"
           CENSUS_SERVICE_ID: "{{ census_service_id }}"
 
-    - name: Start Database
-      docker_container:
-        name: ps2alerts-db
-        image: mariadb:10.3
-        state: started
-        volumes:
-          - "{{ db_dir }}:/var/lib/mysql"
-        env:
-          MYSQL_ROOT_PASSWORD: foobar
-        ports:
-          - 3306:3306
-        networks:
-          - name: "ps2alerts"
-
-    - name: Start Redis
-      docker_container:
-        name: ps2alerts-api-redis
-        image: redis:5
-        state: started
-        volumes:
-          - "{{ redis_dir }}:/data"
-        ports:
-          - 6379:6379
-        networks:
-          - name: "ps2alerts"

@@ -1,4 +1,4 @@
-FROM ps2alerts:base
+FROM ps2alerts/api:base
 
 USER root
 
