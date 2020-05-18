@@ -37,8 +37,8 @@
           path: "{{ playbook_dir }}"
 
     - name: Get user's current UID
-        command: "id -u {{ ansible_user_id }}"
-        register: id
+      command: "id -u {{ ansible_user_id }}"
+      register: id
 
     - name: Run Composer
       docker_container:
