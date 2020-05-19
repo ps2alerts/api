@@ -1,17 +1,7 @@
 ---
 - hosts: localhost
   tasks:
-    - name: Stop Dev container
+    - name: Stop API container
       docker_container:
-        name: ps2alerts-api-dev
-        state: stopped
-
-    - name: Stop DB container
-      docker_container:
-        name: ps2alerts-db
-        state: stopped
-
-    - name: Stop Redis container
-      docker_container:
-        name: ps2alerts-api-redis
+        name: ps2alerts-api
         state: stopped

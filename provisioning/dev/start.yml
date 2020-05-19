@@ -48,6 +48,8 @@
           - "{{ playbook_dir }}/../../app:/app"
         user: "{{ id.stdout }}:{{ id.stdout }}"
         command: install
+        labels:
+          traefik.enable: "false"
 
     - name: Start API Dev Image
       docker_container:
@@ -55,11 +57,12 @@
         image: ps2alerts/api:dev
         state: started
         restart: yes
+        restart_policy: always
         volumes:
           - "{{ playbook_dir }}/../../app:/var/www/html:rw"
         ports:
-          - 80:80
-          - 443:443
+          - 80
+          - 443
         networks:
           - name: "ps2alerts"
         env:
@@ -74,5 +77,9 @@
           REDIS_ENABLED: "1"
           REDIS_HOST: "ps2alerts-api-redis"
           REDIS_DB: "1"
-          BASE_URL: "http://dev.api.ps2alerts.com"
+          BASE_URL: "https://api.dev.ps2alerts.com"
           CENSUS_SERVICE_ID: "{{ census_service_id }}"
+        labels:
+          traefik.http.routers.api.rule: "Host(`api.dev.ps2alerts.com`)"
+          traefik.http.routers.api.tls: "true"
+          traefik.http.routers.api.tls.domains[0].main: "api.dev.ps2alerts.com"
