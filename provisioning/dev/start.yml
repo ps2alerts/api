@@ -80,6 +80,7 @@
           BASE_URL: "https://api.dev.ps2alerts.com"
           CENSUS_SERVICE_ID: "{{ census_service_id }}"
         labels:
-          traefik.http.routers.api.rule: "Host(`api.dev.ps2alerts.com`)"
-          traefik.http.routers.api.tls: "true"
-          traefik.http.routers.api.tls.domains[0].main: "api.dev.ps2alerts.com"
+          traefik.enable: "true"
+          traefik.http.routers.ps2alerts-api.rule: "Host(`api.dev.ps2alerts.com`)"
+          traefik.http.routers.ps2alerts-api.tls: "true"
+          traefik.http.routers.ps2alerts-api.tls.domains[0].main: "api.dev.ps2alerts.com"
