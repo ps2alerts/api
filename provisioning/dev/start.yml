@@ -4,6 +4,8 @@
     - "{{ playbook_dir }}/../vars.yml"
 #    - "{{ playbook_dir }}/../secrets.yml"
   tasks:
+    - debug:
+        msg: "========= 🔗 Starting API Module 🔗 ========="
     - name: Install docker
       pip:
         name: docker
