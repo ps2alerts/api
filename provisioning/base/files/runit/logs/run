@@ -1,0 +1,5 @@
+#!/bin/sh
+exec tail -f \
+    /var/log/nginx/error.log \
+    /var/log/nginx/access.log \
+    /var/log/php-fpm.log
