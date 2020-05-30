@@ -113,8 +113,15 @@ class AlertEndpointController extends AbstractEndpointController
             return $this->respondWithError($e->getMessage(), self::CODE_WRONG_ARGS);
         }
 
-        $offset = (int) $_GET['offset'];
-        $limit  = (int) $_GET['limit'];
+        $offset = 0;
+        $limit = 0;
+        if (!empty($_GET['offset'])) {
+            $offset = (int) $_GET['offset'];
+        }
+
+        if (!empty($_GET['limit'])) {
+            $limit = (int) $_GET['limit'];
+        }
 
         // Set defaults if not supplied
         if (empty($offset) || ! is_numeric($offset)) {
