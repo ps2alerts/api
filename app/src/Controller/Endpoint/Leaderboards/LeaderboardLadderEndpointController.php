@@ -18,11 +18,7 @@ class LeaderboardLadderEndpointController extends AbstractEndpointController
 
         $list = "ps2alerts:api:leaderboards:players:{$metric}:listById-{$server}";
 
-        var_dump($list);
-
         $entries = $redis->get($list);
-
-        var_dump($entries);
     }
 
     /**
@@ -41,7 +37,7 @@ class LeaderboardLadderEndpointController extends AbstractEndpointController
         $ip = $request->getClientIp();
 
         if ($ip !== $_SERVER['SERVER_ADDR']) {
-            $response->setStatusCode(404);
+            $response->withStatus(404);
             return $response;
         }
 

@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcurl4-gnutls-dev \
     libmhash-dev \
     libzip-dev \
+    openssl
     python3-pip \
     python3-setuptools \
     wget \

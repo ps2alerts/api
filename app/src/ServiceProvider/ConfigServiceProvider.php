@@ -52,6 +52,7 @@ class ConfigServiceProvider extends AbstractServiceProvider
                     'pass'     => (!empty($_ENV['REDIS_PASS'])) ? $_ENV['REDIS_PASS'] : null,
                     'db'       => (!empty($_ENV['REDIS_DB']))? $_ENV['REDIS_DB'] : 1,
                 ],
+                'db_query_debug' => false, # Change this to have certain sections spit out the query
                 'servers' => [1, 10, 13, 17, 25, 1000, 2000],
                 'zones' => [2, 4, 6, 8],
                 'classes' => [1, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21],

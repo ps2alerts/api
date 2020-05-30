@@ -118,11 +118,10 @@ abstract class AbstractEndpointRepository implements
         if ($this->getConfigItem('db_query_debug') === true) {
             $pdo->setProfiler(new Profiler);
             $pdo->getProfiler()->setActive(true);
-            var_dump($pdo);
-            var_dump($query->getStatement());
-            var_dump($query->getBindValues());
+            dump($pdo);
+            dump($query->getStatement());
+            dump($query->getBindValues());
         }
-
         if ($single === false) {
             if ($object === false) {
                 $return = $pdo->fetchAll($query->getStatement(), $query->getBindValues());
@@ -138,7 +137,7 @@ abstract class AbstractEndpointRepository implements
         }
 
         if ($this->getConfigItem('db_query_debug') === true) {
-            var_dump($pdo->getProfiler()->getProfiles());
+            dump($pdo->getProfiler()->getProfiles());
         }
 
         // If no data, recall this function with archive flag

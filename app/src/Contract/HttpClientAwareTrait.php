@@ -7,14 +7,14 @@ use GuzzleHttp\Client;
 trait HttpClientAwareTrait
 {
     /**
-     * @var \GuzzleHttp\Client
+     * @var Client
      */
     protected $httpClient;
 
     /**
      * Sets the http client
      *
-     * @param \GuzzleHttp\Client $httpClient
+     * @param Client $httpClient
      */
     public function setHttpClientDriver(Client $httpClient)
     {
@@ -24,7 +24,7 @@ trait HttpClientAwareTrait
     /**
      * Gets the http client
      *
-     * @return \GuzzleHttp\Client
+     * @return Client
      */
     public function getHttpClientDriver()
     {

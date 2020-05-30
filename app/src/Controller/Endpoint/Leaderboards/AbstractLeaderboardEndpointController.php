@@ -18,19 +18,19 @@ abstract class AbstractLeaderboardEndpointController extends AbstractEndpointCon
     public function validateRequestVars()
     {
         try {
-            if (! empty($_GET['field'])) {
+            if (!empty($_GET['field'])) {
                 $this->parseField($_GET['field']);
             }
 
-            if (! empty($_GET['server'])) {
+            if (!empty($_GET['server'])) {
                 $this->parseServer($_GET['server']);
             }
 
-            if (! empty($_GET['limit'])) {
+            if (!empty($_GET['limit'])) {
                 $this->parseOffset($_GET['limit']);
             }
 
-            if (! empty($_GET['offset'])) {
+            if (!empty($_GET['offset'])) {
                 $this->parseOffset($_GET['offset']);
             }
         } catch (InvalidArgumentException $e) {

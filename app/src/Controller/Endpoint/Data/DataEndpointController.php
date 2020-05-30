@@ -238,6 +238,11 @@ class DataEndpointController extends AbstractEndpointController implements
         $config = $this->getConfig();
         $guzzle = $this->getHttpClientDriver();
 
+        // Throw exception if census service ID is undefined
+        if (empty($config['census_service_id'])) {
+            throw new \Exception('Census service ID is required! Please define it in your config!');
+        }
+
         $environments = [
             'ps2:v2',
             'ps2ps4us',
@@ -245,12 +250,15 @@ class DataEndpointController extends AbstractEndpointController implements
         ];
 
         // Loop through each environment and get the first result
-        foreach($environments as $env) {
-            $url = "https://census.daybreakgames.com/s:{$config['census_service_id']}/get/{$env}/{$endpoint}";
-
-            $req  = $guzzle->request('GET', $url);
-            $body = $req->getBody();
-            $json = json_decode($body);
+        foreach ($environments as $env) {
+            $url = "http://census.daybreakgames.com/s:{$config['census_service_id']}/get/{$env}/{$endpoint}";
+            try {
+                $response = $guzzle->request('GET', $url);
+                $body = $response->getBody();
+                $json = json_decode($body);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
 
             // Check for errors #BRINGJSONEXCEPTIONS!
             if (json_last_error() !== JSON_ERROR_NONE) {

@@ -11,11 +11,8 @@ Please see the [ps2alerts/stack](https://github.com/ps2alerts/stack) repository 
 
 ### Your vars file
 
-Firstly you need to configure your `vars.local` file in order to load the project and inject the required config. Copy the `provisioning/vars-local.yml.dist` file to `provisioning/vars-local.yml` and configure it to your specification.
+Firstly, copy the `provisioning/vars_local.yml.dist` file to `provisioning/vars_local.yml` and insert your census ID, or this project will not build.
 
-To start the development environment up on it's own, run the following command (from this directory):
-
-`ansible-playbook provisioning/dev/start.yml`
+To start just this project on it's own, execute `ps2alerts-api-start` command. You will need to have started the stack prior to this for it to run.
 
 Otherwise, use the `ps2alerts-start` command as provided by the stack install process.
-

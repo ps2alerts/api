@@ -36,9 +36,15 @@ class LeaderboardOutfitEndpointController extends AbstractLeaderboardEndpointCon
             return $this->respondWithError($e->getMessage(), self::CODE_WRONG_ARGS);
         }
 
-        $server = $_GET['server'];
-        $limit  = $_GET['limit'];
-        $offset = $_GET['offset'];
+        if (!empty($_GET['server'])) {
+            $server = (int) $_GET['server'];
+        }
+        if (!empty($_GET['limit'])) {
+            $limit = (int) $_GET['limit'];
+        }
+        if (!empty($_GET['offset'])) {
+            $offset = (int) $_GET['offset'];
+        }
 
         // Translate field into table specific columns
 
