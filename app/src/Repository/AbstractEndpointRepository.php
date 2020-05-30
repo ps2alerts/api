@@ -110,10 +110,10 @@ abstract class AbstractEndpointRepository implements
         $archive = false
     ) {
         $pdo = $this->getDbDriver();
-        if ($archive === true) {
-            // If we've been bounced back to search the archive, load that driver
-            $pdo = $this->getDbArchiveDriver();
-        }
+//        if ($archive === true) {
+//            // If we've been bounced back to search the archive, load that driver
+//            $pdo = $this->getDbArchiveDriver();
+//        }
 
         if ($this->getConfigItem('db_query_debug') === true) {
             $pdo->setProfiler(new Profiler);
