@@ -1,16 +1,22 @@
 ---
 - hosts: localhost
   vars_files:
-    - "{{ playbook_dir }}/../vars.yml"
-    - "{{ playbook_dir }}/../vars_local.yml"
-#    - "{{ playbook_dir }}/../secrets.yml"
+    - "{{playbook_dir}}/../vars.yml"
+    - "{{playbook_dir}}/../vars_local.yml"
+#    - "{{playbook_dir}}/../secrets.yml"
   tasks:
     - debug:
         msg: "========= 🔗 Starting API Module 🔗 ========="
+
     - name: Install docker
       pip:
         name: docker
         state: present
+
+    - name: Get user's current UID
+      command: "id -u {{ansible_user_id}}"
+      register: id
+      when: id is undefined
 
     - name: Create docker network
       docker_network:
@@ -26,7 +32,7 @@
         force_source: yes
         build:
           pull: no
-          path: "{{ playbook_dir }}/../base"
+          path: "{{root_dir | realpath}}/provisioning/base"
 
     - name: Build API Dev image
       docker_image:
@@ -37,19 +43,15 @@
         force_source: yes
         build:
           pull: no
-          path: "{{ playbook_dir }}"
-
-    - name: Get user's current UID
-      command: "id -u {{ ansible_user_id }}"
-      register: id
+          path: "{{root_dir | realpath}}/provisioning/dev"
 
     - name: Run Composer for API
       docker_container:
         name: composer
         image: composer
         volumes:
-          - "{{ playbook_dir }}/../../app:/app"
-        user: "{{ id.stdout }}:{{ id.stdout }}"
+          - "{{app_dir}}:/app"
+        user: "{{id.stdout}}:{{id.stdout}}"
         command: install
         labels:
           traefik.enable: "false"
@@ -62,8 +64,8 @@
         restart: yes
         restart_policy: always
         volumes:
-          - "{{ playbook_dir }}/../../app:/var/www/html:rw"
-          - "/data/ps2alerts/certs:/certs:ro"
+          - "{{app_dir | realpath}}:/var/www/html:rw"
+          - "{{data_dir | realpath}}/certs:/certs:ro"
         ports:
           - "80"
           - "443"
@@ -83,7 +85,7 @@
           REDIS_HOST: "ps2alerts-redis"
           REDIS_DB: "1"
           BASE_URL: "http://api.dev.ps2alerts.com"
-          CENSUS_SERVICE_ID: "{{ census_service_id }}"
+          CENSUS_SERVICE_ID: "{{census_service_id}}"
         labels:
           traefik.enable: "true"
           traefik.http.routers.ps2alerts-api.rule: "Host(`api.dev.ps2alerts.com`)"
