@@ -1,17 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-
-import ConfigModule from './modules/ConfigModule';
-import { MongooseModule } from '@nestjs/mongoose';
+import ConfigModule from './config/config.module';
+import TypeOrmModule from './database/typeorm.module';
 
 @Module({
   imports: [
     ConfigModule,
-    MongooseModule,
+    TypeOrmModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {
 }
