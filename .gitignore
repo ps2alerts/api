@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+# Provisioning
+provisioning/vars_local.yml
+
 # Logs
 logs
 *.log
