@@ -7,7 +7,6 @@ import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './app.module';
 
-
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -15,6 +14,9 @@ async function bootstrap() {
   );
 
   const config = app.get(ConfigService);
+
+  app.enableCors(config.get('config'));
+  app.register(fastifyHelmet);
 
   app.connectMicroservice({
     transport: Transport.RMQ,
@@ -29,11 +31,8 @@ async function bootstrap() {
 
   app.useWebSocketAdapter(new WsAdapter(app));
 
-  app.register(fastifyHelmet);
-  app.enableCors();
-
   await app.startAllMicroservicesAsync();
-  await app.listen(config.get<number>('http.port'));
+  await app.listen(config.get('http.port'));
 }
 
 void bootstrap();
