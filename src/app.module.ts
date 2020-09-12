@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import ConfigModule from './config/config.module';
-import TypeOrmModule from './database/typeorm.module';
+import MongoModule from './databases/mongo.module';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule,
+    MongoModule,
   ],
   controllers: [],
   providers: [],
