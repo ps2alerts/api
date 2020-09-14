@@ -7,6 +7,11 @@ export class MongoConfig implements TypeOrmOptionsFactory {
   constructor(private config: ConfigService) {}
 
   public createTypeOrmOptions(): TypeOrmModuleOptions {
-    return this.config.get('database.mongo');
+    return {
+      ...this.config.get('database.mongo'),
+      entities: [
+        '/dist/**/*.entity.ts',
+      ],
+    };
   }
 }
