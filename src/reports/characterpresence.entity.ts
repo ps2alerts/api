@@ -1,24 +1,22 @@
 import {Unique, Column, ObjectIdColumn, Entity, ObjectID} from "typeorm";
-import {World, worldArray} from '../constants/world';
-import {Zone, zoneArray} from '../constants/zone';
-import {Faction, factionArray} from '../constants/faction';
+import {World, worldArray} from '../constants/world.consts';
+import {Zone, zoneArray} from '../constants/zone.consts';
+import {Faction, factionArray} from '../constants/faction.consts';
 
 @Entity()
 @Unique(["character"])
-export class CharacterPresenceEntity {
+export default class CharacterPresence {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
         type: "string",
-        nullable: false
     })
     character: string;
 
     @Column({
         type: "enum",
         enum: worldArray,
-        nullable: false
     })
     world: World;
 
@@ -32,13 +30,11 @@ export class CharacterPresenceEntity {
     @Column({
         type: "enum",
         enum: factionArray,
-        nullable: false
     })
     faction: Faction;
 
     @Column({
         type: "date",
-        nullable: false
     })
     lastSeen: Date;
 }

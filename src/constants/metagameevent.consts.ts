@@ -1,6 +1,3 @@
-import {Zone} from './zone';
-import {Faction} from './faction';
-
 export enum MetagameEventType {
     // Current Generation normal alerts
     INDAR_SUPERIORITY = 147,
@@ -59,6 +56,3 @@ export const metagameEventTypeArray = [
     209,
     210,
 ];
-
-const longAlert = 90 * 60 * 1000;
-const shortAlert = 45 * 60 * 1000;

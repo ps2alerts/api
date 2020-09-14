@@ -1,29 +1,28 @@
 import {Column, ObjectIdColumn, Entity, ObjectID} from "typeorm";
-import {FactionCombat} from "../common/faction-combat";
+import {FactionCombat} from "../common/combatstats.embed";
 
 @Entity()
-export class FactionCombatEntity {
+export default class FactionCombat {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
         type: "string",
-        nullable: false
     })
     instance: string;
 
-    @Column(type => FactionCombat)
+    @Column(() => FactionCombat)
     vs: FactionCombat;
 
-    @Column(type => FactionCombat)
+    @Column(() => FactionCombat)
     nc: FactionCombat;
 
-    @Column(type => FactionCombat)
+    @Column(() => FactionCombat)
     tr: FactionCombat;
 
-    @Column(type => FactionCombat)
+    @Column(() => FactionCombat)
     nso: FactionCombat;
 
-    @Column(type => FactionCombat)
+    @Column(() => FactionCombat)
     totals: FactionCombat;
 }
