@@ -1,42 +1,42 @@
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from "typeorm";
+import { Column, ObjectIdColumn, Entity, Index, ObjectID } from 'typeorm';
 
 @Entity()
-@Index(["instance", "weapon"], {unique: true})
+@Index(['instance', 'weapon'], { unique: true })
 export default class Weapon {
-    @ObjectIdColumn()
-    _id: ObjectID;
+  @ObjectIdColumn()
+  _id: ObjectID;
 
-    @Column({
-        type: "string",
-    })
-    instance: string;
+  @Column({
+    type: 'string',
+  })
+  instance: string;
 
-    @Column({
-        type: "number",
-    })
-    weapon: number;
+  @Column({
+    type: 'number',
+  })
+  weapon: number;
 
-    @Column({
-        type: "number",
-        default: 0,
-    })
-    kills: number;
+  @Column({
+    type: 'number',
+    default: 0,
+  })
+  kills: number;
 
-    @Column({
-        type: "number",
-        default: 0,
-    })
-    teamKills: number;
+  @Column({
+    type: 'number',
+    default: 0,
+  })
+  teamKills: number;
 
-    @Column({
-        type: "number",
-        default: 0,
-    })
-    suicides: number;
+  @Column({
+    type: 'number',
+    default: 0,
+  })
+  suicides: number;
 
-    @Column({
-        type: "number",
-        default: 0,
-    })
-    headshots: number;
+  @Column({
+    type: 'number',
+    default: 0,
+  })
+  headshots: number;
 }
