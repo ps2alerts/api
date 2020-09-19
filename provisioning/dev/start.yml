@@ -7,10 +7,16 @@
   tasks:
     - debug:
         msg: "========= 🔗 Starting API Module 🔗 ========="
+
     - name: Install docker
       pip:
         name: docker
         state: present
+
+    - name: Get user's current UID
+      command: "id -u {{ ansible_user_id }}"
+      register: id
+      when: id is undefined
 
     - name: Create docker network
       docker_network:
@@ -26,7 +32,7 @@
         force_source: yes
         build:
           pull: no
-          path: "{{ playbook_dir }}/../base"
+          path: "{{ root_dir | realpath }}/provisioning/base"
 
     - name: Build API Dev image
       docker_image:
@@ -37,18 +43,14 @@
         force_source: yes
         build:
           pull: no
-          path: "{{ playbook_dir }}"
-
-    - name: Get user's current UID
-      command: "id -u {{ ansible_user_id }}"
-      register: id
+          path: "{{ root_dir | realpath }}/provisioning/dev"
 
     - name: Run Composer for API
       docker_container:
         name: composer
         image: composer
         volumes:
-          - "{{ playbook_dir }}/../../app:/app"
+          - "{{ app_dir }}:/app"
         user: "{{ id.stdout }}:{{ id.stdout }}"
         command: install
         labels:
@@ -62,8 +64,8 @@
         restart: yes
         restart_policy: always
         volumes:
-          - "{{ playbook_dir }}/../../app:/var/www/html:rw"
-          - "/data/ps2alerts/certs:/certs:ro"
+          - "{{ app_dir | realpath }}:/var/www/html:rw"
+          - "{{ data_dir | realpath }}/certs:/certs:ro"
         ports:
           - "80"
           - "443"

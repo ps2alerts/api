@@ -1,4 +1,5 @@
 root_dir: "{{ playbook_dir }}/../../"
-site_dir: "{{ root_dir }}/site"
-app_dir: "{{ root_dir }}/site/app"
+site_dir: "{{ root_dir | realpath }}/site"
+app_dir: "{{ root_dir | realpath }}/app"
+data_dir: "{{ lookup('env', 'HOME') }}/ps2alerts"
 census_service_id: "12345"
