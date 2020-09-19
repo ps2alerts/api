@@ -1,8 +1,8 @@
 import {Controller} from "@nestjs/common";
 import {MessagePattern, Payload} from "@nestjs/microservices";
 import Death from "../reports/instance/death.entity";
-import {InjectEntityManager, InjectRepository} from "@nestjs/typeorm";
-import {MongoEntityManager, MongoRepository} from "typeorm";
+import {InjectEntityManager} from "@nestjs/typeorm";
+import {MongoEntityManager} from "typeorm";
 
 interface InstanceMetagameMessageData {
     instanceId: string;
