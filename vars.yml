@@ -1,4 +1,3 @@
 root_dir: "{{ playbook_dir }}/../../"
 site_dir: "{{ root_dir }}/site"
 app_dir: "{{ root_dir }}/site/app"
-census_service_id: "12345"

@@ -1,12 +1,10 @@
 ---
 - hosts: localhost
+  vars:
+    root_dir: "{{ playbook_dir }}/../../"
   vars_files:
-    - "{{ playbook_dir }}/../vars.yml"
-    - "{{ playbook_dir }}/../vars_local.yml"
-#    - "{{ playbook_dir }}/../secrets.yml"
+    - "{{ root_dir }}/vars_local.yml"
   tasks:
-    - debug:
-        msg: "========= 🔗 Starting API Module 🔗 ========="
     - name: Install docker
       pip:
         name: docker
@@ -19,14 +17,14 @@
 
     - name: Build API Base image (grab a snickers)
       docker_image:
-        name: ps2alerts/api # local image
+        name: ps2alerts/api
         state: present
         source: build
         tag: base
         force_source: yes
         build:
           pull: no
-          path: "{{ playbook_dir }}/../base"
+          path: "{{ root_dir | realpath }}/provisioning/base"
 
     - name: Build API Dev image
       docker_image:
@@ -40,17 +38,20 @@
           path: "{{ playbook_dir }}"
 
     - name: Get user's current UID
-      command: "id -u {{ ansible_user_id }}"
+      command: "id -u {{ lookup('ENV', 'USER') }}"
       register: id
+      when: id is undefined
 
-    - name: Run Composer for API
+      # This step has issues on OSX, not quite sure how to fix it. Gets permission denied within the container.
+      # Workaround is to just install npm via brew and npm install, meh.
+    - name: Run npm install for API deps
       docker_container:
-        name: composer
-        image: composer
+        name: ps2alerts-api-npm
+        image: node:12
         volumes:
-          - "{{ playbook_dir }}/../../app:/app"
+          - "{{ root_dir | realpath }}:/app:rw"
         user: "{{ id.stdout }}:{{ id.stdout }}"
-        command: install
+        command: "npm install"
         labels:
           traefik.enable: "false"
 
@@ -59,33 +60,27 @@
         name: ps2alerts-api
         image: ps2alerts/api:dev
         state: started
-        restart: yes
-        restart_policy: always
+        restart: no
+        recreate: yes
+        restart_policy: "no"
         volumes:
-          - "{{ playbook_dir }}/../../app:/var/www/html:rw"
-          - "/data/ps2alerts/certs:/certs:ro"
+          - "{{ root_dir | realpath }}:/app:rw"
         ports:
-          - "80"
-          - "443"
+          - "1337"
         networks:
           - name: "ps2alerts"
+        tty: true
         env:
-          ENVIRONMENT: "development"
+          NODE_ENV: "development"
           VERSION: "12345"
+          BASE_URL: "http://dev.api.ps2alerts.com"
+          DB_HOST: "ps2alerts-db"
+          DB_PORT: "27017"
           DB_USER: "root"
           DB_PASS: "foobar"
-          DB_HOST: "ps2alerts-db"
-          DB_NAME: "ps2alertsWS"
-          DB_NAME_DATA: "ps2alerts_data"
-          DB_NAME_ARCHIVE: "ps2alertsArchive"
-          DB_DEBUG: "1"
-          REDIS_ENABLED: "1"
-          REDIS_HOST: "ps2alerts-redis"
-          REDIS_DB: "1"
-          BASE_URL: "http://api.dev.ps2alerts.com"
+          DB_NAME: "ps2alerts"
+          DB_DEBUG: "true"
           CENSUS_SERVICE_ID: "{{ census_service_id }}"
         labels:
           traefik.enable: "true"
-          traefik.http.routers.ps2alerts-api.rule: "Host(`api.dev.ps2alerts.com`)"
-#          traefik.http.routers.ps2alerts-api.tls: "true"
-#          traefik.http.routers.ps2alerts-api.tls.domains[0].main: "api.dev.ps2alerts.com"
+          traefik.http.routers.ps2alerts-api.rule: "Host(`dev.api.ps2alerts.com`)"

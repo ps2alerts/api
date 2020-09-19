@@ -9,10 +9,12 @@ Please see the [ps2alerts/stack](https://github.com/ps2alerts/stack) repository 
 
 ## Development Environment
 
-### Your vars file
+To start the environment, execute `ps2alerts-api-start`. If you don't have this command available, pull in the [Stack](https://github.com/ps2alerts/stack) and follow the instructions there to get set up properly.
 
-Firstly, copy the `provisioning/vars_local.yml.dist` file to `provisioning/vars_local.yml` and insert your census ID, or this project will not build.
+### Local vars file
 
-To start just this project on it's own, execute `ps2alerts-api-start` command. You will need to have started the stack prior to this for it to run.
+Firstly before starting the environment, copy the `provisioning/vars_local.yml.dist` file to `provisioning/vars_local.yml` and insert your census ID, or this project will not start.
 
-Otherwise, use the `ps2alerts-start` command as provided by the stack install process.
+To start just this project on its own, execute `ps2alerts-api-start` command. You will need to have started the stack prior to this for it to run (`ps2alerts-stack-start`)
+
+Otherwise, use the `ps2alerts-start` command as provided by the stack install process to boot the entire environment.
