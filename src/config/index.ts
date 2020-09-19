@@ -6,7 +6,7 @@ export const config = () => ({
       type: 'mongodb',
       host: process.env.MONGO_HOST ?? 'localhost',
       port: process.env.MONGO_PORT ?? 27017,
-      database: process.env.MONGO_DATABASE ?? 'ps2alerts-api',
+      database: process.env.MONGO_DATABASE ?? 'ps2alerts',
       logging: false,
       useUnifiedTopology: true,
       useNewUrlParser: true,
@@ -18,8 +18,10 @@ export const config = () => ({
     port: parseInt(process.env.PORT, 10) ?? 3000,
   },
 
+  // amqp://${this.config.user}:${this.config.pass}@${this.config.host}:${this.config.port}${vhost}?heartbeat=${this.config.heartbeat}&connection_timeout=${this.config.timeout}
+
   rabbitmq: {
-    url: [process.env.RMQ_URL ?? 'amqp://localhost:5672'],
-    queue: process.env.RMQ_QUEUE ?? 'websocket',
+    url: [process.env.RMQ_URL ?? 'amqp://user:bitnami@localhost:5672'],
+    queue: process.env.RMQ_QUEUE ?? 'api-consume-dev',
   },
 });

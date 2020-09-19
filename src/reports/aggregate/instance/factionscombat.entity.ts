@@ -1,5 +1,5 @@
 import { Column, ObjectIdColumn, Entity, ObjectID } from 'typeorm';
-import { FactionCombat } from '../common/combatstats.embed';
+import CombatStats from '../common/combatstats.embed';
 
 @Entity()
 export default class FactionCombat {
@@ -11,17 +11,17 @@ export default class FactionCombat {
   })
   instance: string;
 
-  @Column(() => FactionCombat)
-  vs: FactionCombat;
+  @Column(() => CombatStats)
+  vs: CombatStats;
 
-  @Column(() => FactionCombat)
-  nc: FactionCombat;
+  @Column(() => CombatStats)
+  nc: CombatStats;
 
-  @Column(() => FactionCombat)
-  tr: FactionCombat;
+  @Column(() => CombatStats)
+  tr: CombatStats;
 
-  @Column(() => FactionCombat)
-  nso: FactionCombat;
+  @Column(() => CombatStats)
+  nso: CombatStats;
 
   @Column(() => FactionCombat)
   totals: FactionCombat;
