@@ -33,6 +33,7 @@ export default class InstanceDeathController {
     // MQHANDLE
     @MessagePattern('instanceDeath')
     public handleMessage(@Payload() data: InstanceMetagameMessageData): void {
+        // TODO: VALIDATE THE DATA FROM MQ
         console.log('instanceDeath', data);
 
         void this.create()
