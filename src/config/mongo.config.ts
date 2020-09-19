@@ -10,7 +10,9 @@ export class MongoConfig implements TypeOrmOptionsFactory {
     return {
       ...this.config.get('database.mongo'),
       entities: [
-        '/dist/**/*.entity.ts',
+        __dirname + '/../../dist/reports/common/*.entity.js',
+        __dirname + '/../../dist/reports/global/*.entity.js',
+        __dirname + '/../../dist/reports/instance/*.entity.js',
       ],
     };
   }
