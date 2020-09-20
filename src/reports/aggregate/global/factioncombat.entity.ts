@@ -3,7 +3,7 @@ import { World, worldArray } from '../../../constants/world.consts';
 import CombatStats from '../common/combatstats.embed';
 
 @Entity({
-  name: 'aggregate_global_factionscombat'
+  name: 'aggregate_global_factioncombat'
 })
 export default class FactionsCombat {
   @ObjectIdColumn()

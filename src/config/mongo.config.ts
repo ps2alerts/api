@@ -13,7 +13,6 @@ export class MongoConfig implements TypeOrmOptionsFactory {
         __dirname + '/../../dist/reports/aggregate/global/*.entity.js',
         __dirname + '/../../dist/reports/aggregate/instance/*.entity.js',
         __dirname + '/../../dist/reports/instance/*.entity.js',
-        __dirname + '/../../dist/reports/*.entity.js',
       ],
     };
   }
