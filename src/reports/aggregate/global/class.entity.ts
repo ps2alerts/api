@@ -2,7 +2,9 @@ import { Column, ObjectIdColumn, Entity, Index, ObjectID } from 'typeorm';
 import { Loadout, loadoutArray } from '../../../constants/loadout.consts';
 import { World, worldArray } from '../../../constants/world.consts';
 
-@Entity()
+@Entity({
+  name: 'aggregate_global_class'
+})
 @Index(['class', 'world'], { unique: true })
 export default class Class {
   @ObjectIdColumn()

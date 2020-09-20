@@ -1,8 +1,10 @@
 import { Column, ObjectIdColumn, Entity, Index, ObjectID } from 'typeorm';
 import { World, worldArray } from '../../../constants/world.consts';
-import Facilitycontrol from '../common/facilitycontrol.embed';
+import FacilityFactionControl from '../common/facilityfactioncontrol.embed';
 
-@Entity()
+@Entity({
+  name: 'aggregate_global_facilitycontrol'
+})
 @Index(['facility', 'world'], { unique: true })
 export default class FacilityControl {
   @ObjectIdColumn()
@@ -19,17 +21,17 @@ export default class FacilityControl {
   })
   world: World;
 
-  @Column(() => Facilitycontrol)
-  vs: Facilitycontrol;
+  @Column(() => FacilityFactionControl)
+  vs: FacilityFactionControl;
 
-  @Column(() => Facilitycontrol)
-  nc: Facilitycontrol;
+  @Column(() => FacilityFactionControl)
+  nc: FacilityFactionControl;
 
-  @Column(() => Facilitycontrol)
-  tr: Facilitycontrol;
+  @Column(() => FacilityFactionControl)
+  tr: FacilityFactionControl;
 
   // No NSO, they cannot capture bases on behalf of their faction. Their outfits can though strangely!
 
-  @Column(() => Facilitycontrol)
-  totals: Facilitycontrol;
+  @Column(() => FacilityFactionControl)
+  totals: FacilityFactionControl;
 }

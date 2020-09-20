@@ -2,7 +2,7 @@ import { Column, ObjectIdColumn, Entity, Index, ObjectID } from 'typeorm';
 import { Loadout, loadoutArray } from '../../constants/loadout.consts';
 
 @Entity({
-  name: 'instance_deaths'
+  name: 'instance_death'
 })
 @Index(['instance', 'attacker', 'character', 'timestamp'], { unique: true })
 

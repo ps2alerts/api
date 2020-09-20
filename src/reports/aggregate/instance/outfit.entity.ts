@@ -1,6 +1,8 @@
 import { Column, ObjectIdColumn, Entity, Index, ObjectID } from 'typeorm';
 
-@Entity()
+@Entity({
+  name: 'aggregate_instance_outfit'
+})
 @Index(['instance', 'outfit'], { unique: true })
 export default class Outfit {
   @ObjectIdColumn()
