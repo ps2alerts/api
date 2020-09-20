@@ -1,6 +1,6 @@
 import { Column } from 'typeorm';
 
-export default class FacilityControl {
+export default class FacilityFactionControl {
   @Column({
     type: 'number',
     default: 0,

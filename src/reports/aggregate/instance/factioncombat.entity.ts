@@ -1,7 +1,9 @@
 import { Column, ObjectIdColumn, Entity, ObjectID } from 'typeorm';
 import CombatStats from '../common/combatstats.embed';
 
-@Entity()
+@Entity({
+  name: 'aggregate_instance_factioncombat'
+})
 export default class FactionCombat {
   @ObjectIdColumn()
   _id: ObjectID;
@@ -23,6 +25,6 @@ export default class FactionCombat {
   @Column(() => CombatStats)
   nso: CombatStats;
 
-  @Column(() => FactionCombat)
-  totals: FactionCombat;
+  @Column(() => CombatStats)
+  totals: CombatStats;
 }

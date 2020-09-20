@@ -1,6 +1,8 @@
 import { Column, ObjectIdColumn, Entity, Index, ObjectID } from 'typeorm';
 
-@Entity()
+@Entity({
+  name: 'aggregate_instance_population'
+})
 @Index(['instance', 'timestamp'], { unique: true })
 export default class Population {
   @ObjectIdColumn()

@@ -4,7 +4,9 @@ import { Zone, zoneArray } from '../../constants/zone.consts';
 import { MetagameEventType, metagameEventTypeArray } from '../../constants/metagameevent.consts';
 import { Ps2alertsEventState, ps2alertsEventStateArray } from '../../constants/eventstate.consts';
 
-@Entity()
+@Entity({
+  name: 'instance_metagame'
+})
 @Index(['world', 'censusInstanceId'], { unique: true })
 export default class Metagame {
   @ObjectIdColumn()

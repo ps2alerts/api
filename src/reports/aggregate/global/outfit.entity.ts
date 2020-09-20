@@ -1,7 +1,9 @@
 import { Column, ObjectIdColumn, Entity, Index, ObjectID } from 'typeorm';
 import { World, worldArray } from '../../../constants/world.consts';
 
-@Entity()
+@Entity({
+  name: 'aggregate_global_outfit'
+})
 @Index(['outfit', 'world'], { unique: true })
 export default class Outfit {
   @ObjectIdColumn()

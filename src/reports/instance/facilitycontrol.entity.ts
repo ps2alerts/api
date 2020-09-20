@@ -1,7 +1,9 @@
 import { Column, ObjectIdColumn, Entity, Index, ObjectID } from 'typeorm';
 import { Faction, factionArray } from '../../constants/faction.consts';
 
-@Entity()
+@Entity({
+  name: 'instance_facilitycontrol'
+})
 @Index(['instance', 'facility', 'timestamp'], { unique: true })
 export default class FacilityControl {
   @ObjectIdColumn()

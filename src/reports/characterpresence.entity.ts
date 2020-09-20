@@ -3,7 +3,9 @@ import { World, worldArray } from '../constants/world.consts';
 import { Zone, zoneArray } from '../constants/zone.consts';
 import { Faction, factionArray } from '../constants/faction.consts';
 
-@Entity()
+@Entity({
+  name: 'characterpresence'
+})
 @Unique(['character'])
 export default class CharacterPresence {
   @ObjectIdColumn()

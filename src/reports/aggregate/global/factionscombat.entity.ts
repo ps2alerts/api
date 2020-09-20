@@ -1,8 +1,10 @@
 import { Column, ObjectIdColumn, Entity, ObjectID } from 'typeorm';
 import { World, worldArray } from '../../../constants/world.consts';
-import FactionCombat from '../common/combatstats.embed';
+import CombatStats from '../common/combatstats.embed';
 
-@Entity()
+@Entity({
+  name: 'aggregate_global_factionscombat'
+})
 export default class FactionsCombat {
   @ObjectIdColumn()
   _id: ObjectID;
@@ -13,19 +15,19 @@ export default class FactionsCombat {
   })
   world: World;
 
-  @Column(() => FactionCombat)
-  vs: FactionCombat;
+  @Column(() => CombatStats)
+  vs: CombatStats;
 
-  @Column(() => FactionCombat)
-  nc: FactionCombat;
+  @Column(() => CombatStats)
+  nc: CombatStats;
 
-  @Column(() => FactionCombat)
-  tr: FactionCombat;
+  @Column(() => CombatStats)
+  tr: CombatStats;
 
-  @Column(() => FactionCombat)
-  nso: FactionCombat;
+  @Column(() => CombatStats)
+  nso: CombatStats;
 
-  @Column(() => FactionCombat)
-  totals: FactionCombat;
+  @Column(() => CombatStats)
+  totals: CombatStats;
 }
 
