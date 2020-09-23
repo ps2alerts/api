@@ -49,6 +49,7 @@
       docker_container:
         name: ps2alerts-api-npm
         image: node:12
+        restart_policy: "no"
         volumes:
           - "{{ root_dir | realpath }}:/app:rw"
         user: "{{ id.stdout }}:{{ id.stdout }}"
@@ -67,7 +68,7 @@
         volumes:
           - "{{ root_dir | realpath }}:/app:rw"
         ports:
-          - "1337"
+          - "3000:3000"
         networks:
           - name: "ps2alerts"
         networks_cli_compatible: no
@@ -85,5 +86,9 @@
           MQ_HOST: "ps2alerts-mq"
         labels:
           traefik.enable: "true"
-          traefik.http.routers.ps2alerts-api.rule: "Host(`dev.api.ps2alerts.com`)"
+          traefik.http.routers.ps2alerts_api.rule: "Host(`dev.api.ps2alerts.com`)"
+          traefik.http.routers.ps2alerts_api.service: "ps2alerts_api_service"
+          traefik.http.services.ps2alerts_api_service.loadbalancer.server.port: "3000"
+          traefik.http.services.ps2alerts_api_service.loadbalancer.server.scheme: "http"
+          traefik.http.services.myservice.loadbalancer.passhostheader: true
           traefik.port: "3000"

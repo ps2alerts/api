@@ -19,7 +19,7 @@
         networks_cli_compatible: no
         tty: true
         ports:
-          - "3000:3000"
+          - "3000"
         env:
           NODE_ENV: "development"
           VERSION: "12345"
@@ -33,7 +33,9 @@
           DB_DEBUG: "true"
           MQ_HOST: "ps2alerts-mq"
         labels:
-          traefik.enable: "false"
-          traefik.frontend.rule: "Host(`dev.api.ps2alerts.com`)"
-          traefik.docker.network: "ps2alerts"
-          traefik.port: "3000"
+          traefik.enable: "true"
+          traefik.http.routers.ps2alerts_api.rule: "Host(`dev.api.ps2alerts.com`)"
+          traefik.http.routers.ps2alerts_api.service: "ps2alerts_api_service"
+          traefik.http.services.ps2alerts_api_service.loadbalancer.server.port: "3000"
+          traefik.http.services.ps2alerts_api_service.loadbalancer.server.scheme: "http"
+          traefik.http.services.ps2alerts_api_service.loadbalancer.passhostheader: "true"

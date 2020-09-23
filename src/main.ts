@@ -53,7 +53,7 @@ async function bootstrap(): Promise<void> {
 
     // await app.startAllMicroservicesAsync();
     const port = config.get('http.port') ?? 3000;
-    await app.listen(port);
+    await app.listen(port, '0.0.0.0');
     console.log(`Web server listening on port: ${port}`);
 }
 
