@@ -5,7 +5,7 @@ export const config = () => ({
     database: {
         mongo: {
             type: 'mongodb',
-            host: process.env.DB_HOST ?? 'ps2alerts-db',
+            host: process.env.DB_HOST ?? 'localhost',
             port: process.env.DB_PORT ?? 27017,
             username: process.env.DB_USER ?? 'root',
             password: encodeURIComponent(process.env.DB_PASS ?? 'foobar'),
@@ -19,11 +19,11 @@ export const config = () => ({
     },
 
     http: {
-        port: parseInt((process.env.PORT ?? '3000'), 10),
+        port: parseInt((process.env.HTTP_PORT ?? '3000'), 10),
     },
 
     rabbitmq: {
-        url: [process.env.MQ_URL ?? 'amqp://user:bitnami@ps2alerts-mq:5672'],
+        url: [process.env.MQ_URL ?? `amqp://user:bitnami@${process.env.MQ_HOST ?? 'localhost'}:5672`],
         queue: process.env.MQ_QUEUE ?? 'api-consume-dev',
     },
 });

@@ -5,6 +5,7 @@ import {WsAdapter} from '@nestjs/platform-ws';
 import {RmqOptions, Transport} from '@nestjs/microservices';
 import {ConfigService} from '@nestjs/config';
 import {AppModule} from './app.module';
+import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -28,10 +29,22 @@ async function bootstrap(): Promise<void> {
         },
     });
 
+    // Swagger
+    // const options = new DocumentBuilder()
+    //     .setTitle('Cats example')
+    //     .setDescription('The cats API description')
+    //     .setVersion('1.0')
+    //     .addTag('cats')
+    //     .build();
+    // const document = SwaggerModule.createDocument(app, options);
+    // SwaggerModule.setup('api', app, document);
+
     app.useWebSocketAdapter(new WsAdapter(app));
 
     await app.startAllMicroservicesAsync();
-    await app.listen(config.get('http.port') ?? 3000);
+    const port = config.get('http.port') ?? 3000;
+    await app.listen(port);
+    console.log(`Web server listening on port: ${port}`);
 }
 
 void bootstrap();
