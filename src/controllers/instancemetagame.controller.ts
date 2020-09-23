@@ -1,18 +1,16 @@
-import {Controller} from "@nestjs/common";
-import {MessagePattern, Payload} from "@nestjs/microservices";
+import {Controller} from '@nestjs/common';
+import {MessagePattern, Payload} from '@nestjs/microservices';
 
 interface InstanceMetagameMessageData {
     instanceId: string;
-    type: string
+    type: string;
 }
 
 @Controller()
 export default class InstanceMetagameController {
     // CREATE
 
-
     // PATCH
-
 
     // MQHANDLE
     @MessagePattern('instanceMetagame')
@@ -20,6 +18,5 @@ export default class InstanceMetagameController {
         console.log('instanceMetagame', data);
 
         // If starting
-
     }
 }

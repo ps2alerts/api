@@ -1,30 +1,31 @@
-import { Column, ObjectIdColumn, Entity, ObjectID } from 'typeorm';
+/* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
+import {Column, ObjectIdColumn, Entity, ObjectID} from 'typeorm';
 import CombatStats from '../common/combatstats.embed';
 
 @Entity({
-  name: 'aggregate_instance_factioncombat'
+    name: 'aggregate_instance_factioncombat',
 })
 export default class FactionCombat {
-  @ObjectIdColumn()
-  _id: ObjectID;
+    @ObjectIdColumn()
+    _id: ObjectID;
 
-  @Column({
-    type: 'string',
-  })
-  instance: string;
+    @Column({
+        type: 'string',
+    })
+    instance: string;
 
-  @Column(() => CombatStats)
-  vs: CombatStats;
+    @Column(() => CombatStats)
+    vs: CombatStats;
 
-  @Column(() => CombatStats)
-  nc: CombatStats;
+    @Column(() => CombatStats)
+    nc: CombatStats;
 
-  @Column(() => CombatStats)
-  tr: CombatStats;
+    @Column(() => CombatStats)
+    tr: CombatStats;
 
-  @Column(() => CombatStats)
-  nso: CombatStats;
+    @Column(() => CombatStats)
+    nso: CombatStats;
 
-  @Column(() => CombatStats)
-  totals: CombatStats;
+    @Column(() => CombatStats)
+    totals: CombatStats;
 }

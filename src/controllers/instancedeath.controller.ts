@@ -1,22 +1,22 @@
-import {Controller} from "@nestjs/common";
-import {MessagePattern, Payload} from "@nestjs/microservices";
-import Death from "../reports/instance/death.entity";
-import {InjectEntityManager} from "@nestjs/typeorm";
-import {MongoEntityManager} from "typeorm";
+import {Controller} from '@nestjs/common';
+import {MessagePattern, Payload} from '@nestjs/microservices';
+import Death from '../reports/instance/death.entity';
+import {InjectEntityManager} from '@nestjs/typeorm';
+import {MongoEntityManager} from 'typeorm';
 
 interface InstanceMetagameMessageData {
     instanceId: string;
-    type: string
+    type: string;
 }
 
 @Controller()
 export default class InstanceDeathController {
-    private em: MongoEntityManager;
+    private readonly em: MongoEntityManager;
 
     constructor(
-        @InjectEntityManager() em: MongoEntityManager
+    @InjectEntityManager() em: MongoEntityManager,
     ) {
-        this.em = em
+        this.em = em;
     }
 
     // CREATE
@@ -24,10 +24,10 @@ export default class InstanceDeathController {
     public async create(): Promise<void> {
         // Instantiate model
         const death = new Death();
-        death.instance = "10-TEST";
-        death.attacker = "12345678wegsdghshsrhf9";
+        death.instance = '10-TEST';
+        death.attacker = '12345678wegsdghshsrhf9';
 
-        await this.em.insert(Death, death)
+        await this.em.insert(Death, death);
     }
 
     // MQHANDLE
@@ -36,7 +36,7 @@ export default class InstanceDeathController {
         // TODO: VALIDATE THE DATA FROM MQ
         console.log('instanceDeath', data);
 
-        void this.create()
+        void this.create();
         // If starting
 
     }

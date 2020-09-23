@@ -1,33 +1,33 @@
-import { Column, ObjectIdColumn, Entity, ObjectID } from 'typeorm';
-import { World, worldArray } from '../../../constants/world.consts';
+/* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
+import {Column, ObjectIdColumn, Entity, ObjectID} from 'typeorm';
+import {World, worldArray} from '../../../constants/world.consts';
 import CombatStats from '../common/combatstats.embed';
 
 @Entity({
-  name: 'aggregate_global_factioncombat'
+    name: 'aggregate_global_factioncombat',
 })
 export default class FactionsCombat {
-  @ObjectIdColumn()
-  _id: ObjectID;
+    @ObjectIdColumn()
+    _id: ObjectID;
 
-  @Column({
-    type: 'enum',
-    enum: worldArray,
-  })
-  world: World;
+    @Column({
+        type: 'enum',
+        enum: worldArray,
+    })
+    world: World;
 
-  @Column(() => CombatStats)
-  vs: CombatStats;
+    @Column(() => CombatStats)
+    vs: CombatStats;
 
-  @Column(() => CombatStats)
-  nc: CombatStats;
+    @Column(() => CombatStats)
+    nc: CombatStats;
 
-  @Column(() => CombatStats)
-  tr: CombatStats;
+    @Column(() => CombatStats)
+    tr: CombatStats;
 
-  @Column(() => CombatStats)
-  nso: CombatStats;
+    @Column(() => CombatStats)
+    nso: CombatStats;
 
-  @Column(() => CombatStats)
-  totals: CombatStats;
+    @Column(() => CombatStats)
+    totals: CombatStats;
 }
-
