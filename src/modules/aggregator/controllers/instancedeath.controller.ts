@@ -1,6 +1,6 @@
 import {Controller} from '@nestjs/common';
 import {MessagePattern, Payload} from '@nestjs/microservices';
-import Death from '../reports/instance/death.entity';
+import Death from '../../data/entities/instance/death.entity';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {MongoEntityManager} from 'typeorm';
 

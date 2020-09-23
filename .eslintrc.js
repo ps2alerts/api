@@ -28,16 +28,6 @@ module.exports = {
       "interface"
     ],
     "@typescript-eslint/explicit-function-return-type": "error",
-    "@typescript-eslint/explicit-member-accessibility": [
-      "error",
-      {
-        "accessibility": "explicit",
-        "overrides": {
-          "accessors": "no-public",
-          "constructors": "no-public"
-        }
-      }
-    ],
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {

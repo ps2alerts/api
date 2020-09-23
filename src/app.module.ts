@@ -1,18 +1,16 @@
 import {Module} from '@nestjs/common';
 import ConfigModule from './config/config.module';
-import MongoModule from './databases/mongo.module';
-import InstanceDeathController from './controllers/instancedeath.controller';
-import InstanceMetagameController from './controllers/instancemetagame.controller';
+import {DefaultController} from './controllers/default.controller';
+import {RestModule} from './modules/rest/rest.module';
+import {AggregatorModule} from './modules/aggregator/aggregator.module';
 
 @Module({
     imports: [
-        ConfigModule,
-        MongoModule,
+        ConfigModule, // Must come first
+        AggregatorModule,
+        RestModule,
     ],
-    controllers: [
-        InstanceDeathController,
-        InstanceMetagameController,
-    ],
+    controllers: [DefaultController],
     providers: [],
 })
 export class AppModule {}
