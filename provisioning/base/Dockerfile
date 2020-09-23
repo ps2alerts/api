@@ -1,4 +1,4 @@
-FROM node:11
+FROM node:12
 
 USER root
 
@@ -7,3 +7,5 @@ COPY ./files/entrypoint.sh /etc/service/entrypoint.sh
 USER node
 
 ENTRYPOINT /etc/service/entrypoint.sh
+
+WORKDIR /app
