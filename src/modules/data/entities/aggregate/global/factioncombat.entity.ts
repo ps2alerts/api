@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
-import {Column, ObjectIdColumn, Entity, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, ObjectID, Index} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
 import CombatStats from '../common/combatstats.embed';
 
 @Entity({
     name: 'aggregate_global_factioncombat',
 })
+@Index(['world'], {unique: true})
 export default class FactionsCombat {
     @ObjectIdColumn()
     _id: ObjectID;

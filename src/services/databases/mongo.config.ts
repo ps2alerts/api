@@ -1,6 +1,7 @@
 import {TypeOrmModuleOptions, TypeOrmOptionsFactory} from '@nestjs/typeorm';
 import {ConfigService} from '@nestjs/config';
 import {Injectable} from '@nestjs/common';
+import {resolve} from 'path';
 
 @Injectable()
 export class MongoConfig implements TypeOrmOptionsFactory {
@@ -11,23 +12,11 @@ export class MongoConfig implements TypeOrmOptionsFactory {
     }
 
     public createTypeOrmOptions(): TypeOrmModuleOptions {
-        const path = `${__dirname}/../../../dist/modules/data/entities`;
-        console.log(path);
-        return {
+        const path = resolve(`${__dirname}/../../../dist`);
+        const config: TypeOrmModuleOptions = {
             ...this.config.get('database.mongo'),
-            entities: [
-                // `${path}/aggregate/global/*.entity.js`,
-                // For some reason the database initialization breaks when we reference /reports/aggregate via a wildcard...
-                `${path}/aggregate/instance/character.entity.js`,
-                `${path}/aggregate/instance/class.entity.js`,
-                `${path}/aggregate/instance/facilitycontrol.entity.js`,
-                `${path}/aggregate/instance/factioncombat.entity.js`,
-                `${path}/aggregate/instance/outfit.entity.js`,
-                `${path}/aggregate/instance/population.entity.js`,
-                `${path}/aggregate/instance/weapon.entity.js`,
-                `${path}/instance/*.entity.js`,
-                `${path}/aggregate/common/*.entity.js`,
-            ],
+            entities: [`${path}/**/*.entity.js`],
         };
+        return config;
     }
 }
