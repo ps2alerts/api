@@ -45,8 +45,7 @@ async function bootstrap(): Promise<void> {
     const options = new DocumentBuilder()
         .setTitle('PS2Alerts API')
         .setDescription('PS2Alerts API documentation')
-        .setVersion('3.0')
-        .addTag('ps2alerts')
+        .setVersion('3.0-alpha')
         .build();
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('/', app, document);
@@ -54,7 +53,7 @@ async function bootstrap(): Promise<void> {
     // await app.startAllMicroservicesAsync();
     const port = config.get('http.port') ?? 3000;
     await app.listen(port, '0.0.0.0');
-    console.log(`Web server listening on port: ${port}`);
+    console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
 void bootstrap();
