@@ -1,13 +1,11 @@
 ---
 - hosts: localhost
-  vars:
-    root_dir: "{{ playbook_dir }}/../../"
   vars_files:
     - "{{ playbook_dir }}/../vars.yml"
-    - "{{ playbook_dir }}/../vars_local.yml"
+#    - "{{ playbook_dir }}/../vars_local.yml"
   tasks:
     - debug:
-        msg: "========= 🔗 Starting API Module 🔗 ========="
+        msg: "========= 🔗 Initializing API Module 🔗 ========="
 
     - name: Install docker
       pip:
@@ -72,6 +70,7 @@
           - "1337"
         networks:
           - name: "ps2alerts"
+        networks_cli_compatible: no
         tty: true
         env:
           NODE_ENV: "development"
@@ -83,7 +82,6 @@
           DB_PASS: "foobar"
           DB_NAME: "ps2alerts"
           DB_DEBUG: "true"
-          CENSUS_SERVICE_ID: "{{ census_service_id }}"
         labels:
           traefik.enable: "true"
           traefik.http.routers.ps2alerts-api.rule: "Host(`dev.api.ps2alerts.com`)"
