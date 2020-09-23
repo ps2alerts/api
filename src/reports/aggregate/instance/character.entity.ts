@@ -4,7 +4,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 @Entity({
     name: 'aggregate_instance_character',
 })
-@Index(['instance', 'world'], {unique: true})
+@Index(['instance', 'character'], {unique: true})
 export default class Character {
     @ObjectIdColumn()
     _id: ObjectID;
