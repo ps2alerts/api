@@ -3,12 +3,21 @@
   vars:
     root_dir: "{{ playbook_dir }}/../../"
   vars_files:
-    - "{{ root_dir }}/vars_local.yml"
+    - "{{ playbook_dir }}/../vars.yml"
+    - "{{ playbook_dir }}/../vars_local.yml"
   tasks:
+    - debug:
+        msg: "========= 🔗 Starting API Module 🔗 ========="
+
     - name: Install docker
       pip:
         name: docker
         state: present
+
+    - name: Get user's current UID
+      command: "id -u {{ ansible_user_id }}"
+      register: id
+      when: id is undefined
 
     - name: Create docker network
       docker_network:
@@ -35,15 +44,8 @@
         force_source: yes
         build:
           pull: no
-          path: "{{ playbook_dir }}"
+          path: "{{ root_dir | realpath }}/provisioning/dev"
 
-    - name: Get user's current UID
-      command: "id -u {{ lookup('ENV', 'USER') }}"
-      register: id
-      when: id is undefined
-
-      # This step has issues on OSX, not quite sure how to fix it. Gets permission denied within the container.
-      # Workaround is to just install npm via brew and npm install, meh.
     - name: Run npm install for API deps
       docker_container:
         name: ps2alerts-api-npm
