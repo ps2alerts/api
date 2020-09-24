@@ -5,7 +5,7 @@ import {Loadout, loadoutArray} from '../../constants/loadout.consts';
 @Entity({
     name: 'instance_deaths',
 })
-@Index(['instance', 'attacker', 'character', 'timestamp'], {unique: true})
+@Index(['instance', 'attacker', 'character'], {unique: true})
 
 export default class Death {
     @ObjectIdColumn()

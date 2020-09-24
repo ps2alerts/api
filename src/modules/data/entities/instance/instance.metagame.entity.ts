@@ -10,7 +10,7 @@ import {Exclude} from 'class-transformer';
 @Entity({
     name: 'instance_metagames',
 })
-@Index(['instanceId'], {unique: true})
+@Index(['world', 'censusInstanceId'], {unique: true})
 export default class InstanceMetagameEntity {
     @ObjectIdColumn()
     @Exclude()
