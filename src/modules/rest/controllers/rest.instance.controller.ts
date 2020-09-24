@@ -17,6 +17,7 @@ export class RestInstanceController {
 
     @Get('/metagame')
     @ApiOperation({summary: 'Return a paginated list of metagame instances'})
+    @UseInterceptors(ClassSerializerInterceptor)
     async findAll(): Promise<InstanceMetagameEntity[] | undefined> {
         return await this.repository.find();
     }
