@@ -2,7 +2,7 @@
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 
 @Entity({
-    name: 'aggregate_instance_character',
+    name: 'aggregate_instance_characters',
 })
 @Index(['instance', 'character'], {unique: true})
 export default class Character {

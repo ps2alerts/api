@@ -4,7 +4,7 @@ import {World, worldArray} from '../../../constants/world.consts';
 import CombatStats from '../common/combatstats.embed';
 
 @Entity({
-    name: 'aggregate_global_factioncombat',
+    name: 'aggregate_global_faction_combats',
 })
 @Index(['world'], {unique: true})
 export default class FactionsCombat {

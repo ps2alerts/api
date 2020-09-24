@@ -10,7 +10,7 @@ export const config = () => ({
             username: process.env.DB_USER ?? 'root',
             password: encodeURIComponent(process.env.DB_PASS ?? 'foobar'),
             database: process.env.DB_NAME ?? 'ps2alerts',
-            synchronize: true,
+            synchronize: false,
             logging: true,
             poolSize: 50,
             authSource: 'admin',

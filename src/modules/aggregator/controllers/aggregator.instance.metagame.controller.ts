@@ -7,15 +7,15 @@ interface InstanceMetagameMessageData {
 }
 
 @Controller()
-export default class InstanceMetagameController {
+export default class AggregatorInstanceMetagameController {
     // CREATE
 
     // PATCH
 
     // MQHANDLE
     @MessagePattern('instanceMetagame')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleMessage(@Payload() data: InstanceMetagameMessageData): void {
-        console.log('instanceMetagame', data);
 
         // If starting
     }

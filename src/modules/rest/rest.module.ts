@@ -1,16 +1,19 @@
 import {Module} from '@nestjs/common';
-import MongoModule from '../../services/databases/mongo.module';
-import {InstancesController} from './controllers/instances.controller';
+import {RestInstanceController} from './controllers/rest.instance.controller';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import InstanceMetagameEntity from '../data/entities/instance/instance.metagame.entity';
 
 /**
  * Handles incoming requests to the API via HTTP, CRUD environment.
  */
 @Module({
     imports: [
-        MongoModule,
+        TypeOrmModule.forFeature([
+            InstanceMetagameEntity,
+        ]),
     ],
     controllers: [
-        InstancesController,
+        RestInstanceController,
     ],
     providers: [],
 })

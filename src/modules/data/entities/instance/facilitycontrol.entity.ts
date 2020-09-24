@@ -3,7 +3,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {Faction, factionArray} from '../../constants/faction.consts';
 
 @Entity({
-    name: 'instance_facilitycontrol',
+    name: 'instance_facility_controls',
 })
 @Index(['instance', 'facility', 'timestamp'], {unique: true})
 export default class FacilityControl {

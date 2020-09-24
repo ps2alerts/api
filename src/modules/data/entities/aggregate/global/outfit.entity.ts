@@ -3,7 +3,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_global_outfit',
+    name: 'aggregate_global_outfits',
 })
 @Index(['outfit', 'world'], {unique: true})
 export default class Outfit {

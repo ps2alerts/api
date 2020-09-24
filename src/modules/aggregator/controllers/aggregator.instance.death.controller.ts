@@ -10,7 +10,7 @@ interface InstanceMetagameMessageData {
 }
 
 @Controller()
-export default class InstanceDeathController {
+export default class AggregatorInstanceDeathController {
     private readonly em: MongoEntityManager;
 
     constructor(
@@ -32,9 +32,9 @@ export default class InstanceDeathController {
 
     // MQHANDLE
     @MessagePattern('instanceDeath')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public handleMessage(@Payload() data: InstanceMetagameMessageData): void {
         // TODO: VALIDATE THE DATA FROM MQ
-        console.log('instanceDeath', data);
 
         void this.create();
         // If starting

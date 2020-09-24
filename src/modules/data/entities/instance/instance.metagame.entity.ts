@@ -5,13 +5,15 @@ import {Zone, zoneArray} from '../../constants/zone.consts';
 import {MetagameEventType, metagameEventTypeArray} from '../../constants/metagameevent.consts';
 import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../constants/eventstate.consts';
 import {ApiProperty} from '@nestjs/swagger';
+import {Exclude} from 'class-transformer';
 
 @Entity({
-    name: 'instance_metagame',
+    name: 'instance_metagames',
 })
-@Index(['world', 'censusInstanceId'], {unique: true})
-export default class Metagame {
+@Index(['instanceId'], {unique: true})
+export default class InstanceMetagameEntity {
     @ObjectIdColumn()
+    @Exclude()
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _id: ObjectID;
 

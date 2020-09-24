@@ -2,7 +2,7 @@
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 
 @Entity({
-    name: 'aggregate_instance_outfit',
+    name: 'aggregate_instance_outfits',
 })
 @Index(['instance', 'outfit'], {unique: true})
 export default class Outfit {

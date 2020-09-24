@@ -3,7 +3,7 @@ import {Column, ObjectIdColumn, Entity, ObjectID, Index} from 'typeorm';
 import CombatStats from '../common/combatstats.embed';
 
 @Entity({
-    name: 'aggregate_instance_factioncombat',
+    name: 'aggregate_instance_faction_combats',
 })
 @Index(['instance'], {unique: true})
 export default class FactionCombat {

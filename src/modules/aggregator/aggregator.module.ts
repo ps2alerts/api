@@ -1,7 +1,7 @@
 import {Module} from '@nestjs/common';
 import {DataModule} from '../data/data.module';
-import InstanceDeathController from './controllers/instancedeath.controller';
-import InstanceMetagameController from './controllers/instancemetagame.controller';
+import AggregatorInstanceDeathController from './controllers/aggregator.instance.death.controller';
+import AggregatorInstanceMetagameController from './controllers/aggregator.instance.metagame.controller';
 
 /**
  * This module processes the incoming messages from the PS2Alerts Aggregator component.
@@ -11,8 +11,8 @@ import InstanceMetagameController from './controllers/instancemetagame.controlle
         DataModule,
     ],
     controllers: [
-        InstanceDeathController,
-        InstanceMetagameController,
+        AggregatorInstanceDeathController,
+        AggregatorInstanceMetagameController,
     ],
     providers: [],
 })

@@ -40,6 +40,7 @@
     "@nestjs/websockets": "^7.4.2",
     "amqp-connection-manager": "^3.2.0",
     "amqplib": "^0.6.0",
+    "class-transformer": "^0.3.1",
     "fastify-helmet": "^5.0.0",
     "fastify-rate-limit": "^4.0.2",
     "fastify-swagger": "^3.3.0",

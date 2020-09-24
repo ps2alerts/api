@@ -29,7 +29,7 @@
           DB_PORT: "27017"
           DB_USER: "root"
           DB_PASS: "foobar"
-          DB_NAME: "ps2alerts-api"
+          DB_NAME: "ps2alerts"
           DB_DEBUG: "true"
           MQ_HOST: "ps2alerts-mq"
         labels:

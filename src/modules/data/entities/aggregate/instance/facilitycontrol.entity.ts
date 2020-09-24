@@ -3,7 +3,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import FacilityFactionControl from '../common/facilityfactioncontrol.embed';
 
 @Entity({
-    name: 'aggregate_instance_facilitycontrol',
+    name: 'aggregate_instance_facility_controls',
 })
 @Index(['instance', 'facility'], {unique: true})
 export default class FactionsFacilityControl {
