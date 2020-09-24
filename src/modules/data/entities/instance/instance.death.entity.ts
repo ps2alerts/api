@@ -7,7 +7,7 @@ import {Loadout, loadoutArray} from '../../constants/loadout.consts';
 })
 @Index(['instance', 'attacker', 'character'], {unique: true})
 
-export default class Death {
+export default class InstanceDeath {
     @ObjectIdColumn()
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _id: ObjectID;

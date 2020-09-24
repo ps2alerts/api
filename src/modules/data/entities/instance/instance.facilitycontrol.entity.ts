@@ -6,7 +6,7 @@ import {Faction, factionArray} from '../../constants/faction.consts';
     name: 'instance_facility_controls',
 })
 @Index(['instance', 'facility', 'timestamp'], {unique: true})
-export default class FacilityControl {
+export default class InstanceFacilityControl {
     @ObjectIdColumn()
     _id: ObjectID;
 

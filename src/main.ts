@@ -38,6 +38,7 @@ async function bootstrap(): Promise<void> {
             queueOptions: {
                 durable: true,
             },
+            noAck: false,
         },
     });
 
@@ -57,6 +58,7 @@ async function bootstrap(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const port = config.get('http.port') ?? 3000;
     await app.listen(port, '0.0.0.0');
+    // eslint-disable-next-line no-console
     console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
