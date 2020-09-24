@@ -29,14 +29,14 @@ export default class InstanceMetagameEntity {
     })
     censusInstanceId: number;
 
-    @ApiProperty({example: 10, description: 'Server / World ID'})
+    @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({
         type: 'enum',
         enum: worldArray,
     })
     world: World;
 
-    @ApiProperty({example: 2, description: 'Continent / Zone ID'})
+    @ApiProperty({enum: zoneArray, description: 'Continent / Zone ID'})
     @Column({
         type: 'enum',
         enum: zoneArray,
@@ -56,7 +56,7 @@ export default class InstanceMetagameEntity {
     })
     timeEnded?: Date;
 
-    @ApiProperty({example: 147, description: 'The census metagame event type. This is what we use to determine what kind of alert this is (e.g. meltdown or not)'})
+    @ApiProperty({enum: metagameEventTypeArray, description: 'The census metagame event type. This is what we use to determine what kind of alert this is (e.g. meltdown or not)'})
     @Column({
         type: 'enum',
         enum: metagameEventTypeArray,
@@ -69,10 +69,11 @@ export default class InstanceMetagameEntity {
     })
     duration: number;
 
-    @ApiProperty({example: 2, description: 'The internal event state. 1 = in progress, 2 = finished'})
+    @ApiProperty({enum: ps2alertsEventStateArray, description: 'The internal event state. 0 = scheduled, 1 = in progress, 2 = finished'})
     @Column({
         type: 'enum',
         enum: ps2alertsEventStateArray,
     })
     state: Ps2alertsEventState;
+
 }
