@@ -7,7 +7,7 @@ import FacilityFactionControl from '../common/facilityfactioncontrol.embed';
     name: 'aggregate_global_facility_controlss',
 })
 @Index(['facility', 'world'], {unique: true})
-export default class FacilityControl {
+export default class GlobalFacilityControlAggregate {
     @ObjectIdColumn()
     _id: ObjectID;
 

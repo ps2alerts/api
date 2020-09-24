@@ -6,7 +6,7 @@ import {World, worldArray} from '../../../constants/world.consts';
     name: 'aggregate_global_weapons',
 })
 @Index(['weapon', 'world'], {unique: true})
-export default class Weapon {
+export default class GlobalWeaponAggregate {
     @ObjectIdColumn()
     _id: ObjectID;
 

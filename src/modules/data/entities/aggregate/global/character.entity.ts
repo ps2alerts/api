@@ -6,7 +6,7 @@ import {World, worldArray} from '../../../constants/world.consts';
     name: 'aggregate_global_characters',
 })
 @Index(['character', 'world'], {unique: true})
-export default class Character {
+export default class GlobalCharacterAggregate {
     @ObjectIdColumn()
     _id: ObjectID;
 

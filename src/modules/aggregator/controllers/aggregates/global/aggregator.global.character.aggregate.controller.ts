@@ -3,24 +3,28 @@ import {BadRequestException, Controller} from '@nestjs/common';
 import {Ctx, MessagePattern, Payload, RmqContext} from '@nestjs/microservices';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {MongoEntityManager} from 'typeorm';
-import InstanceFacilityControl from '../../../data/entities/instance/instance.facilitycontrol.entity';
-import AggregatorMessageInterface from '../../interfaces/AggregatorMessageInterface';
+import GlobalCharacterAggregate from '../../../../data/entities/aggregate/global/character.entity';
+import AggregatorMessageInterface from '../../../interfaces/AggregatorMessageInterface';
 
 @Controller()
-export default class AggregatorInstanceFacilityControlEventController {
+export default class AggregatorGlobalCharacterAggregateController {
     private readonly em: MongoEntityManager;
 
     constructor(@InjectEntityManager() em: MongoEntityManager) {
         this.em = em;
     }
 
-    @MessagePattern('instanceFacilityControlEvent.create')
+    @MessagePattern('globalCharacterAggregate.create')
     public async create(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
         for (const doc of data.docs) {
             try {
-                await this.em.insert(InstanceFacilityControl, doc);
+                await this.em.updateOne(
+                    GlobalCharacterAggregate,
+                    data.conditionals[0],
+                    doc,
+                    {upsert: true});
             } catch (e) {
-                throw new BadRequestException('Unable to create document!', 'instanceFacilityControlEvent.create');
+                throw new BadRequestException('Unable to create document!', 'globalCharacterAggregate.create');
             }
         }
 

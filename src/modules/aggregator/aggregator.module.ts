@@ -4,6 +4,8 @@ import AggregatorInstanceDeathEventController from './controllers/instance/aggre
 import AggregatorInstanceMetagameController from './controllers/instance/aggregator.instance.metagame.controller';
 import AggregatorInstanceFacilityControlEventController
     from './controllers/instance/aggregator.instance.facility.control.event.controller';
+import AggregatorGlobalCharacterAggregateController
+    from './controllers/aggregates/global/aggregator.global.character.aggregate.controller';
 
 /**
  * This module processes the incoming messages from the PS2Alerts Aggregator component.
@@ -16,6 +18,7 @@ import AggregatorInstanceFacilityControlEventController
         AggregatorInstanceDeathEventController,
         AggregatorInstanceFacilityControlEventController,
         AggregatorInstanceMetagameController,
+        AggregatorGlobalCharacterAggregateController,
     ],
     providers: [],
 })

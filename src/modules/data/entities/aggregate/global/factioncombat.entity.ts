@@ -7,7 +7,7 @@ import CombatStats from '../common/combatstats.embed';
     name: 'aggregate_global_faction_combats',
 })
 @Index(['world'], {unique: true})
-export default class FactionsCombat {
+export default class GlobalFactionCombatAggregate {
     @ObjectIdColumn()
     _id: ObjectID;
 
