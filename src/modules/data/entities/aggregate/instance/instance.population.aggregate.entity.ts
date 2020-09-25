@@ -1,47 +1,51 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_global_weapons',
+    name: 'aggregate_instance_populations',
 })
-@Index(['weapon', 'world'], {unique: true})
-export default class GlobalWeaponAggregate {
+@Index(['instance', 'timestamp'], {unique: true})
+export default class InstancePopulationAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
-        type: 'number',
+        type: 'string',
     })
-    weapon: number;
+    instance: string;
 
     @Column({
-        type: 'enum',
-        enum: worldArray,
+        type: 'date',
     })
-    world: World;
-
-    @Column({
-        type: 'number',
-        default: 0,
-    })
-    kills: number;
+    timestamp: Date;
 
     @Column({
         type: 'number',
         default: 0,
     })
-    teamKills: number;
+    vs: number;
 
     @Column({
         type: 'number',
         default: 0,
     })
-    suicides: number;
+    nc: number;
 
     @Column({
         type: 'number',
         default: 0,
     })
-    headshots: number;
+    tr: number;
+
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    nso: number;
+
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    total: number;
 }

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import FacilityFactionControl from '../common/facilityfactioncontrol.embed';
+import FacilityFactionControl from '../common/facility.faction.control.embed';
 
 @Entity({
     name: 'aggregate_instance_facility_controls',
 })
 @Index(['instance', 'facility'], {unique: true})
-export default class FactionsFacilityControl {
+export default class InstanceFacilityControlAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 

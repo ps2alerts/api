@@ -7,7 +7,7 @@ interface InstanceMetagameMessageData {
 }
 
 @Controller()
-export default class AggregatorInstanceMetagameController {
+export default class AggregatorInstanceMetagameEventController {
     // CREATE
 
     // PATCH

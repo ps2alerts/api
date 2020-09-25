@@ -1,23 +1,25 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_instance_outfits',
+    name: 'aggregate_global_outfits',
 })
-@Index(['instance', 'outfit'], {unique: true})
-export default class Outfit {
+@Index(['outfit', 'world'], {unique: true})
+export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
         type: 'string',
     })
-    instance: string;
+    outfit: string;
 
     @Column({
-        type: 'string',
+        type: 'enum',
+        enum: worldArray,
     })
-    outfit: string;
+    world: World;
 
     @Column({
         type: 'number',

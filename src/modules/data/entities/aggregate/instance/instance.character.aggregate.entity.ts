@@ -1,25 +1,23 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_global_outfits',
+    name: 'aggregate_instance_characters',
 })
-@Index(['outfit', 'world'], {unique: true})
-export default class GlobalOutfitAggregate {
+@Index(['instance', 'character'], {unique: true})
+export default class InstanceCharacterAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
         type: 'string',
     })
-    outfit: string;
+    instance: string;
 
     @Column({
-        type: 'enum',
-        enum: worldArray,
+        type: 'string',
     })
-    world: World;
+    character: string;
 
     @Column({
         type: 'number',
@@ -50,4 +48,10 @@ export default class GlobalOutfitAggregate {
         default: 0,
     })
     headshots: number;
+
+    @Column({
+        type: 'string',
+        nullable: true,
+    })
+    outfit?: string;
 }

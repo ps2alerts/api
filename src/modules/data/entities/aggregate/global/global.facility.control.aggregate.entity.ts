@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
-import FacilityFactionControl from '../common/facilityfactioncontrol.embed';
+import FacilityFactionControl from '../common/facility.faction.control.embed';
 
 @Entity({
     name: 'aggregate_global_facility_controlss',
 })
 @Index(['facility', 'world'], {unique: true})
-export default class GlobalFacilityControlAggregate {
+export default class GlobalFacilityControlAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 

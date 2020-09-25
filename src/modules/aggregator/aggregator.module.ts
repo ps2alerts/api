@@ -1,9 +1,9 @@
 import {Module} from '@nestjs/common';
 import {DataModule} from '../data/data.module';
-import AggregatorInstanceDeathEventController from './controllers/instance/aggregator.instance.death.event.controller';
-import AggregatorInstanceMetagameController from './controllers/instance/aggregator.instance.metagame.controller';
+import AggregatorInstanceDeathEventController from './controllers/events/aggregator.instance.death.event.controller';
+import AggregatorInstanceMetagameEventController from './controllers/events/aggregator.instance.metagame.event.controller';
 import AggregatorInstanceFacilityControlEventController
-    from './controllers/instance/aggregator.instance.facility.control.event.controller';
+    from './controllers/events/aggregator.instance.facility.control.event.controller';
 import AggregatorGlobalCharacterAggregateController
     from './controllers/aggregates/global/aggregator.global.character.aggregate.controller';
 
@@ -17,7 +17,7 @@ import AggregatorGlobalCharacterAggregateController
     controllers: [
         AggregatorInstanceDeathEventController,
         AggregatorInstanceFacilityControlEventController,
-        AggregatorInstanceMetagameController,
+        AggregatorInstanceMetagameEventController,
         AggregatorGlobalCharacterAggregateController,
     ],
     providers: [],

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column} from 'typeorm';
 
-export default class CombatStats {
+export default class CombatStatsEmbed {
     @Column({
         type: 'number',
     })

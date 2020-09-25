@@ -6,7 +6,7 @@ import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
     name: 'aggregate_instance_class',
 })
 @Index(['instance', 'class'], {unique: true})
-export default class Class {
+export default class InstanceClassAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 

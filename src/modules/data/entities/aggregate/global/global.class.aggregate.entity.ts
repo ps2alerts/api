@@ -1,51 +1,55 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
+import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_instance_populations',
+    name: 'aggregate_global_class',
 })
-@Index(['instance', 'timestamp'], {unique: true})
-export default class Population {
+@Index(['class', 'world'], {unique: true})
+export default class GlobalClassAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
-        type: 'string',
+        type: 'enum',
+        enum: loadoutArray,
     })
-    instance: string;
+    class: Loadout; // Subject to change to a PlayerInterface
 
     @Column({
-        type: 'date',
+        type: 'enum',
+        enum: worldArray,
     })
-    timestamp: Date;
-
-    @Column({
-        type: 'number',
-        default: 0,
-    })
-    vs: number;
+    world: World;
 
     @Column({
         type: 'number',
         default: 0,
     })
-    nc: number;
+    kills: number;
 
     @Column({
         type: 'number',
         default: 0,
     })
-    tr: number;
+    deaths: number;
 
     @Column({
         type: 'number',
         default: 0,
     })
-    nso: number;
+    teamKills: number;
 
     @Column({
         type: 'number',
         default: 0,
     })
-    total: number;
+    suicides: number;
+
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    headshots: number;
 }

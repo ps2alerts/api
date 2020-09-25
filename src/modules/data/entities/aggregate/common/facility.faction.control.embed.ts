@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column} from 'typeorm';
 
-export default class FacilityFactionControl {
+export default class FacilityFactionControlEmbed {
     @Column({
         type: 'number',
         default: 0,

@@ -1,37 +1,29 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_global_characters',
+    name: 'aggregate_instance_weapons',
 })
-@Index(['character', 'world'], {unique: true})
-export default class GlobalCharacterAggregate {
+@Index(['instance', 'weapon'], {unique: true})
+export default class InstanceWeaponAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
         type: 'string',
     })
-    character: string;
+    instance: string;
 
     @Column({
-        type: 'enum',
-        enum: worldArray,
+        type: 'number',
     })
-    world: World;
+    weapon: number;
 
     @Column({
         type: 'number',
         default: 0,
     })
     kills: number;
-
-    @Column({
-        type: 'number',
-        default: 0,
-    })
-    deaths: number;
 
     @Column({
         type: 'number',

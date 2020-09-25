@@ -1,35 +1,31 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_instance_characters',
+    name: 'aggregate_global_weapons',
 })
-@Index(['instance', 'character'], {unique: true})
-export default class Character {
+@Index(['weapon', 'world'], {unique: true})
+export default class GlobalWeaponAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
-        type: 'string',
+        type: 'number',
     })
-    instance: string;
+    weapon: number;
 
     @Column({
-        type: 'string',
+        type: 'enum',
+        enum: worldArray,
     })
-    character: string;
+    world: World;
 
     @Column({
         type: 'number',
         default: 0,
     })
     kills: number;
-
-    @Column({
-        type: 'number',
-        default: 0,
-    })
-    deaths: number;
 
     @Column({
         type: 'number',
@@ -48,10 +44,4 @@ export default class Character {
         default: 0,
     })
     headshots: number;
-
-    @Column({
-        type: 'string',
-        nullable: true,
-    })
-    outfit?: string;
 }

@@ -1,21 +1,19 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
 import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_global_class',
+    name: 'aggregate_global_characters',
 })
-@Index(['class', 'world'], {unique: true})
-export default class GlobalClassAggregate {
+@Index(['character', 'world'], {unique: true})
+export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
     @Column({
-        type: 'enum',
-        enum: loadoutArray,
+        type: 'string',
     })
-    class: Loadout; // Subject to change to a PlayerInterface
+    character: string;
 
     @Column({
         type: 'enum',

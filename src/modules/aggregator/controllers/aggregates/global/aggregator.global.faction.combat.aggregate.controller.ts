@@ -3,16 +3,16 @@ import {Ctx, MessagePattern, Payload, RmqContext} from '@nestjs/microservices';
 import AggregatorBaseController from '../../AggregatorBaseController';
 import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
 import AggregatorMessageInterface from '../../../interfaces/AggregatorMessageInterface';
-import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.character.aggregate.entity';
+import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggregate/global/global.faction.combat.entity';
 
 @Controller()
-export default class AggregatorInstanceDeathEventController extends AggregatorBaseController {
-    @MessagePattern(MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE)
+export default class AggregatorGlobalFactionCombatAggregateController extends AggregatorBaseController {
+    @MessagePattern(MQAcceptedPatterns.GLOBAL_FACTION_COMBAT_AGGREGATE)
     public async process(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
         try {
-            await this.update(data, context, GlobalCharacterAggregateEntity);
+            await this.update(data, context, GlobalFactionCombatAggregateEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE);
+            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.GLOBAL_FACTION_COMBAT_AGGREGATE);
         }
     }
 }

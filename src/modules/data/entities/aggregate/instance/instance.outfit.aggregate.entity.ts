@@ -2,10 +2,10 @@
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 
 @Entity({
-    name: 'aggregate_instance_weapons',
+    name: 'aggregate_instance_outfits',
 })
-@Index(['instance', 'weapon'], {unique: true})
-export default class Weapon {
+@Index(['instance', 'outfit'], {unique: true})
+export default class InstanceOutfitAggregateEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
@@ -15,15 +15,21 @@ export default class Weapon {
     instance: string;
 
     @Column({
-        type: 'number',
+        type: 'string',
     })
-    weapon: number;
+    outfit: string;
 
     @Column({
         type: 'number',
         default: 0,
     })
     kills: number;
+
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    deaths: number;
 
     @Column({
         type: 'number',
