@@ -9,6 +9,8 @@ import InstanceFacilityControlEntity from '../../../data/entities/instance/insta
 export default class AggregatorInstanceFacilityControlEventController extends AggregatorBaseController {
     @MessagePattern(MQAcceptedPatterns.INSTANCE_FACILITY_CONTROL)
     public async process(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
+        console.log(data);
+
         try {
             await this.create(data, context, InstanceFacilityControlEntity);
         } catch (err) {
