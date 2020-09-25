@@ -12,7 +12,8 @@ export default class AggregatorGlobalWeaponAggregateController extends Aggregato
         try {
             await this.update(data, context, GlobalWeaponAggregateEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.GLOBAL_WEAPON_AGGREGATE);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.GLOBAL_WEAPON_AGGREGATE);
         }
     }
 }

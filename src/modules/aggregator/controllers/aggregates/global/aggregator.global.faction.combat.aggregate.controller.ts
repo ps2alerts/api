@@ -12,7 +12,8 @@ export default class AggregatorGlobalFactionCombatAggregateController extends Ag
         try {
             await this.update(data, context, GlobalFactionCombatAggregateEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.GLOBAL_FACTION_COMBAT_AGGREGATE);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.GLOBAL_FACTION_COMBAT_AGGREGATE);
         }
     }
 }

@@ -12,7 +12,8 @@ export default class AggregatorInstanceFactionCombatAggregateController extends 
         try {
             await this.update(data, context, InstanceFactionCombatAggregateEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.INSTANCE_FACTION_COMBAT_AGGREGATE);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.INSTANCE_FACTION_COMBAT_AGGREGATE);
         }
     }
 }

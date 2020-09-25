@@ -12,7 +12,8 @@ export default class AggregatorInstanceOutfitAggregateController extends Aggrega
         try {
             await this.update(data, context, InstanceOutfitAggregateEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.INSTANCE_OUTFIT_AGGREGATE);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.INSTANCE_OUTFIT_AGGREGATE);
         }
     }
 }

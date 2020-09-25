@@ -12,7 +12,8 @@ export default class AggregatorInstanceClassAggregateController extends Aggregat
         try {
             await this.update(data, context, InstanceClassAggregateEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.INSTANCE_CLASS_AGGREGATE);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.INSTANCE_CLASS_AGGREGATE);
         }
     }
 }

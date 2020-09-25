@@ -12,7 +12,8 @@ export default class AggregatorInstanceDeathEventController extends AggregatorBa
         try {
             await this.create(data, context, InstanceDeathEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.INSTANCE_DEATH);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.INSTANCE_DEATH);
         }
     }
 }

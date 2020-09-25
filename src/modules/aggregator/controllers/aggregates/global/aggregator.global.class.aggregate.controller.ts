@@ -12,7 +12,8 @@ export default class AggregatorGlobalClassAggregateController extends Aggregator
         try {
             await this.update(data, context, GlobalClassAggregateEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.GLOBAL_CLASS_AGGREGATE);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.GLOBAL_CLASS_AGGREGATE);
         }
     }
 }

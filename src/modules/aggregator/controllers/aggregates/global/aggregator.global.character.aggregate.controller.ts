@@ -6,13 +6,14 @@ import AggregatorMessageInterface from '../../../interfaces/AggregatorMessageInt
 import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.character.aggregate.entity';
 
 @Controller()
-export default class AggregatorInstanceDeathEventController extends AggregatorBaseController {
+export default class AggregatorGlobalCharacterAggregateController extends AggregatorBaseController {
     @MessagePattern(MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE)
     public async process(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
         try {
             await this.update(data, context, GlobalCharacterAggregateEntity);
         } catch (err) {
-            throw new BadRequestException('Unable to process message!', MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE);
         }
     }
 }
