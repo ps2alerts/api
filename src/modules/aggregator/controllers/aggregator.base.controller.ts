@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any */
 import {MongoEntityManager} from 'typeorm';
 import {RmqContext} from '@nestjs/microservices';
-import AggregatorMessageInterface from '../interfaces/AggregatorMessageInterface';
+import AggregatorMessageInterface from '../interfaces/aggregator.message.interface';
 import {InjectEntityManager} from '@nestjs/typeorm';
 
 export default abstract class AggregatorBaseController {

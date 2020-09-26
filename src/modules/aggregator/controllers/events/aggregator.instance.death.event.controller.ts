@@ -1,7 +1,7 @@
 import {BadRequestException, Controller} from '@nestjs/common';
 import {Ctx, MessagePattern, Payload, RmqContext} from '@nestjs/microservices';
 import InstanceDeathEntity from '../../../data/entities/instance/instance.death.entity';
-import AggregatorMessageInterface from '../../interfaces/AggregatorMessageInterface';
+import AggregatorMessageInterface from '../../interfaces/aggregator.message.interface';
 import AggregatorBaseController from '../aggregator.base.controller';
 import {MQAcceptedPatterns} from '../../../data/constants/MQAcceptedPatterns';
 

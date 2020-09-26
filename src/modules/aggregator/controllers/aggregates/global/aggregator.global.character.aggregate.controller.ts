@@ -2,7 +2,7 @@ import {BadRequestException, Controller} from '@nestjs/common';
 import {Ctx, MessagePattern, Payload, RmqContext} from '@nestjs/microservices';
 import AggregatorBaseController from '../../aggregator.base.controller';
 import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
-import AggregatorMessageInterface from '../../../interfaces/AggregatorMessageInterface';
+import AggregatorMessageInterface from '../../../interfaces/aggregator.message.interface';
 import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.character.aggregate.entity';
 
 @Controller()
