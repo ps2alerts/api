@@ -29,7 +29,6 @@ async function bootstrap(): Promise<void> {
         },
     });
 
-    // TODO: Can we register this in the aggregator module?
     app.connectMicroservice<RmqOptions>({
         transport: Transport.RMQ,
         options: {
