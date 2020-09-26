@@ -3,7 +3,7 @@ import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
 import AggregatorBaseController from '../../aggregator.base.controller';
 import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
 import AggregatorMessageInterface from '../../../interfaces/aggregator.message.interface';
-import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggregate/global/global.faction.combat.entity';
+import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggregate/global/global.faction.combat.aggregate.entity';
 
 @Controller()
 export default class AggregatorGlobalFactionCombatAggregateController extends AggregatorBaseController {
