@@ -1,5 +1,5 @@
 import {Controller} from '@nestjs/common';
-import {EventPattern Payload} from '@nestjs/microservices';
+import {EventPattern, Payload} from '@nestjs/microservices';
 
 interface InstanceMetagameMessageData {
     instanceId: string;
