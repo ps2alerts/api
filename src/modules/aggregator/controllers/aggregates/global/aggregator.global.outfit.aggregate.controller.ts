@@ -1,5 +1,5 @@
 import {BadRequestException, Controller} from '@nestjs/common';
-import {Ctx, MessagePattern, Payload, RmqContext} from '@nestjs/microservices';
+import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
 import AggregatorBaseController from '../../aggregator.base.controller';
 import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
 import AggregatorMessageInterface from '../../../interfaces/aggregator.message.interface';
@@ -7,7 +7,7 @@ import GlobalOutfitAggregateEntity from '../../../../data/entities/aggregate/glo
 
 @Controller()
 export default class AggregatorGlobalOutfitAggregateController extends AggregatorBaseController {
-    @MessagePattern(MQAcceptedPatterns.GLOBAL_OUTFIT_AGGREGATE)
+    @EventPattern(MQAcceptedPatterns.GLOBAL_OUTFIT_AGGREGATE)
     public async process(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
         try {
             await this.update(data, context, GlobalOutfitAggregateEntity);

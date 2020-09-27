@@ -31,4 +31,4 @@ In order for this to work, messages must be supplied to the queue NestJS is list
 }
 ```
 
-Here, any endpoint / function with `@MessagePattern('instanceDeath')` will consume the message and process it.
+Here, any endpoint / function with `@EventPattern('instanceDeath')` will consume the message and process it.

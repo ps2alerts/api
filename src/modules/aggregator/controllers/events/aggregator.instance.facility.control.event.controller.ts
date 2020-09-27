@@ -1,5 +1,5 @@
 import {BadRequestException, Controller} from '@nestjs/common';
-import {Ctx, MessagePattern, Payload, RmqContext} from '@nestjs/microservices';
+import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
 import AggregatorMessageInterface from '../../interfaces/aggregator.message.interface';
 import AggregatorBaseController from '../aggregator.base.controller';
 import {MQAcceptedPatterns} from '../../../data/constants/MQAcceptedPatterns';
@@ -7,7 +7,7 @@ import InstanceFacilityControlEntity from '../../../data/entities/instance/insta
 
 @Controller()
 export default class AggregatorInstanceFacilityControlEventController extends AggregatorBaseController {
-    @MessagePattern(MQAcceptedPatterns.INSTANCE_FACILITY_CONTROL)
+    @EventPattern(MQAcceptedPatterns.INSTANCE_FACILITY_CONTROL)
     public async process(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
         console.log(data);
 

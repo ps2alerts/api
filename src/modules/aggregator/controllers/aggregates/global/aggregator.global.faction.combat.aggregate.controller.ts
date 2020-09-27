@@ -1,5 +1,5 @@
 import {BadRequestException, Controller} from '@nestjs/common';
-import {Ctx, MessagePattern, Payload, RmqContext} from '@nestjs/microservices';
+import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
 import AggregatorBaseController from '../../aggregator.base.controller';
 import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
 import AggregatorMessageInterface from '../../../interfaces/aggregator.message.interface';
@@ -7,7 +7,7 @@ import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggreg
 
 @Controller()
 export default class AggregatorGlobalFactionCombatAggregateController extends AggregatorBaseController {
-    @MessagePattern(MQAcceptedPatterns.GLOBAL_FACTION_COMBAT_AGGREGATE)
+    @EventPattern(MQAcceptedPatterns.GLOBAL_FACTION_COMBAT_AGGREGATE)
     public async process(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
         try {
             await this.update(data, context, GlobalFactionCombatAggregateEntity);

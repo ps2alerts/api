@@ -1,5 +1,5 @@
 import {Controller} from '@nestjs/common';
-import {MessagePattern, Payload} from '@nestjs/microservices';
+import {EventPattern Payload} from '@nestjs/microservices';
 
 interface InstanceMetagameMessageData {
     instanceId: string;
@@ -13,7 +13,7 @@ export default class AggregatorInstanceMetagameEventController {
     // PATCH
 
     // MQHANDLE
-    @MessagePattern('instanceMetagame')
+    @EventPattern('instanceMetagame')
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleMessage(@Payload() data: InstanceMetagameMessageData): void {
 
