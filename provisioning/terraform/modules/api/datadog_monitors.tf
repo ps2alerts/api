@@ -22,8 +22,8 @@ resource datadog_monitor "api_high_mem" {
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "high memory"})
 
   thresholds = {
-    critical = 262144000
-    warning = 209715000
+    critical = 471859000 #450MB
+    warning = 419430000 #400MB
   }
 
   notify_no_data = true
@@ -40,8 +40,8 @@ resource datadog_monitor "api_high_cpu" {
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "high CPU"})
 
   thresholds = {
-    critical = 471859000 #450MB
-    warning = 419430000 #400MB
+    critical = 450000000
+    warning = 400000000
   }
 
   notify_no_data = true
