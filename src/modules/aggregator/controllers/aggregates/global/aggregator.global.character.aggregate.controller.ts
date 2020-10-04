@@ -1,4 +1,4 @@
-import {BadRequestException, Controller} from '@nestjs/common';
+import {Controller} from '@nestjs/common';
 import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
 import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
 import AggregatorMessageInterface from '../../../interfaces/aggregator.message.interface';
@@ -11,11 +11,6 @@ export default class AggregatorGlobalCharacterAggregateController {
 
     @EventPattern(MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE)
     public async process(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
-        try {
-            await this.mongoOperationsService.update(data, context, GlobalCharacterAggregateEntity);
-        } catch (err) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-            throw new BadRequestException(`Unable to process message! E: ${err.message}`, MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE);
-        }
+        await this.mongoOperationsService.update(data, context, GlobalCharacterAggregateEntity);
     }
 }
