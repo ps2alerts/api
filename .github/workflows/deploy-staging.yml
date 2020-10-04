@@ -1,0 +1,93 @@
+---
+name: Build & Deploy Staging
+on:
+  push:
+    branches: [staging, features/33-api-terraform]
+jobs:
+  build-docker-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Get short SHA
+        id: sha
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Build base image
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          path: provisioning/base
+          repository: maelstromeous/applications
+          tags: ps2alerts-api-base
+
+      - name: Build staging image
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: maelstromeous/applications
+          dockerfile: provisioning/staging/Dockerfile
+          always_pull: true
+          tags: ps2alerts-api-staging-${{ steps.sha.outputs.sha_short }}
+
+  deploy-terraform:
+    needs:
+      - build-docker-images
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: provisioning/terraform
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get short SHA
+        id: sha
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      # Install the latest version of Terraform CLI and configure the Terraform
+      # CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+
+      # Initialize a new or existing Terraform working directory by creating initial
+      # files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      # Generates an execution plan for Terraform, with the injected SHA
+      - name: Terraform Plan
+        run: >
+          terraform plan \
+            -var='checksum_version=${{ steps.sha.outputs.sha_short }}' \
+            -var='db_user=${{ secrets.DB_USER }}' \
+            -var='db_pass=${{ secrets.DB_PASS }}' \
+            -var='dd_api_key=${{ secrets.DATADOG_API_KEY }}' \
+            -var='dd_app_key=${{ secrets.DATADOG_APP_KEY }}' \
+            -target=module.api_staging -out='.tfout'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+      # Apply the terraform plan and inject the SHA
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+        run: terraform apply -auto-approve .tfout
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
