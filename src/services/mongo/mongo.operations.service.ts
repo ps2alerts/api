@@ -46,6 +46,7 @@ export default class MongoOperationsService {
     }
 
     public async insertOne(entity: any, doc: any): Promise<ObjectID> {
+        doc = this.transform([doc])[0];
         await this.em.insertOne(entity, doc).then((result) => {
             if (result.insertedCount > 0) {
                 return result.insertedId;
@@ -56,6 +57,7 @@ export default class MongoOperationsService {
     }
 
     public async insertMany(entity: any, docs: any[]): Promise<ObjectID[]> {
+        docs = this.transform(docs);
         await this.em.insertMany(entity, docs).then((result) => {
             if (result.insertedCount > 0) {
                 return result.insertedIds;
@@ -66,6 +68,7 @@ export default class MongoOperationsService {
     }
 
     public async upsertOne(entity: any, doc: any, conditionals: any[]): Promise<ObjectID> {
+        doc = this.transform([doc])[0];
         await this.em.updateOne(
             entity,
             conditionals[0],
@@ -81,6 +84,7 @@ export default class MongoOperationsService {
     }
 
     public async upsertMany(entity: any, docs: any[], conditionals: any[]): Promise<ObjectID[]> {
+        docs = this.transform(docs);
         await this.em.updateMany(
             entity,
             conditionals[0],
@@ -93,5 +97,15 @@ export default class MongoOperationsService {
         });
 
         throw new Error(`upsertMany failed! No documents were inserted! ${JSON.stringify(docs)}`);
+    }
+
+    private transform(docs: any[]): any[] {
+        return docs.map((doc) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            if (doc.prototype.hasOwnProperty.call('timestamp')) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                doc.timestamp = new Date(doc.timestamp);
+            }
+        });
     }
 }
