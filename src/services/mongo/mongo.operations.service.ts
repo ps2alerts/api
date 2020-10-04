@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any */
-import {MongoEntityManager} from 'typeorm';
+import AggregatorMessageInterface from '../../modules/aggregator/interfaces/aggregator.message.interface';
 import {RmqContext} from '@nestjs/microservices';
-import AggregatorMessageInterface from '../interfaces/aggregator.message.interface';
+import {MongoEntityManager} from 'typeorm';
 import {InjectEntityManager} from '@nestjs/typeorm';
+import {Injectable} from '@nestjs/common';
 
-export default abstract class AggregatorBaseController {
+@Injectable()
+export default class MongoOperationsService {
     protected readonly em: MongoEntityManager;
 
     constructor(@InjectEntityManager() em: MongoEntityManager) {
