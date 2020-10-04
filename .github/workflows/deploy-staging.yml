@@ -34,8 +34,8 @@ jobs:
 #          tags: ps2alerts-api-staging-${{ steps.sha.outputs.sha_short }}
 
   deploy-terraform:
-    needs:
-      - build-docker-images
+#    needs:
+#      - build-docker-images
     runs-on: ubuntu-latest
     defaults:
       run:
