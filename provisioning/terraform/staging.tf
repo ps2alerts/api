@@ -1,5 +1,5 @@
 module "api_staging" {
-  source             = "modules/api"
+  source             = "./modules/api"
   namespace          = "ps2alerts"
   environment        = "staging"
   identifier         = "ps2alerts-api-staging"
