@@ -3,7 +3,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
 
 @Entity({
-    name: 'aggregate_instance_class',
+    name: 'aggregate_instance_classes',
 })
 @Index(['instance', 'class'], {unique: true})
 export default class InstanceClassAggregateEntity {

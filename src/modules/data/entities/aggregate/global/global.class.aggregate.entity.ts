@@ -4,7 +4,7 @@ import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
 import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_global_class',
+    name: 'aggregate_global_classes',
 })
 @Index(['class', 'world'], {unique: true})
 export default class GlobalClassAggregateEntity {

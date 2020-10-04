@@ -4,7 +4,7 @@ import {World, worldArray} from '../../../constants/world.consts';
 import FacilityFactionControl from '../common/facility.faction.control.embed';
 
 @Entity({
-    name: 'aggregate_global_facility_controlss',
+    name: 'aggregate_global_facility_controls',
 })
 @Index(['facility', 'world'], {unique: true})
 export default class GlobalFacilityControlAggregateEntity {
