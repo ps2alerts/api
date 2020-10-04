@@ -1,20 +1,15 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
-import RestBaseController from '../../rest.base.controller';
 import {World} from '../../../../data/constants/world.consts';
 import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggregate/global/global.faction.combat.aggregate.entity';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('global_faction_combat_aggregate')
 @Controller('aggregates')
-export default class RestGlobalFactionCombatAggregateController extends RestBaseController<GlobalFactionCombatAggregateEntity>{
-
+export default class RestGlobalFactionCombatAggregateController {
     constructor(
-    @InjectRepository(GlobalFactionCombatAggregateEntity) repository: Repository<GlobalFactionCombatAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
     @Get('global/faction')
     @ApiOperation({summary: 'Return a filtered list of GlobalFactionCombatAggregateEntity aggregate'})
@@ -25,7 +20,7 @@ export default class RestGlobalFactionCombatAggregateController extends RestBase
         isArray: true,
     })
     async findAll(): Promise<GlobalFactionCombatAggregateEntity[]> {
-        return await this.findEntities();
+        return await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity);
     }
 
     @Get('global/faction/:id')
@@ -35,7 +30,7 @@ export default class RestGlobalFactionCombatAggregateController extends RestBase
         description: 'The GlobalFactionCombatAggregateEntity aggregate',
         type: GlobalFactionCombatAggregateEntity,
     })
-    async findOne(@Param('id') id: World): Promise<GlobalFactionCombatAggregateEntity> {
-        return await this.findEntity({world: id});
+    async findOne(@Param('world') world: World): Promise<GlobalFactionCombatAggregateEntity> {
+        return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world});
     }
 }

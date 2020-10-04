@@ -1,51 +1,97 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any */
-import AggregatorMessageInterface from '../../modules/aggregator/interfaces/aggregator.message.interface';
-import {RmqContext} from '@nestjs/microservices';
-import {MongoEntityManager} from 'typeorm';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-assignment */
+import {MongoEntityManager, ObjectID} from 'typeorm';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
 
 @Injectable()
 export default class MongoOperationsService {
-    protected readonly em: MongoEntityManager;
+    public readonly em: MongoEntityManager;
 
     constructor(@InjectEntityManager() em: MongoEntityManager) {
         this.em = em;
     }
 
-    public async create(data: AggregatorMessageInterface, context: RmqContext, entity: any): Promise<void> {
-        const promises = [];
-
-        for (const doc of data.docs) {
-            promises.push(this.em.create(
+    /**
+     * Returns a promise that provides a single entity
+     * If no filter is provided, a single entity of the type is provided
+     * @param entity entity type to return
+     * @param filter object provided to filter entities
+     */
+    public async findOne(entity: any, filter?: any): Promise<any> {
+        if (filter) {
+            return await this.em.findOneOrFail(
                 entity,
-                doc,
-            ));
+                {where: filter},
+            );
         }
 
-        await Promise.all(promises);
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-        context.getChannelRef().ack(context.getMessage());
+        return this.em.findOneOrFail(entity);
     }
 
-    public async update(data: AggregatorMessageInterface, context: RmqContext, entity: any): Promise<void> {
-        const promises = [];
-
-        for (const doc of data.docs) {
-            promises.push(this.em.updateOne(
+    /**
+     * Returns a promise that provides a list of entities
+     * If no filter is provided, all entities of the type is provided
+     * @param entity entity type to return
+     * @param filter object provided to filter entities
+     */
+    public async findMany(entity: any, filter?: any): Promise<any[]> {
+        if (filter) {
+            return await this.em.find(
                 entity,
-                data.conditionals[0],
-                doc,
-                {upsert: true},
-            ));
+                {where: filter},
+            );
         }
 
-        console.log(`Update promise length: ${promises.length}`);
+        return this.em.find(entity);
+    }
 
-        await Promise.all(promises);
+    public async insertOne(entity: any, doc: any): Promise<ObjectID> {
+        await this.em.insertOne(entity, doc).then((result) => {
+            if (result.insertedCount > 0) {
+                return result.insertedId;
+            }
+        });
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-        context.getChannelRef().ack(context.getMessage());
+        throw new Error(`insertOne failed! No documents were inserted! ${JSON.stringify(doc)}`);
+    }
+
+    public async insertMany(entity: any, docs: any[]): Promise<ObjectID[]> {
+        await this.em.insertMany(entity, docs).then((result) => {
+            if (result.insertedCount > 0) {
+                return result.insertedIds;
+            }
+        });
+
+        throw new Error(`insertMany failed! No documents were inserted! ${JSON.stringify(docs)}`);
+    }
+
+    public async upsertOne(entity: any, doc: any, conditionals: any[]): Promise<ObjectID> {
+        await this.em.updateOne(
+            entity,
+            conditionals[0],
+            doc,
+            {upsert: true},
+        ).then((result) => {
+            if (result.upsertedCount > 0) {
+                return result.upsertedId;
+            }
+        });
+
+        throw new Error(`upsertOne failed! No documents were inserted! ${JSON.stringify(doc)}`);
+    }
+
+    public async upsertMany(entity: any, docs: any[], conditionals: any[]): Promise<ObjectID[]> {
+        await this.em.updateMany(
+            entity,
+            conditionals[0],
+            docs,
+            {upsert: true},
+        ).then((result) => {
+            if (result.upsertedCount > 0) {
+                return result.upsertedId;
+            }
+        });
+
+        throw new Error(`upsertMany failed! No documents were inserted! ${JSON.stringify(docs)}`);
     }
 }

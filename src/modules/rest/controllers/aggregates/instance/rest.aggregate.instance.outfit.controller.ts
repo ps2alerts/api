@@ -1,40 +1,35 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
-import RestBaseController from '../../rest.base.controller';
 import InstanceOutfitAggregateEntity from '../../../../data/entities/aggregate/instance/instance.outfit.aggregate.entity';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('instance_outfit_aggregate')
 @Controller('aggregates')
-export default class RestInstanceOutfitAggregateController extends RestBaseController<InstanceOutfitAggregateEntity>{
-
+export default class RestInstanceOutfitAggregateController {
     constructor(
-    @InjectRepository(InstanceOutfitAggregateEntity) repository: Repository<InstanceOutfitAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
-    @Get('instance/outfit')
-    @ApiOperation({summary: 'Return a filtered list of InstanceOutfitAggregateEntity aggregate'})
+    @Get('instance/:instance/outfit')
+    @ApiOperation({summary: 'Returns a list of InstanceOutfitAggregateEntity for an instance'})
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceOutfitAggregateEntity aggregates',
         type: InstanceOutfitAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('instance') instanceQuery?: string): Promise<InstanceOutfitAggregateEntity[]> {
-        return await instanceQuery ? this.findEntities({instance: instanceQuery}) : this.findEntities();
+    async findAll(@Param('instance') instance?: string): Promise<InstanceOutfitAggregateEntity[]> {
+        return this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance});
     }
 
-    @Get('instance/outfit/:id')
+    @Get('instance/:instance/outfit/:id')
     @ApiOperation({summary: 'Returns a InstanceOutfitAggregateEntity aggregate with given id within an instance'})
     @ApiResponse({
         status: 200,
         description: 'The InstanceOutfitAggregateEntity aggregate',
         type: InstanceOutfitAggregateEntity,
     })
-    async findOne(@Param('id') id: string, @Query('instance') instanceQuery?: string): Promise<InstanceOutfitAggregateEntity | InstanceOutfitAggregateEntity[]> {
-        return await instanceQuery ? this.findEntity({outfit: id, instance: instanceQuery}) : this.findEntitiesById('outfit', id);
+    async findOne(@Param('instance') instance: string, @Param('outfit') outfit: string): Promise<InstanceOutfitAggregateEntity | InstanceOutfitAggregateEntity[]> {
+        return this.mongoOperationsService.findOne(InstanceOutfitAggregateEntity, {instance, outfit});
     }
 }

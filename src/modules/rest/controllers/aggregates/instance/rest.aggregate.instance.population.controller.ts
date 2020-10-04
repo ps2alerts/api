@@ -1,40 +1,24 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
-import RestBaseController from '../../rest.base.controller';
 import InstancePopulationAggregateEntity from '../../../../data/entities/aggregate/instance/instance.population.aggregate.entity';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('instance_population_aggregate')
 @Controller('aggregates')
-export default class RestInstancePopulationAggregateController extends RestBaseController<InstancePopulationAggregateEntity>{
-
+export default class RestInstancePopulationAggregateController {
     constructor(
-    @InjectRepository(InstancePopulationAggregateEntity) repository: Repository<InstancePopulationAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
-    @Get('instance/population')
-    @ApiOperation({summary: 'Return a filtered list of InstancePopulationAggregateEntity instances'})
+    @Get('instance/:instance/population')
+    @ApiOperation({summary: 'Returns a list of InstancePopulationAggregateEntity for an instance'})
     @ApiResponse({
         status: 200,
         description: 'The list of InstancePopulationAggregateEntity aggregates',
         type: InstancePopulationAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('instance') instanceQuery?: string): Promise<InstancePopulationAggregateEntity[]> {
-        return await instanceQuery ? this.findEntities({instance: instanceQuery}) : this.findEntities();
-    }
-
-    @Get('instance/population/:id')
-    @ApiOperation({summary: 'Returns a single InstancePopulationAggregateEntity aggregate'})
-    @ApiResponse({
-        status: 200,
-        description: 'The InstancePopulationAggregateEntity Instance',
-        type: InstancePopulationAggregateEntity,
-    })
-    async findOne(@Param('id') id: Date, @Query('instance') instanceQuery?: string): Promise<InstancePopulationAggregateEntity | InstancePopulationAggregateEntity[]> {
-        return await instanceQuery ? this.findEntity({timestamp: id, instance: instanceQuery}) : this.findEntitiesById('population', id);
+    async findAll(@Param('instance') instance?: string): Promise<InstancePopulationAggregateEntity[]> {
+        return this.mongoOperationsService.findMany(InstancePopulationAggregateEntity, {instance});
     }
 }

@@ -1,41 +1,37 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
 import InstanceClassAggregateEntity from '../../../../data/entities/aggregate/instance/instance.class.aggregate.entity';
-import RestBaseController from '../../rest.base.controller';
 import {Loadout} from '../../../../data/constants/loadout.consts';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('instance_class_aggregate')
 @Controller('aggregates')
-export default class RestInstanceClassAggregateController extends RestBaseController<InstanceClassAggregateEntity>{
-
+export default class RestInstanceClassAggregateController {
     constructor(
-    @InjectRepository(InstanceClassAggregateEntity) repository: Repository<InstanceClassAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
-    @Get('instance/class')
-    @ApiOperation({summary: 'Return a filtered list of InstanceClassAggregateEntity aggregates'})
+    @Get('instance/:instance/class')
+    @ApiOperation({summary: 'Returns a list of InstanceClassAggregateEntity for an instance'})
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceClassAggregateEntity aggregates',
         type: InstanceClassAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('instance') instanceQuery?: string): Promise<InstanceClassAggregateEntity[]> {
-        return await instanceQuery ? this.findEntities({instance: instanceQuery}) : this.findEntities();
+    async findAll(@Param('instance') instance?: string): Promise<InstanceClassAggregateEntity[]> {
+        return this.mongoOperationsService.findMany(InstanceClassAggregateEntity, {instance});
     }
 
-    @Get('instance/class/:id')
-    @ApiOperation({summary: 'Returns a list of InstanceClassAggregateEntity aggregates within an instance'})
+    // Note we use loadout here because class is a NodeJS reserved name and TS gets confused
+    @Get('instance/:instance/class/:loadout')
+    @ApiOperation({summary: 'Returns a specific class of InstanceClassAggregateEntity aggregates within an instance'})
     @ApiResponse({
         status: 200,
         description: 'The InstanceClassAggregateEntity aggregate',
         type: InstanceClassAggregateEntity,
     })
-    async findOne(@Param('id') id: Loadout, @Query('instance') instanceQuery?: string): Promise<InstanceClassAggregateEntity | InstanceClassAggregateEntity[]> {
-        return await instanceQuery ? this.findEntity({class: id, instance: instanceQuery}) : this.findEntitiesById('class', id);
+    async findOne(@Param('instance') instance: string, @Param('loadout') loadout: Loadout): Promise<InstanceClassAggregateEntity | InstanceClassAggregateEntity[]> {
+        return await this.mongoOperationsService.findOne(InstanceClassAggregateEntity, {instance, class: loadout});
     }
 }

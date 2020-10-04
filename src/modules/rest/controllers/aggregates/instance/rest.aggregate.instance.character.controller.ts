@@ -1,40 +1,35 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
-import RestBaseController from '../../rest.base.controller';
 import InstanceCharacterAggregateEntity from '../../../../data/entities/aggregate/instance/instance.character.aggregate.entity';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('instance_character_aggregate')
 @Controller('aggregates')
-export default class RestInstanceCharacterAggregateController extends RestBaseController<InstanceCharacterAggregateEntity>{
-
+export default class RestInstanceCharacterAggregateController {
     constructor(
-    @InjectRepository(InstanceCharacterAggregateEntity) repository: Repository<InstanceCharacterAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
-    @Get('instance/character')
-    @ApiOperation({summary: 'Return a filtered list of InstanceCharacterAggregateEntity instances'})
+    @Get('instance/:instance/character')
+    @ApiOperation({summary: 'Returns a list of InstanceCharacterAggregateEntity for an instance'})
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceCharacterAggregateEntity aggregates',
         type: InstanceCharacterAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('instance') instanceQuery?: string): Promise<InstanceCharacterAggregateEntity[]> {
-        return await instanceQuery ? this.findEntities({instance: instanceQuery}) : this.findEntities();
+    async findAll(@Param('instance') instance?: string): Promise<InstanceCharacterAggregateEntity[]> {
+        return this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {instance});
     }
 
-    @Get('instance/character/:id')
-    @ApiOperation({summary: 'Returns a single InstanceCharacterAggregateEntity aggregate'})
+    @Get('instance/:instance/character/:character')
+    @ApiOperation({summary: 'Returns a single InstanceCharacterAggregateEntity for an instance'})
     @ApiResponse({
         status: 200,
         description: 'The InstanceCharacterAggregateEntity Instance',
         type: InstanceCharacterAggregateEntity,
     })
-    async findOne(@Param('id') id: string, @Query('instance') instanceQuery?: string): Promise<InstanceCharacterAggregateEntity | InstanceCharacterAggregateEntity[]> {
-        return await instanceQuery ? this.findEntity({character: id, instance: instanceQuery}) : this.findEntitiesById('character', id);
+    async findOne(@Param('instance') instance: string, @Param('character') character: string): Promise<InstanceCharacterAggregateEntity | InstanceCharacterAggregateEntity[]> {
+        return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {instance, character});
     }
 }

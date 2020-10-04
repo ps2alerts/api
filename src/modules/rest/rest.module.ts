@@ -1,7 +1,7 @@
 
 import {APP_INTERCEPTOR} from '@nestjs/core';
 import {ClassSerializerInterceptor, Module} from '@nestjs/common';
-import {RestInstanceController} from './controllers/rest.instance.controller';
+import {RestInstanceMetagameController} from './controllers/rest.instance.metagame.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import GlobalCharacterAggregateEntity from '../data/entities/aggregate/global/global.character.aggregate.entity';
 import GlobalClassAggregateEntity from '../data/entities/aggregate/global/global.class.aggregate.entity';
@@ -30,6 +30,9 @@ import RestInstanceFactionCombatAggregateController from './controllers/aggregat
 import RestInstanceOutfitAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.outfit.controller';
 import RestInstanceWeaponAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.weapon.controller';
 import RestInstancePopulationAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.population.controller';
+import MongoOperationsService from '../../services/mongo/mongo.operations.service';
+import InstanceFacilityControlEntity from '../data/entities/instance/instance.facilitycontrol.entity';
+import RestInstanceFacilityControlController from './controllers/rest.instance.facility.control.controller';
 
 /**
  * Handles incoming requests to the API via HTTP, CRUD environment.
@@ -37,7 +40,6 @@ import RestInstancePopulationAggregateController from './controllers/aggregates/
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            InstanceMetagameEntity,
             GlobalCharacterAggregateEntity,
             GlobalClassAggregateEntity,
             GlobalFacilityControlAggregateEntity,
@@ -51,16 +53,20 @@ import RestInstancePopulationAggregateController from './controllers/aggregates/
             InstanceOutfitAggregateEntity,
             InstancePopulationAggregateEntity,
             InstanceWeaponAggregateEntity,
+            // Events
+            InstanceFacilityControlEntity,
+            InstanceMetagameEntity,
         ]),
     ],
     controllers: [
-        RestInstanceController,
+        // Global Aggregates
         RestGlobalCharacterAggregateController,
         RestGlobalClassAggregateController,
         RestGlobalFacilityControlAggregateController,
         RestGlobalFactionCombatAggregateController,
         RestGlobalOutfitAggregateController,
         RestGlobalWeaponAggregateController,
+        // Instance Aggregates
         RestInstanceCharacterAggregateController,
         RestInstanceClassAggregateController,
         RestInstanceFacilityControlAggregateController,
@@ -68,10 +74,13 @@ import RestInstancePopulationAggregateController from './controllers/aggregates/
         RestInstanceOutfitAggregateController,
         RestInstancePopulationAggregateController,
         RestInstanceWeaponAggregateController,
+        // Per InstanceEvents
+        RestInstanceMetagameController,
+        RestInstanceFacilityControlController,
     ],
-    providers: [{
-        provide: APP_INTERCEPTOR,
-        useClass: ClassSerializerInterceptor,
-    }],
+    providers: [
+        {provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor},
+        MongoOperationsService,
+    ],
 })
 export class RestModule {}

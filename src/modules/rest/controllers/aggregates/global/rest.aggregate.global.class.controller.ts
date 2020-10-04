@@ -1,21 +1,16 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
 import GlobalClassAggregateEntity from '../../../../data/entities/aggregate/global/global.class.aggregate.entity';
-import RestBaseController from '../../rest.base.controller';
 import {World} from '../../../../data/constants/world.consts';
 import {Loadout} from '../../../../data/constants/loadout.consts';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('global_class_aggregate')
 @Controller('aggregates')
-export default class RestGlobalClassAggregateController extends RestBaseController<GlobalClassAggregateEntity>{
-
+export default class RestGlobalClassAggregateController {
     constructor(
-    @InjectRepository(GlobalClassAggregateEntity) repository: Repository<GlobalClassAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
     @Get('global/class')
     @ApiOperation({summary: 'Return a filtered list of GlobalClassAggregateEntity aggregates'})
@@ -25,18 +20,22 @@ export default class RestGlobalClassAggregateController extends RestBaseControll
         type: GlobalClassAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world') worldQuery?: World): Promise<GlobalClassAggregateEntity[]> {
-        return await worldQuery ? this.findEntities({world: worldQuery}) : this.findEntities();
+    async findAll(@Query('world') world?: World): Promise<GlobalClassAggregateEntity[]> {
+        return world
+            ? await this.mongoOperationsService.findMany(GlobalClassAggregateEntity, {world})
+            : await this.mongoOperationsService.findMany(GlobalClassAggregateEntity);
     }
 
     @Get('global/class/:id')
-    @ApiOperation({summary: 'Returns a single GlobalClassAggregateEntity aggregate (or one of each world)'})
+    @ApiOperation({summary: 'Returns a single GlobalClassAggregateEntity aggregate by loadout ID and/or world'})
     @ApiResponse({
         status: 200,
         description: 'The GlobalClassAggregateEntity aggregate',
         type: GlobalClassAggregateEntity,
     })
-    async findOne(@Param('id') id: Loadout, @Query('world') worldQuery?: World): Promise<GlobalClassAggregateEntity | GlobalClassAggregateEntity[]> {
-        return await worldQuery ? this.findEntity({class: id, world: worldQuery}) : this.findEntitiesById('class', id);
+    async findOne(@Param('id') id: Loadout, @Query('world') world?: World): Promise<GlobalClassAggregateEntity | GlobalClassAggregateEntity[]> {
+        return world
+            ? await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: id, world})
+            : await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: id});
     }
 }

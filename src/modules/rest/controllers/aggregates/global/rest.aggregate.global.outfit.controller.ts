@@ -1,20 +1,15 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
-import RestBaseController from '../../rest.base.controller';
 import {World} from '../../../../data/constants/world.consts';
 import GlobalOutfitAggregateEntity from '../../../../data/entities/aggregate/global/global.outfit.aggregate.entity';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('global_outfit_aggregate')
 @Controller('aggregates')
-export default class RestGlobalOutfitAggregateController extends RestBaseController<GlobalOutfitAggregateEntity>{
-
+export default class RestGlobalOutfitAggregateController {
     constructor(
-    @InjectRepository(GlobalOutfitAggregateEntity) repository: Repository<GlobalOutfitAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
     @Get('global/outfit')
     @ApiOperation({summary: 'Return a filtered list of GlobalOutfitAggregateEntity aggregate'})
@@ -24,18 +19,22 @@ export default class RestGlobalOutfitAggregateController extends RestBaseControl
         type: GlobalOutfitAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world') worldQuery?: World): Promise<GlobalOutfitAggregateEntity[]> {
-        return await worldQuery ? this.findEntities({world: worldQuery}) : this.findEntities();
+    async findAll(@Query('world') world?: World): Promise<GlobalOutfitAggregateEntity[]> {
+        return world
+            ? await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world})
+            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity);
     }
 
     @Get('global/outfit/:id')
-    @ApiOperation({summary: 'Returns a GlobalOutfitAggregateEntity aggregate with given Id (or one of each world)'})
+    @ApiOperation({summary: 'Returns a GlobalOutfitAggregateEntity aggregate with given Id (or one of each world as a PS4 outfit may share the same ID as PC)'})
     @ApiResponse({
         status: 200,
         description: 'The GlobalOutfitAggregateEntity aggregate',
         type: GlobalOutfitAggregateEntity,
     })
-    async findOne(@Param('id') id: string, @Query('world') worldQuery?: World): Promise<GlobalOutfitAggregateEntity | GlobalOutfitAggregateEntity[]> {
-        return await worldQuery ? this.findEntity({outfit: id, world: worldQuery}) : this.findEntitiesById('outfit', id);
+    async findOne(@Param('id') id: string, @Query('world') world?: World): Promise<GlobalOutfitAggregateEntity> {
+        return world
+            ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit: id, world})
+            : await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit: id});
     }
 }

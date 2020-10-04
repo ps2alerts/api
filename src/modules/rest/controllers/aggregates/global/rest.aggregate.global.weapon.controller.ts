@@ -1,20 +1,15 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
-import RestBaseController from '../../rest.base.controller';
 import {World} from '../../../../data/constants/world.consts';
 import GlobalWeaponAggregateEntity from '../../../../data/entities/aggregate/global/global.weapon.aggregate.entity';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('global_weapon_aggregate')
 @Controller('aggregates')
-export default class RestGlobalWeaponAggregateController extends RestBaseController<GlobalWeaponAggregateEntity>{
-
+export default class RestGlobalWeaponAggregateController {
     constructor(
-    @InjectRepository(GlobalWeaponAggregateEntity) repository: Repository<GlobalWeaponAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
     @Get('global/weapon')
     @ApiOperation({summary: 'Return a filtered list of GlobalWeaponAggregateEntity aggregate'})
@@ -24,8 +19,10 @@ export default class RestGlobalWeaponAggregateController extends RestBaseControl
         type: GlobalWeaponAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world') worldQuery?: World): Promise<GlobalWeaponAggregateEntity[]> {
-        return await worldQuery ? this.findEntities({world: worldQuery}) : this.findEntities();
+    async findAll(@Query('world') world?: World): Promise<GlobalWeaponAggregateEntity[]> {
+        return world
+            ? await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {world})
+            : await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity);
     }
 
     @Get('global/weapon/:id')
@@ -35,7 +32,9 @@ export default class RestGlobalWeaponAggregateController extends RestBaseControl
         description: 'The GlobalWeaponAggregateEntity aggregate',
         type: GlobalWeaponAggregateEntity,
     })
-    async findOne(@Param('id') id: number, @Query('world') worldQuery?: World): Promise<GlobalWeaponAggregateEntity | GlobalWeaponAggregateEntity[]> {
-        return await worldQuery ? this.findEntity({weapon: id, world: worldQuery}) : this.findEntitiesById('weapon', id);
+    async findOne(@Param('id') id: number, @Query('world') world?: World): Promise<GlobalWeaponAggregateEntity | GlobalWeaponAggregateEntity[]> {
+        return world
+            ? await this.mongoOperationsService.findOne(GlobalWeaponAggregateEntity, {outfit: id, world})
+            : await this.mongoOperationsService.findOne(GlobalWeaponAggregateEntity, {outfit: id});
     }
 }

@@ -1,20 +1,15 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
 import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.character.aggregate.entity';
-import RestBaseController from '../../rest.base.controller';
 import {World} from '../../../../data/constants/world.consts';
+import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('global_character_aggregate')
+@ApiTags('Global Character Aggregate')
 @Controller('aggregates')
-export default class RestGlobalCharacterAggregateController extends RestBaseController<GlobalCharacterAggregateEntity>{
-
+export default class RestGlobalCharacterAggregateController {
     constructor(
-    @InjectRepository(GlobalCharacterAggregateEntity) repository: Repository<GlobalCharacterAggregateEntity>,
-    ) {
-        super(repository);
-    }
+        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+    ) {}
 
     @Get('global/character')
     @ApiOperation({summary: 'Return a filtered list of GlobalCharacterAggregateEntity instances'})
@@ -24,8 +19,10 @@ export default class RestGlobalCharacterAggregateController extends RestBaseCont
         type: GlobalCharacterAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world') worldQuery?: World): Promise<GlobalCharacterAggregateEntity[]> {
-        return await worldQuery ? this.findEntities({world: worldQuery}) : this.findEntities();
+    async findAll(@Query('world') world?: World): Promise<GlobalCharacterAggregateEntity[]> {
+        return world
+            ? await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world})
+            : await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity);
     }
 
     @Get('global/character/:id')
@@ -35,7 +32,7 @@ export default class RestGlobalCharacterAggregateController extends RestBaseCont
         description: 'The GlobalCharacterAggregateEntity Instance',
         type: GlobalCharacterAggregateEntity,
     })
-    async findOne(@Param('id') id: string): Promise<GlobalCharacterAggregateEntity> {
-        return await this.findEntityById('character', id);
+    async findOne(@Param('character') id: string): Promise<GlobalCharacterAggregateEntity> {
+        return await this.mongoOperationsService.findOne(GlobalCharacterAggregateEntity, {character: id});
     }
 }
