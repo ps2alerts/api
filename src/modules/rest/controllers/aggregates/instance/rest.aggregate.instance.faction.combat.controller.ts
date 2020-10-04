@@ -3,7 +3,7 @@ import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceFactionCombatAggregateEntity from '../../../../data/entities/aggregate/instance/instance.faction.combat.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('instance_faction_combat_aggregate')
+@ApiTags('Instance Faction Combat Aggregates')
 @Controller('aggregates')
 export default class RestInstanceFactionCombatAggregateController {
     constructor(

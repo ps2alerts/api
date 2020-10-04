@@ -1,11 +1,10 @@
 import {Controller, Get, Inject, Param} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceWeaponAggregateEntity from '../../../../data/entities/aggregate/instance/instance.weapon.aggregate.entity';
-import InstancePopulationAggregateEntity
-    from '../../../../data/entities/aggregate/instance/instance.population.aggregate.entity';
+import InstancePopulationAggregateEntity from '../../../../data/entities/aggregate/instance/instance.population.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('instance_weapon_aggregate')
+@ApiTags('Instance Weapon Aggregates')
 @Controller('aggregates')
 export default class RestInstanceWeaponAggregateController {
     constructor(

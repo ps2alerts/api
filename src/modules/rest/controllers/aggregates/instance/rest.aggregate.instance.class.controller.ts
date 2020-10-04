@@ -4,7 +4,7 @@ import InstanceClassAggregateEntity from '../../../../data/entities/aggregate/in
 import {Loadout} from '../../../../data/constants/loadout.consts';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('instance_class_aggregate')
+@ApiTags('Instance Class Aggregates')
 @Controller('aggregates')
 export default class RestInstanceClassAggregateController {
     constructor(

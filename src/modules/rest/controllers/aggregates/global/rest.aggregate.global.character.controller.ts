@@ -4,7 +4,7 @@ import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/
 import {World} from '../../../../data/constants/world.consts';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('Global Character Aggregate')
+@ApiTags('Global Character Aggregates')
 @Controller('aggregates')
 export default class RestGlobalCharacterAggregateController {
     constructor(

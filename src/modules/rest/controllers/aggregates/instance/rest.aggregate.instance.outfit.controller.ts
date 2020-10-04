@@ -3,7 +3,7 @@ import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceOutfitAggregateEntity from '../../../../data/entities/aggregate/instance/instance.outfit.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('instance_outfit_aggregate')
+@ApiTags('Instance Outfit Aggregates')
 @Controller('aggregates')
 export default class RestInstanceOutfitAggregateController {
     constructor(

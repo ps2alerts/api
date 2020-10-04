@@ -4,7 +4,7 @@ import {World} from '../../../../data/constants/world.consts';
 import GlobalWeaponAggregateEntity from '../../../../data/entities/aggregate/global/global.weapon.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('global_weapon_aggregate')
+@ApiTags('Global Weapon Aggregates')
 @Controller('aggregates')
 export default class RestGlobalWeaponAggregateController {
     constructor(

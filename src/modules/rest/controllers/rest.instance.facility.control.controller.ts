@@ -3,8 +3,8 @@ import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceFacilityControlEntity from '../../data/entities/instance/instance.facilitycontrol.entity';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 
-@ApiTags('instance_facility_control_events')
-@Controller('instance-events')
+@ApiTags('Instance Facility Control Entries')
+@Controller('instance-entries')
 export default class RestInstanceFacilityControlController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
@@ -14,7 +14,7 @@ export default class RestInstanceFacilityControlController {
     @ApiOperation({summary: 'Returns a list of InstanceFacilityControlEntity for an instance'})
     @ApiResponse({
         status: 200,
-        description: 'The list of InstanceFacilityControlEntity',
+        description: 'The list of InstanceFacilityControlEntity for an instance',
         type: InstanceFacilityControlEntity,
         isArray: true,
     })

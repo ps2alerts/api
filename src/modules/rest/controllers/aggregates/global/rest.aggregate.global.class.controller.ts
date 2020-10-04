@@ -5,7 +5,7 @@ import {World} from '../../../../data/constants/world.consts';
 import {Loadout} from '../../../../data/constants/loadout.consts';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('global_class_aggregate')
+@ApiTags('Global Class Aggregates')
 @Controller('aggregates')
 export default class RestGlobalClassAggregateController {
     constructor(

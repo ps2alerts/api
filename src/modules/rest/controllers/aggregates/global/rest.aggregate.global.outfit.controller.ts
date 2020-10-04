@@ -4,7 +4,7 @@ import {World} from '../../../../data/constants/world.consts';
 import GlobalOutfitAggregateEntity from '../../../../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('global_outfit_aggregate')
+@ApiTags('Global Outfit Aggregates')
 @Controller('aggregates')
 export default class RestGlobalOutfitAggregateController {
     constructor(

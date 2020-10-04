@@ -4,7 +4,7 @@ import {World} from '../../../../data/constants/world.consts';
 import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggregate/global/global.faction.combat.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('global_faction_combat_aggregate')
+@ApiTags('Global Faction Combat Aggregates')
 @Controller('aggregates')
 export default class RestGlobalFactionCombatAggregateController {
     constructor(

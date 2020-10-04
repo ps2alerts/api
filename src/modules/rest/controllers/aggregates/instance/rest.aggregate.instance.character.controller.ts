@@ -3,7 +3,7 @@ import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceCharacterAggregateEntity from '../../../../data/entities/aggregate/instance/instance.character.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('instance_character_aggregate')
+@ApiTags('Instance Character Aggregates')
 @Controller('aggregates')
 export default class RestInstanceCharacterAggregateController {
     constructor(

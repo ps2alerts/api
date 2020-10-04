@@ -4,7 +4,7 @@ import InstanceMetagameEntity from '../../data/entities/instance/instance.metaga
 import {World} from '../../data/constants/world.consts';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 
-@ApiTags('instances')
+@ApiTags('Instances')
 @Controller('instances')
 export class RestInstanceMetagameController {
     constructor(
@@ -14,6 +14,12 @@ export class RestInstanceMetagameController {
     @Get('/metagame')
     @ApiOperation({summary: 'Return a paginated list of metagame instances'})
     @UseInterceptors(ClassSerializerInterceptor)
+    @ApiResponse({
+        status: 200,
+        description: 'List of Metagame Instances',
+        type: InstanceMetagameEntity,
+        isArray: true,
+    })
     async findAll(@Query('world') world: World): Promise<InstanceMetagameEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(InstanceMetagameEntity, {world})

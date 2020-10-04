@@ -4,7 +4,7 @@ import {World} from '../../../../data/constants/world.consts';
 import GlobalFacilityControlAggregateEntity from '../../../../data/entities/aggregate/global/global.facility.control.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
-@ApiTags('global_facility_control_aggregate')
+@ApiTags('Global Facility Control Aggregates')
 @Controller('aggregates')
 export default class RestGlobalFacilityControlAggregateController {
     constructor(
