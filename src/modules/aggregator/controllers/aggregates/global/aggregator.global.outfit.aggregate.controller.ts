@@ -3,14 +3,14 @@ import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
 import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
 import AggregatorMessageInterface from '../../../interfaces/aggregator.message.interface';
 import GlobalOutfitAggregateEntity from '../../../../data/entities/aggregate/global/global.outfit.aggregate.entity';
-import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
+import AggregatorDataHandler from '../../../aggregator.data.handler';
 
 @Controller()
 export default class AggregatorGlobalOutfitAggregateController {
-    constructor(private readonly mongoOperationsService: MongoOperationsService) {}
+    constructor(private readonly aggregatorDataHandler: AggregatorDataHandler) {}
 
     @EventPattern(MQAcceptedPatterns.GLOBAL_OUTFIT_AGGREGATE)
     public async process(@Payload() data: AggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
-        await this.mongoOperationsService.update(data, context, GlobalOutfitAggregateEntity);
+        await this.aggregatorDataHandler.upsert(data, context, GlobalOutfitAggregateEntity);
     }
 }

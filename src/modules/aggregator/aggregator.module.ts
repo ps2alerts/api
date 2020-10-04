@@ -16,6 +16,7 @@ import AggregatorInstanceWeaponAggregateController from './controllers/aggregate
 import AggregatorInstanceDeathEventController from './controllers/events/aggregator.instance.death.event.controller';
 import AggregatorInstanceFacilityControlEventController from './controllers/events/aggregator.instance.facility.control.event.controller';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
+import AggregatorDataHandler from './aggregator.data.handler';
 
 /**
  * This module processes the incoming messages from the PS2Alerts Aggregator component.
@@ -45,6 +46,9 @@ import MongoOperationsService from '../../services/mongo/mongo.operations.servic
         AggregatorInstanceFacilityControlEventController,
         // METAGAME TODO
     ],
-    providers: [MongoOperationsService],
+    providers: [
+        AggregatorDataHandler,
+        MongoOperationsService,
+    ],
 })
 export class AggregatorModule {}
