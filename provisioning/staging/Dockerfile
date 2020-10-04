@@ -1,4 +1,3 @@
-# Base paths are relative to project root!
 FROM maelstromeous/applications:ps2alerts-api-base
 
 USER root

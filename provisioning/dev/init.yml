@@ -76,7 +76,6 @@
         env:
           NODE_ENV: "development"
           VERSION: "12345"
-          BASE_URL: "http://dev.api.ps2alerts.com"
           DB_HOST: "ps2alerts-db"
           DB_PORT: "27017"
           DB_USER: "root"
