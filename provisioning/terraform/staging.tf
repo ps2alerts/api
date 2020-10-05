@@ -21,4 +21,6 @@ module "api_staging" {
   logger_transports  = "console"
   dd_api_key         = var.dd_api_key
   dd_app_key         = var.dd_app_key
+  multi_urls         = false
+  urls               = ["staging.api.ps2alerts.com"]
 }

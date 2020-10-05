@@ -27,3 +27,5 @@ variable "logger_transports" {
 }
 variable "dd_api_key" {}
 variable "dd_app_key" {}
+variable "multi_urls" {}
+variable "urls" {}
