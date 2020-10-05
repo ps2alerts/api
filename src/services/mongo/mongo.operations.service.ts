@@ -68,8 +68,8 @@ export default class MongoOperationsService {
     }
 
     public async upsertOne(entity: any, doc: any, conditionals: any[]): Promise<boolean> {
-        console.log(doc);
         doc = this.transform([doc])[0];
+        console.log('upsertOne', doc);
         await this.em.updateOne(
             entity,
             conditionals[0],
@@ -86,6 +86,7 @@ export default class MongoOperationsService {
 
     public async upsertMany(entity: any, docs: any[], conditionals: any[]): Promise<boolean> {
         docs = this.transform(docs);
+        console.log('upsertMany', docs);
         await this.em.updateMany(
             entity,
             conditionals[0],
