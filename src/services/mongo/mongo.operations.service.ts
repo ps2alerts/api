@@ -101,8 +101,8 @@ export default class MongoOperationsService {
 
     private transform(docs: any[]): any[] {
         return docs.map((doc) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            if (doc.prototype.hasOwnProperty.call('timestamp')) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if (doc.timestamp !== undefined) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 doc.timestamp = new Date(doc.timestamp);
             }
