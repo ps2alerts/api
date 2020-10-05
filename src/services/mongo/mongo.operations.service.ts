@@ -46,7 +46,7 @@ export default class MongoOperationsService {
     }
 
     public async insertOne(entity: any, doc: any): Promise<ObjectID> {
-        doc = this.transform([doc])[0];
+        doc = this.transform(doc);
         await this.em.insertOne(entity, doc).then((result) => {
             if (result.insertedCount > 0) {
                 return result.insertedId;
@@ -68,7 +68,7 @@ export default class MongoOperationsService {
     }
 
     public async upsertOne(entity: any, doc: any, conditionals: any[]): Promise<boolean> {
-        doc = this.transform([doc])[0];
+        doc = this.transform(doc);
         console.log('upsertOne', doc);
         await this.em.updateOne(
             entity,
@@ -101,13 +101,22 @@ export default class MongoOperationsService {
         throw new Error(`upsertMany failed! No documents were inserted! ${JSON.stringify(docs)}`);
     }
 
-    private transform(docs: any[]): any[] {
-        return docs.map((doc) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            if (doc.timestamp !== undefined) {
+    private transform(docs: any): any {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if (docs.length) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            docs.map((doc) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                doc.timestamp = new Date(doc.timestamp);
-            }
-        });
+                if (doc.timestamp !== undefined) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    doc.timestamp = new Date(doc.timestamp);
+                }
+            });
+        } else if (docs.timestamp !== undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            docs.timestamp = new Date(docs.timestamp);
+        }
+
+        return docs;
     }
 }
