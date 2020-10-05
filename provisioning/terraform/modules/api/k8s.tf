@@ -52,6 +52,14 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
         container {
           name = var.identifier
           image = join("", ["maelstromeous/applications:", var.identifier, "-", var.checksum_version])
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 3000
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 5
+          }
           resources {
             limits {
               cpu = var.cpu_limit
@@ -63,7 +71,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
             }
           }
           port {
-            container_port = 443
+            container_port = 3000
           }
           env {
             name = "NODE_ENV"
