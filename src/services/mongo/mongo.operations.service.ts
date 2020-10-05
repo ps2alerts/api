@@ -103,7 +103,7 @@ export default class MongoOperationsService {
 
     private transform(docs: any): any {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-        if (docs.isArray()) {
+        if (docs.isArray) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             docs.map((doc: any) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
