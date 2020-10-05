@@ -123,7 +123,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
           }
           env {
             name = "RABBITMQ_VHOST"
-            value = "ps2alerts"
+            value = "/ps2alerts"
           }
           env {
             name = "LOGGER_TRANSPORTS"
