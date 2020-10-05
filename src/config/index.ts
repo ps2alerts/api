@@ -24,7 +24,7 @@ export const config = () => ({
     },
 
     rabbitmq: {
-        url: [process.env.RABBITMQ_URL ?? `amqp://user:bitnami@${process.env.RABBITMQ_HOST ?? 'localhost'}:5672`],
+        url: [process.env.RABBITMQ_URL ?? `amqp://${process.env.RABBITMQ_USER ?? 'user'}:${process.env.RABBITMQ_PASS ?? 'bitnami'}@${process.env.RABBITMQ_HOST ?? 'localhost'}:5672`],
         queue: process.env.RABBITMQ_QUEUE ?? 'api-queue',
     },
 });
