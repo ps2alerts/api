@@ -1,7 +1,7 @@
 {
   "name": "ps2alerts-api",
-  "version": "0.0.1",
-  "description": "The API that poweres PS2Alerts.com",
+  "version": "0.1.2",
+  "description": "The API that powers PS2Alerts.com",
   "author": "",
   "private": true,
   "license": "GNU",
@@ -45,7 +45,6 @@
     "fastify-rate-limit": "^4.0.2",
     "fastify-swagger": "^3.3.0",
     "mongodb": "^3.6.0",
-    "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.2",
     "typeorm": "^0.2.25"

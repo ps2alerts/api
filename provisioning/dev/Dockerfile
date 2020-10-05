@@ -7,6 +7,4 @@ RUN apt-get update \
         watch \
     && rm -rf /var/lib/apt/lists/* /var/cache/apk/*
 
-COPY files/nginx/dev.conf /etc/nginx/sites-enabled
-
 USER node
