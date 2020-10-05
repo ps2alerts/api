@@ -68,6 +68,7 @@ export default class MongoOperationsService {
     }
 
     public async upsertOne(entity: any, doc: any, conditionals: any[]): Promise<ObjectID> {
+        console.log(doc);
         doc = this.transform([doc])[0];
         await this.em.updateOne(
             entity,
