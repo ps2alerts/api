@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
               path = "/"
               port = 3000
             }
-            initial_delay_seconds = 30
+            initial_delay_seconds = 5
             period_seconds        = 5
           }
           resources {
