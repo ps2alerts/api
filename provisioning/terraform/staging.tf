@@ -15,6 +15,7 @@ module "api_staging" {
   rabbitmq_user      = "ps2alerts"
   rabbitmq_pass      = var.rabbitmq_pass
   rabbitmq_vhost     = "/ps2alerts"
+  rabbitmq_queue     = "/api-queue-staging"
   cpu_limit          = "250m"
   mem_limit          = "256Mi"
   cpu_request        = "250m"

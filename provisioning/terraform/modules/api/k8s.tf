@@ -126,6 +126,10 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
             value = var.rabbitmq_vhost
           }
           env {
+            name = "RABBITMQ_QUEUE"
+            value = var.rabbitmq_queue
+          }
+          env {
             name = "LOGGER_TRANSPORTS"
             value = var.logger_transports
           }
