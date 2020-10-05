@@ -14,9 +14,9 @@ module "api_staging" {
   rabbitmq_host      = "ps2alerts-rabbitmq"
   rabbitmq_user      = "ps2alerts"
   rabbitmq_pass      = var.rabbitmq_pass
-  cpu_limit          = "100m"
+  cpu_limit          = "250m"
   mem_limit          = "256Mi"
-  cpu_request        = "100m"
+  cpu_request        = "250m"
   mem_request        = "256Mi"
   logger_transports  = "console"
   dd_api_key         = var.dd_api_key
