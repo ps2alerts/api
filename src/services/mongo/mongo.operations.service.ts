@@ -67,7 +67,7 @@ export default class MongoOperationsService {
         throw new Error(`insertMany failed! No documents were inserted! ${JSON.stringify(docs)}`);
     }
 
-    public async upsertOne(entity: any, doc: any, conditionals: any[]): Promise<ObjectID> {
+    public async upsertOne(entity: any, doc: any, conditionals: any[]): Promise<boolean> {
         console.log(doc);
         doc = this.transform([doc])[0];
         await this.em.updateOne(
@@ -77,14 +77,14 @@ export default class MongoOperationsService {
             {upsert: true},
         ).then((result) => {
             if (result.upsertedCount > 0) {
-                return result.upsertedId;
+                return true;
             }
         });
 
         throw new Error(`upsertOne failed! No documents were inserted! ${JSON.stringify(doc)}`);
     }
 
-    public async upsertMany(entity: any, docs: any[], conditionals: any[]): Promise<ObjectID[]> {
+    public async upsertMany(entity: any, docs: any[], conditionals: any[]): Promise<boolean> {
         docs = this.transform(docs);
         await this.em.updateMany(
             entity,
@@ -93,7 +93,7 @@ export default class MongoOperationsService {
             {upsert: true},
         ).then((result) => {
             if (result.upsertedCount > 0) {
-                return result.upsertedId;
+                return true;
             }
         });
 
