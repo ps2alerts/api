@@ -102,8 +102,8 @@ export default class MongoOperationsService {
     }
 
     private transform(docs: any): any {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (docs.length) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+        if (docs.isArray()) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             docs.map((doc) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -112,6 +112,7 @@ export default class MongoOperationsService {
                     doc.timestamp = new Date(doc.timestamp);
                 }
             });
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         } else if (docs.timestamp !== undefined) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             docs.timestamp = new Date(docs.timestamp);
