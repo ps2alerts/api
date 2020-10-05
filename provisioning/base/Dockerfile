@@ -4,8 +4,8 @@ USER root
 
 COPY ./files/entrypoint.sh /etc/service/entrypoint.sh
 
-USER node
-
 RUN npm i -g @nestjs/cli
+
+USER node
 
 ENTRYPOINT /etc/service/entrypoint.sh
