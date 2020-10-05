@@ -30,7 +30,7 @@
           DB_PASS: "foobar"
           DB_NAME: "ps2alerts"
           DB_DEBUG: "true"
-          MQ_HOST: "ps2alerts-mq"
+          RABBITMQ_HOST: "ps2alerts-mq"
         labels:
           traefik.enable: "true"
           traefik.http.routers.ps2alerts_api.rule: "Host(`dev.api.ps2alerts.com`)"

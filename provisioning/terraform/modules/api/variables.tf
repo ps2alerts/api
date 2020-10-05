@@ -16,6 +16,7 @@ variable "database_debug" {
 variable "rabbitmq_host" {}
 variable "rabbitmq_user" {}
 variable "rabbitmq_pass" {}
+variable "rabbitmq_vhost" {}
 variable "cpu_limit" {
   default = "250m"
 }
