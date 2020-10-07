@@ -17,9 +17,9 @@ module "api_staging" {
   rabbitmq_vhost     = "/ps2alerts"
   rabbitmq_queue     = "api-queue-staging"
   cpu_limit          = "200m"
-  mem_limit          = "0.5Gi"
+  mem_limit          = "0.25Gi"
   cpu_request        = "100m"
-  mem_request        = "0.5Gi"
+  mem_request        = "0.25Gi"
   logger_transports  = "console"
   dd_api_key         = var.dd_api_key
   dd_app_key         = var.dd_app_key
