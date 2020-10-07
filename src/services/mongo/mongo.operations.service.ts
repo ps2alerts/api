@@ -47,77 +47,60 @@ export default class MongoOperationsService {
 
     public async insertOne(entity: any, doc: any): Promise<ObjectID> {
         doc = this.transform(doc);
-        await this.em.insertOne(entity, doc).then((result) => {
-            if (result.insertedCount > 0) {
-                return result.insertedId;
-            }
-        });
+        const result = await this.em.insertOne(entity, doc);
+
+        if (result.insertedCount > 0) {
+            return result.insertedId;
+        }
 
         throw new Error(`insertOne failed! No documents were inserted! ${JSON.stringify(doc)}`);
     }
 
     public async insertMany(entity: any, docs: any[]): Promise<ObjectID[]> {
         docs = this.transform(docs);
-        await this.em.insertMany(entity, docs).then((result) => {
-            if (result.insertedCount > 0) {
-                return result.insertedIds;
-            }
-        });
+        const result = await this.em.insertMany(entity, docs);
+
+        if (result.insertedCount > 0) {
+            return result.insertedIds;
+        }
 
         throw new Error(`insertMany failed! No documents were inserted! ${JSON.stringify(docs)}`);
     }
 
-    public async upsertOne(entity: any, doc: any, conditionals: any[]): Promise<boolean> {
-        doc = this.transform(doc);
-        console.log('upsertOne', doc);
-        await this.em.updateOne(
-            entity,
-            conditionals[0],
-            doc,
-            {upsert: true},
-        ).then((result) => {
-            if (result.upsertedCount > 0) {
-                return true;
-            }
-        });
-
-        throw new Error(`upsertOne failed! No documents were inserted! ${JSON.stringify(doc)}`);
-    }
-
-    public async upsertMany(entity: any, docs: any[], conditionals: any[]): Promise<boolean> {
+    public async upsert(entity: any, docs: any[], conditionals: any[]): Promise<boolean> {
         docs = this.transform(docs);
-        console.log('upsertMany', docs);
-        await this.em.updateMany(
-            entity,
-            conditionals[0],
-            docs,
-            {upsert: true},
-        ).then((result) => {
-            if (result.upsertedCount > 0) {
-                return true;
-            }
+        const operations: any[] = [];
+
+        // Gather operations, setOnInserts etc should be first and will create the record correctly to then subsequently update.
+        docs.forEach((doc) => {
+            operations.push({
+                updateMany: {
+                    filter: conditionals[0],
+                    update: doc,
+                    upsert: true,
+                },
+            });
         });
 
-        throw new Error(`upsertMany failed! No documents were inserted! ${JSON.stringify(docs)}`);
+        const result = await this.em.bulkWrite(entity, operations, {ordered: true});
+
+        return result.upsertedCount ? result.upsertedCount > 0 : false;
     }
 
+    /* eslint-disable */
     private transform(docs: any): any {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-        if (docs.isArray) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+        // Date handling
+        if (docs.constructor === Array) {
             docs.map((doc: any) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                if (doc.timestamp !== undefined) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                if (doc.hasOwnProperty('timestamp')) {
                     doc.timestamp = new Date(doc.timestamp);
                 }
             });
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        } else if (docs.timestamp !== undefined) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        } else if (docs.hasOwnProperty('timestamp')) {
             docs.timestamp = new Date(docs.timestamp);
         }
 
         return docs;
     }
+    /* eslint-enable */
 }

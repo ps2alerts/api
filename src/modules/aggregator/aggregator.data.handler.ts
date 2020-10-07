@@ -21,17 +21,11 @@ export default class AggregatorDataHandler {
     }
 
     public async upsert(data: AggregatorMessageInterface, context: RmqContext, entity: any): Promise<void> {
-        const promises = [];
-
-        for (const doc of data.docs) {
-            promises.push(this.mongoOperationsService.upsertOne(
-                entity,
-                data.conditionals[0],
-                doc,
-            ));
-        }
-
-        await Promise.all(promises);
+        await this.mongoOperationsService.upsert(
+            entity,
+            data.docs,
+            data.conditionals,
+        );
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
         context.getChannelRef().ack(context.getMessage());
