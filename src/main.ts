@@ -11,7 +11,7 @@ async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestFastifyApplication>(
         AppModule,
         new FastifyAdapter({
-            logger: true,
+            logger: !!process.env.NODE_ENV,
         }),
     );
 

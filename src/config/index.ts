@@ -2,6 +2,8 @@
 export const config = () => ({
     cors: {},
 
+    env: process.env.NODE_ENV,
+
     database: {
         mongo: {
             type: 'mongodb',
