@@ -29,8 +29,11 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
       environment = var.environment
     }
   }
+  lifecycle {
+    ignore_changes = ["spec.replicas"]
+  }
   spec {
-    replicas = 1
+    replicas = 2
     revision_history_limit = 1
     selector {
       match_labels = {
