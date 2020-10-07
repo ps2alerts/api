@@ -30,7 +30,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
     }
   }
   lifecycle {
-    ignore_changes = ["spec.replicas"]
+    ignore_changes = ["spec[0].replicas"]
   }
   spec {
     replicas = 2
