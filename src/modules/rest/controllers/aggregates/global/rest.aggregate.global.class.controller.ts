@@ -1,8 +1,6 @@
 import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalClassAggregateEntity from '../../../../data/entities/aggregate/global/global.class.aggregate.entity';
-import {World} from '../../../../data/constants/world.consts';
-import {Loadout} from '../../../../data/constants/loadout.consts';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('Global Class Aggregates')
@@ -20,22 +18,22 @@ export default class RestGlobalClassAggregateController {
         type: GlobalClassAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world') world?: World): Promise<GlobalClassAggregateEntity[]> {
+    async findAll(@Query('world') world?: string): Promise<GlobalClassAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findMany(GlobalClassAggregateEntity, {world})
+            ? await this.mongoOperationsService.findMany(GlobalClassAggregateEntity, {world: parseInt(world, 10)})
             : await this.mongoOperationsService.findMany(GlobalClassAggregateEntity);
     }
 
-    @Get('global/class/:id')
+    @Get('global/class/:loadout')
     @ApiOperation({summary: 'Returns a single GlobalClassAggregateEntity aggregate by loadout ID and/or world'})
     @ApiResponse({
         status: 200,
         description: 'The GlobalClassAggregateEntity aggregate',
         type: GlobalClassAggregateEntity,
     })
-    async findOne(@Param('id') id: Loadout, @Query('world') world?: World): Promise<GlobalClassAggregateEntity | GlobalClassAggregateEntity[]> {
+    async findOne(@Param('loadout') loadout: string, @Query('world') world?: string): Promise<GlobalClassAggregateEntity | GlobalClassAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: id, world})
-            : await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: id});
+            ? await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: parseInt(loadout, 10), world: parseInt(world, 10)})
+            : await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: parseInt(loadout, 10)});
     }
 }

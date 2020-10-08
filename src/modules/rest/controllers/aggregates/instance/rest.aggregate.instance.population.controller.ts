@@ -18,7 +18,7 @@ export default class RestInstancePopulationAggregateController {
         type: InstancePopulationAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance?: string): Promise<InstancePopulationAggregateEntity[]> {
+    async findAll(@Param('instance') instance: string): Promise<InstancePopulationAggregateEntity[]> {
         return this.mongoOperationsService.findMany(InstancePopulationAggregateEntity, {instance});
     }
 }

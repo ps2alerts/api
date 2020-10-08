@@ -30,6 +30,6 @@ export default class RestInstanceFacilityControlController {
         type: InstanceFacilityControlEntity,
     })
     async findOne(@Param('instance') instance: string, @Param('facility') facility: string): Promise<InstanceFacilityControlEntity> {
-        return await this.mongoOperationsService.findOne(InstanceFacilityControlEntity, {instance, facility});
+        return await this.mongoOperationsService.findOne(InstanceFacilityControlEntity, {instance, facility: parseInt(facility, 10)});
     }
 }
