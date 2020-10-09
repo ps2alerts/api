@@ -1,7 +1,6 @@
 import {ClassSerializerInterceptor, Controller, Get, Inject, Param, Query, UseInterceptors} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceMetagameEntity from '../../data/entities/instance/instance.metagame.entity';
-import {World} from '../../data/constants/world.consts';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 
 @ApiTags('Instances')
@@ -20,9 +19,9 @@ export class RestInstanceMetagameController {
         type: InstanceMetagameEntity,
         isArray: true,
     })
-    async findAll(@Query('world') world: World): Promise<InstanceMetagameEntity[]> {
+    async findAll(@Query('world') world: string): Promise<InstanceMetagameEntity[]> {
         return world
-            ? await this.mongoOperationsService.findMany(InstanceMetagameEntity, {world})
+            ? await this.mongoOperationsService.findMany(InstanceMetagameEntity, {world: parseInt(world, 10)})
             : await this.mongoOperationsService.findMany(InstanceMetagameEntity);
     }
 

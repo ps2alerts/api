@@ -18,11 +18,11 @@ export default class RestInstanceOutfitAggregateController {
         type: InstanceOutfitAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance?: string): Promise<InstanceOutfitAggregateEntity[]> {
+    async findAll(@Param('instance') instance: string): Promise<InstanceOutfitAggregateEntity[]> {
         return this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance});
     }
 
-    @Get('instance/:instance/outfit/:id')
+    @Get('instance/:instance/outfit/:outfit')
     @ApiOperation({summary: 'Returns a InstanceOutfitAggregateEntity aggregate with given id within an instance'})
     @ApiResponse({
         status: 200,

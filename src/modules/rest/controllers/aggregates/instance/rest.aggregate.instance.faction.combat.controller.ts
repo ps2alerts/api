@@ -18,7 +18,7 @@ export default class RestInstanceFactionCombatAggregateController {
         type: InstanceFactionCombatAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance?: string): Promise<InstanceFactionCombatAggregateEntity[]> {
+    async findAll(@Param('instance') instance: string): Promise<InstanceFactionCombatAggregateEntity[]> {
         return this.mongoOperationsService.findMany(InstanceFactionCombatAggregateEntity, {instance});
     }
 }
