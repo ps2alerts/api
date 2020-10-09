@@ -1,6 +1,5 @@
 import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {World} from '../../../../data/constants/world.consts';
 import GlobalOutfitAggregateEntity from '../../../../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
@@ -19,22 +18,22 @@ export default class RestGlobalOutfitAggregateController {
         type: GlobalOutfitAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world') world?: World): Promise<GlobalOutfitAggregateEntity[]> {
+    async findAll(@Query('world') world?: string): Promise<GlobalOutfitAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world})
+            ? await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world: parseInt(world, 10)})
             : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity);
     }
 
-    @Get('global/outfit/:id')
+    @Get('global/outfit/:outfit')
     @ApiOperation({summary: 'Returns a GlobalOutfitAggregateEntity aggregate with given Id (or one of each world as a PS4 outfit may share the same ID as PC)'})
     @ApiResponse({
         status: 200,
         description: 'The GlobalOutfitAggregateEntity aggregate',
         type: GlobalOutfitAggregateEntity,
     })
-    async findOne(@Param('id') id: string, @Query('world') world?: World): Promise<GlobalOutfitAggregateEntity> {
+    async findOne(@Param('outfit') outfit: string, @Query('world') world?: string): Promise<GlobalOutfitAggregateEntity> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit: id, world})
-            : await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit: id});
+            ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit, world: parseInt(world, 10)})
+            : await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit});
     }
 }

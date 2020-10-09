@@ -18,7 +18,7 @@ export default class RestInstanceFacilityControlAggregateController {
         type: InstanceFacilityControlAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance?: string): Promise<InstanceFacilityControlAggregateEntity[]> {
+    async findAll(@Param('instance') instance: string): Promise<InstanceFacilityControlAggregateEntity[]> {
         return this.mongoOperationsService.findMany(InstanceFacilityControlAggregateEntity, {instance});
     }
 
@@ -30,6 +30,6 @@ export default class RestInstanceFacilityControlAggregateController {
         type: InstanceFacilityControlAggregateEntity,
     })
     async findOne(@Param('instance') instance: string, @Param('facility') facility: string): Promise<InstanceFacilityControlAggregateEntity | InstanceFacilityControlAggregateEntity[]> {
-        return await this.mongoOperationsService.findOne(InstanceFacilityControlAggregateEntity, {instance, facility});
+        return await this.mongoOperationsService.findOne(InstanceFacilityControlAggregateEntity, {instance, facility: parseInt(facility, 10)});
     }
 }

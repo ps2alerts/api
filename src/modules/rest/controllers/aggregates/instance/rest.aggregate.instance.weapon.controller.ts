@@ -1,7 +1,6 @@
 import {Controller, Get, Inject, Param} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceWeaponAggregateEntity from '../../../../data/entities/aggregate/instance/instance.weapon.aggregate.entity';
-import InstancePopulationAggregateEntity from '../../../../data/entities/aggregate/instance/instance.population.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
 @ApiTags('Instance Weapon Aggregates')
@@ -19,8 +18,8 @@ export default class RestInstanceWeaponAggregateController {
         type: InstanceWeaponAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance?: string): Promise<InstanceWeaponAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstancePopulationAggregateEntity, {instance});
+    async findAll(@Param('instance') instance: string): Promise<InstanceWeaponAggregateEntity[]> {
+        return this.mongoOperationsService.findMany(InstanceWeaponAggregateEntity, {instance});
     }
 
     @Get('instance/:instance/weapon/:weapon')
@@ -31,6 +30,6 @@ export default class RestInstanceWeaponAggregateController {
         type: InstanceWeaponAggregateEntity,
     })
     async findOne(@Param('instance') instance: number, @Param('weapon') weapon: string): Promise<InstanceWeaponAggregateEntity | InstanceWeaponAggregateEntity[]> {
-        return this.mongoOperationsService.findOne(InstanceWeaponAggregateEntity, {instance, weapon});
+        return this.mongoOperationsService.findOne(InstanceWeaponAggregateEntity, {instance, weapon: parseInt(weapon, 10)});
     }
 }

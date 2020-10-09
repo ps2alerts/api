@@ -1,6 +1,5 @@
 import {Controller, Get, Inject, Param} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {World} from '../../../../data/constants/world.consts';
 import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggregate/global/global.faction.combat.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
@@ -23,14 +22,14 @@ export default class RestGlobalFactionCombatAggregateController {
         return await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity);
     }
 
-    @Get('global/faction/:id')
+    @Get('global/faction/:world')
     @ApiOperation({summary: 'Returns a GlobalFactionCombatAggregateEntity aggregate with given worldId'})
     @ApiResponse({
         status: 200,
         description: 'The GlobalFactionCombatAggregateEntity aggregate',
         type: GlobalFactionCombatAggregateEntity,
     })
-    async findOne(@Param('world') world: World): Promise<GlobalFactionCombatAggregateEntity> {
-        return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world});
+    async findOne(@Param('world') world: string): Promise<GlobalFactionCombatAggregateEntity> {
+        return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world: parseInt(world, 10)});
     }
 }

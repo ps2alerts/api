@@ -18,7 +18,7 @@ export default class RestInstanceCharacterAggregateController {
         type: InstanceCharacterAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance?: string): Promise<InstanceCharacterAggregateEntity[]> {
+    async findAll(@Param('instance') instance: string): Promise<InstanceCharacterAggregateEntity[]> {
         return this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {instance});
     }
 

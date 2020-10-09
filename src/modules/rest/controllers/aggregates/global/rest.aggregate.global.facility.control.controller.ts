@@ -1,6 +1,5 @@
 import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {World} from '../../../../data/constants/world.consts';
 import GlobalFacilityControlAggregateEntity from '../../../../data/entities/aggregate/global/global.facility.control.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 
@@ -19,22 +18,22 @@ export default class RestGlobalFacilityControlAggregateController {
         type: GlobalFacilityControlAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world') world?: World): Promise<GlobalFacilityControlAggregateEntity[]> {
+    async findAll(@Query('world') world?: string): Promise<GlobalFacilityControlAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world})
+            ? await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world: parseInt(world, 10)})
             : await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity);
     }
 
-    @Get('global/facility/:id')
+    @Get('global/facility/:facility')
     @ApiOperation({summary: 'Returns a GlobalFacilityControlAggregateEntity aggregate with given Id (or one of each world)'})
     @ApiResponse({
         status: 200,
         description: 'The GlobalFacilityControlAggregateEntity aggregate',
         type: GlobalFacilityControlAggregateEntity,
     })
-    async findOne(@Param('id') id: number, @Query('world') world?: World): Promise<GlobalFacilityControlAggregateEntity | GlobalFacilityControlAggregateEntity[]> {
+    async findOne(@Param('facility') facility: string, @Query('world') world?: string): Promise<GlobalFacilityControlAggregateEntity | GlobalFacilityControlAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility: id, world})
-            : await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility: id});
+            ? await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility: parseInt(facility, 10), world: parseInt(world, 10)})
+            : await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility: parseInt(facility, 10)});
     }
 }
