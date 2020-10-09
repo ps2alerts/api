@@ -25,11 +25,15 @@ export default class AggregatorDataHandler {
     }
 
     public async upsert(data: AggregatorMessageInterface, context: RmqContext, entity: any): Promise<void> {
-        await this.mongoOperationsService.upsert(
-            entity,
-            data.docs,
-            data.conditionals,
-        );
+        try {
+            await this.mongoOperationsService.upsert(
+                entity,
+                data.docs,
+                data.conditionals,
+            );
+        } catch (error) {
+            // TODO: Log the error, but allow it as it's probably a duplicate
+        }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
         context.getChannelRef().ack(context.getMessage());

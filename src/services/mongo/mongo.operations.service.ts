@@ -100,9 +100,18 @@ export default class MongoOperationsService {
             });
         });
 
-        const result = await this.em.bulkWrite(entity, operations, {ordered: true});
+        try {
+            const result = await this.em.bulkWrite(entity, operations, {ordered: true});
+            return result.upsertedCount ? result.upsertedCount > 0 : false;
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            if (!error.message.includes('E11000')) {
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
+                throw new Error(`upsert failed! E: ${error.message}`);
+            }
 
-        return result.upsertedCount ? result.upsertedCount > 0 : false;
+            return true;
+        }
     }
 
     /* eslint-disable */
