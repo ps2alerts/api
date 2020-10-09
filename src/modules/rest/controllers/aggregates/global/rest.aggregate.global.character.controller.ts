@@ -14,7 +14,7 @@ export default class RestGlobalCharacterAggregateController {
     @ApiOperation({summary: 'Return a filtered list of GlobalCharacterAggregateEntity instances'})
     @ApiResponse({
         status: 200,
-        description: 'The list of GlobalCharacterAggregateEntity aggregates',
+        description: 'The list of matching GlobalCharacterAggregateEntity aggregates',
         type: GlobalCharacterAggregateEntity,
         isArray: true,
     })
@@ -28,7 +28,7 @@ export default class RestGlobalCharacterAggregateController {
     @ApiOperation({summary: 'Returns a single GlobalCharacterAggregateEntity aggregate'})
     @ApiResponse({
         status: 200,
-        description: 'The GlobalCharacterAggregateEntity Instance',
+        description: 'The GlobalCharacterAggregateEntity aggregate',
         type: GlobalCharacterAggregateEntity,
     })
     async findOne(@Param('character') character: string): Promise<GlobalCharacterAggregateEntity> {

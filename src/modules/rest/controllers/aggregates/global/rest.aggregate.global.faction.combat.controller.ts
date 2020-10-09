@@ -11,7 +11,7 @@ export default class RestGlobalFactionCombatAggregateController {
     ) {}
 
     @Get('global/faction')
-    @ApiOperation({summary: 'Return a filtered list of GlobalFactionCombatAggregateEntity aggregate'})
+    @ApiOperation({summary: 'Return a filtered list of GlobalFactionCombatAggregateEntity aggregates'})
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalFactionCombatAggregateEntity aggregates',

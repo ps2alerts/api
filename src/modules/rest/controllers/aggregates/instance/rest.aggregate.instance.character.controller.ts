@@ -11,7 +11,7 @@ export default class RestInstanceCharacterAggregateController {
     ) {}
 
     @Get('instance/:instance/character')
-    @ApiOperation({summary: 'Returns a list of InstanceCharacterAggregateEntity for an instance'})
+    @ApiOperation({summary: 'Returns a list of InstanceCharacterAggregateEntity aggregates for an instance'})
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceCharacterAggregateEntity aggregates',
@@ -26,10 +26,10 @@ export default class RestInstanceCharacterAggregateController {
     @ApiOperation({summary: 'Returns a single InstanceCharacterAggregateEntity for an instance'})
     @ApiResponse({
         status: 200,
-        description: 'The InstanceCharacterAggregateEntity Instance',
+        description: 'The InstanceCharacterAggregateEntity aggregate',
         type: InstanceCharacterAggregateEntity,
     })
-    async findOne(@Param('instance') instance: string, @Param('character') character: string): Promise<InstanceCharacterAggregateEntity | InstanceCharacterAggregateEntity[]> {
+    async findOne(@Param('instance') instance: string, @Param('character') character: string): Promise<InstanceCharacterAggregateEntity> {
         return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {instance, character});
     }
 }

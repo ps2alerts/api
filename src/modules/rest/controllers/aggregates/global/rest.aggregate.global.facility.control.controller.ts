@@ -11,10 +11,10 @@ export default class RestGlobalFacilityControlAggregateController {
     ) {}
 
     @Get('global/facility')
-    @ApiOperation({summary: 'Return a filtered list of GlobalFacilityControlAggregateEntity aggregate'})
+    @ApiOperation({summary: 'Return a filtered list of GlobalFacilityControlAggregateEntity aggregates'})
     @ApiResponse({
         status: 200,
-        description: 'The list of GlobalFacilityControlAggregateEntity aggregates',
+        description: 'The list of matching GlobalFacilityControlAggregateEntity aggregates',
         type: GlobalFacilityControlAggregateEntity,
         isArray: true,
     })
@@ -25,15 +25,15 @@ export default class RestGlobalFacilityControlAggregateController {
     }
 
     @Get('global/facility/:facility')
-    @ApiOperation({summary: 'Returns a GlobalFacilityControlAggregateEntity aggregate with given Id (or one of each world)'})
+    @ApiOperation({summary: 'Returns the matching GlobalFacilityControlAggregateEntity aggregate(s) with given Id (or one of each world)'})
     @ApiResponse({
         status: 200,
-        description: 'The GlobalFacilityControlAggregateEntity aggregate',
+        description: 'The GlobalFacilityControlAggregateEntity aggregate(s)',
         type: GlobalFacilityControlAggregateEntity,
     })
     async findOne(@Param('facility') facility: string, @Query('world') world?: string): Promise<GlobalFacilityControlAggregateEntity | GlobalFacilityControlAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility: parseInt(facility, 10), world: parseInt(world, 10)})
-            : await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility: parseInt(facility, 10)});
+            : await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {facility: parseInt(facility, 10)});
     }
 }

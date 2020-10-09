@@ -14,7 +14,7 @@ export default class RestGlobalClassAggregateController {
     @ApiOperation({summary: 'Return a filtered list of GlobalClassAggregateEntity aggregates'})
     @ApiResponse({
         status: 200,
-        description: 'The list of GlobalClassAggregateEntity aggregates',
+        description: 'The list of matching GlobalClassAggregateEntity aggregates',
         type: GlobalClassAggregateEntity,
         isArray: true,
     })
@@ -25,15 +25,15 @@ export default class RestGlobalClassAggregateController {
     }
 
     @Get('global/class/:loadout')
-    @ApiOperation({summary: 'Returns a single GlobalClassAggregateEntity aggregate by loadout ID and/or world'})
+    @ApiOperation({summary: 'Returns a single/many GlobalClassAggregateEntity aggregate(s) by loadout ID (and world?)'})
     @ApiResponse({
         status: 200,
-        description: 'The GlobalClassAggregateEntity aggregate',
+        description: 'The GlobalClassAggregateEntity aggregate(s)',
         type: GlobalClassAggregateEntity,
     })
     async findOne(@Param('loadout') loadout: string, @Query('world') world?: string): Promise<GlobalClassAggregateEntity | GlobalClassAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: parseInt(loadout, 10), world: parseInt(world, 10)})
-            : await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: parseInt(loadout, 10)});
+            : await this.mongoOperationsService.findMany(GlobalClassAggregateEntity, {class: parseInt(loadout, 10)});
     }
 }
