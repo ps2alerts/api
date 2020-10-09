@@ -78,7 +78,7 @@ export default class MongoOperationsService {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
-                throw new Error(`insertOne failed! E: ${error.message}`);
+                throw new Error(`insertMany failed! E: ${error.message}`);
             }
         }
 
