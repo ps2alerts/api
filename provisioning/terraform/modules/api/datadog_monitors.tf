@@ -18,12 +18,11 @@ resource datadog_monitor "api_not_running" {
 resource datadog_monitor "api_high_mem" {
   name = "PS2Alerts API high memory [${var.environment}]"
   type = "metric alert"
-  query = "avg(last_5m):avg:kubernetes.memory.rss{kube_container_name:ps2alerts-api-${var.environment}} > 471859000"
+  query = "avg(last_5m):avg:kubernetes.memory.rss{kube_container_name:ps2alerts-api-${var.environment}} > 209715000"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "high memory"})
 
   thresholds = {
-    critical = 471859000 #450MB
-    warning = 419430000 #400MB
+    critical = 209715000 # 200MB
   }
 
   notify_no_data = true
@@ -36,12 +35,11 @@ resource datadog_monitor "api_high_mem" {
 resource datadog_monitor "api_high_cpu" {
   name = "PS2Alerts API high CPU [${var.environment}]"
   type = "metric alert"
-  query = "avg(last_10m):avg:kubernetes.cpu.usage.total{kube_container_name:ps2alerts-api-${var.environment}} > 450000000"
+  query = "avg(last_5m):avg:kubernetes.cpu.usage.total{kube_container_name:ps2alerts-api-${var.environment}} > 150000000"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "high CPU"})
 
   thresholds = {
-    critical = 450000000
-    warning = 400000000
+    critical = 150000000
   }
 
   notify_no_data = true
