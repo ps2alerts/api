@@ -29,7 +29,7 @@ export default class RestInstanceFacilityControlAggregateController {
         description: 'The InstanceFacilityControlAggregateEntity aggregate',
         type: InstanceFacilityControlAggregateEntity,
     })
-    async findOne(@Param('instance') instance: string, @Param('facility') facility: string): Promise<InstanceFacilityControlAggregateEntity | InstanceFacilityControlAggregateEntity[]> {
+    async findOne(@Param('instance') instance: string, @Param('facility') facility: string): Promise<InstanceFacilityControlAggregateEntity> {
         return await this.mongoOperationsService.findOne(InstanceFacilityControlAggregateEntity, {instance, facility: parseInt(facility, 10)});
     }
 }

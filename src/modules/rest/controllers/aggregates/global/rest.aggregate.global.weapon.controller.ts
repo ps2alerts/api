@@ -11,7 +11,7 @@ export default class RestGlobalWeaponAggregateController {
     ) {}
 
     @Get('global/weapon')
-    @ApiOperation({summary: 'Return a filtered list of GlobalWeaponAggregateEntity aggregate'})
+    @ApiOperation({summary: 'Return a filtered list of GlobalWeaponAggregateEntity aggregates'})
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalWeaponAggregateEntity aggregates',
@@ -25,15 +25,15 @@ export default class RestGlobalWeaponAggregateController {
     }
 
     @Get('global/weapon/:weapon')
-    @ApiOperation({summary: 'Returns a GlobalWeaponAggregateEntity aggregate with given Id (or one of each world)'})
+    @ApiOperation({summary: 'Returns GlobalWeaponAggregateEntity aggregate(s) with given Id (or one of each world)'})
     @ApiResponse({
         status: 200,
-        description: 'The GlobalWeaponAggregateEntity aggregate',
+        description: 'The GlobalWeaponAggregateEntity aggregate(s)',
         type: GlobalWeaponAggregateEntity,
     })
     async findOne(@Param('weapon') weapon: string, @Query('world') world?: string): Promise<GlobalWeaponAggregateEntity | GlobalWeaponAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalWeaponAggregateEntity, {weapon: parseInt(weapon, 10), world: parseInt(world, 10)})
-            : await this.mongoOperationsService.findOne(GlobalWeaponAggregateEntity, {weapon: parseInt(weapon, 10)});
+            : await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {weapon: parseInt(weapon, 10)});
     }
 }
