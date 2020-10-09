@@ -25,7 +25,7 @@ export default class RestGlobalClassAggregateController {
     }
 
     @Get('global/class/:loadout')
-    @ApiOperation({summary: 'Returns a single/many GlobalClassAggregateEntity aggregate(s) by loadout ID (and world?)'})
+    @ApiOperation({summary: 'Returns a single/many GlobalClassAggregateEntity aggregate(s) by loadout ID (and world)'})
     @ApiResponse({
         status: 200,
         description: 'The GlobalClassAggregateEntity aggregate(s)',

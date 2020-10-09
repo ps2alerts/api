@@ -45,7 +45,7 @@ export default class InstanceFacilityControlEntity {
     })
     newFaction: Faction;
 
-    @ApiProperty({example: 0, description: 'Time taken to capture/defend the facility'})
+    @ApiProperty({example: 0, description: 'Time since last capture / defense event (in seconds)'})
     @Column({
         type: 'number',
         default: 0,

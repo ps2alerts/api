@@ -13,7 +13,7 @@ export default class GlobalOutfitAggregateEntity {
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({example: '37537074285161814', description: 'Outfit ID'})
+    @ApiProperty({example: '37537074285161814', description: 'Census generated Outfit ID'})
     @Column({
         type: 'string',
     })
