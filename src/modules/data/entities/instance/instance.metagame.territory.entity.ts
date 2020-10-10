@@ -6,12 +6,13 @@ import {MetagameEventType, metagameEventTypeArray} from '../../constants/metagam
 import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../constants/eventstate.consts';
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
+import MetagameTerritoryResultEmbed from '../aggregate/common/metagame.territory.result.embed';
 
 @Entity({
-    name: 'instance_metagames',
+    name: 'instance_metagame_territories',
 })
 @Index(['world', 'censusInstanceId'], {unique: true})
-export default class InstanceMetagameEntity {
+export default class InstanceMetagameTerritoryEntity {
     @ObjectIdColumn()
     @Exclude()
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -69,11 +70,14 @@ export default class InstanceMetagameEntity {
     })
     duration: number;
 
-    @ApiProperty({enum: ps2alertsEventStateArray, description: 'The internal event state. 0 = scheduled, 1 = in progress, 2 = finished'})
+    @ApiProperty({example: 1, enum: ps2alertsEventStateArray, description: 'The internal event state. 0 = scheduled, 1 = in progress, 2 = finished'})
     @Column({
         type: 'enum',
         enum: ps2alertsEventStateArray,
     })
     state: Ps2alertsEventState;
 
+    @ApiProperty({description: 'Victory data for the instance'})
+    @Column(() => MetagameTerritoryResultEmbed)
+    result: MetagameTerritoryResultEmbed;
 }

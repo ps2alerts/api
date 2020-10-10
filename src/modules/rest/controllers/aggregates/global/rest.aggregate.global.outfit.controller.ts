@@ -11,7 +11,7 @@ export default class RestGlobalOutfitAggregateController {
     ) {}
 
     @Get('global/outfit')
-    @ApiOperation({summary: 'Return a filtered list of GlobalOutfitAggregateEntity aggregate'})
+    @ApiOperation({summary: 'Return a filtered list of GlobalOutfitAggregateEntity aggregates'})
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalOutfitAggregateEntity aggregates',
@@ -28,12 +28,12 @@ export default class RestGlobalOutfitAggregateController {
     @ApiOperation({summary: 'Returns a GlobalOutfitAggregateEntity aggregate with given Id (or one of each world as a PS4 outfit may share the same ID as PC)'})
     @ApiResponse({
         status: 200,
-        description: 'The GlobalOutfitAggregateEntity aggregate',
+        description: 'The GlobalOutfitAggregateEntity aggregate(s)',
         type: GlobalOutfitAggregateEntity,
     })
-    async findOne(@Param('outfit') outfit: string, @Query('world') world?: string): Promise<GlobalOutfitAggregateEntity> {
+    async findOne(@Param('outfit') outfit: string, @Query('world') world?: string): Promise<GlobalOutfitAggregateEntity | GlobalOutfitAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit, world: parseInt(world, 10)})
-            : await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit});
+            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {outfit});
     }
 }

@@ -1,6 +1,6 @@
 import {ClassSerializerInterceptor, Controller, Get, Inject, Param, Query, UseInterceptors} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import InstanceMetagameEntity from '../../data/entities/instance/instance.metagame.entity';
+import InstanceMetagameTerritoryEntity from '../../data/entities/instance/instance.metagame.territory.entity';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 
 @ApiTags('Instances')
@@ -16,13 +16,13 @@ export class RestInstanceMetagameController {
     @ApiResponse({
         status: 200,
         description: 'List of Metagame Instances',
-        type: InstanceMetagameEntity,
+        type: InstanceMetagameTerritoryEntity,
         isArray: true,
     })
-    async findAll(@Query('world') world: string): Promise<InstanceMetagameEntity[]> {
+    async findAll(@Query('world') world: string): Promise<InstanceMetagameTerritoryEntity[]> {
         return world
-            ? await this.mongoOperationsService.findMany(InstanceMetagameEntity, {world: parseInt(world, 10)})
-            : await this.mongoOperationsService.findMany(InstanceMetagameEntity);
+            ? await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {world: parseInt(world, 10)})
+            : await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity);
     }
 
     @Get('/metagame/:instance')
@@ -30,10 +30,10 @@ export class RestInstanceMetagameController {
     @ApiResponse({
         status: 200,
         description: 'The Metagame Instance',
-        type: InstanceMetagameEntity,
+        type: InstanceMetagameTerritoryEntity,
     })
     @UseInterceptors(ClassSerializerInterceptor)
-    async findOne(@Param('instance') instance: string): Promise<InstanceMetagameEntity> {
-        return await this.mongoOperationsService.findOne(InstanceMetagameEntity, {instance});
+    async findOne(@Param('instance') instance: string): Promise<InstanceMetagameTerritoryEntity> {
+        return await this.mongoOperationsService.findOne(InstanceMetagameTerritoryEntity, {instance});
     }
 }

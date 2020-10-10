@@ -30,7 +30,7 @@ export default class RestInstanceClassAggregateController {
         description: 'The InstanceClassAggregateEntity aggregate',
         type: InstanceClassAggregateEntity,
     })
-    async findOne(@Param('instance') instance: string, @Param('loadout') loadout: string): Promise<InstanceClassAggregateEntity | InstanceClassAggregateEntity[]> {
+    async findOne(@Param('instance') instance: string, @Param('loadout') loadout: string): Promise<InstanceClassAggregateEntity> {
         return await this.mongoOperationsService.findOne(InstanceClassAggregateEntity, {instance, class: parseInt(loadout, 10)});
     }
 }

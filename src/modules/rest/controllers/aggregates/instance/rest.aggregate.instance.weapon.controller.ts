@@ -29,7 +29,7 @@ export default class RestInstanceWeaponAggregateController {
         description: 'The InstanceWeaponAggregateEntity aggregate',
         type: InstanceWeaponAggregateEntity,
     })
-    async findOne(@Param('instance') instance: number, @Param('weapon') weapon: string): Promise<InstanceWeaponAggregateEntity | InstanceWeaponAggregateEntity[]> {
+    async findOne(@Param('instance') instance: number, @Param('weapon') weapon: string): Promise<InstanceWeaponAggregateEntity> {
         return this.mongoOperationsService.findOne(InstanceWeaponAggregateEntity, {instance, weapon: parseInt(weapon, 10)});
     }
 }
