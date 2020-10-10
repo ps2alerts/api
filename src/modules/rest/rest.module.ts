@@ -16,7 +16,7 @@ import InstanceFactionCombatAggregateEntity from '../data/entities/aggregate/ins
 import InstanceOutfitAggregateEntity from '../data/entities/aggregate/instance/instance.outfit.aggregate.entity';
 import InstancePopulationAggregateEntity from '../data/entities/aggregate/instance/instance.population.aggregate.entity';
 import InstanceWeaponAggregateEntity from '../data/entities/aggregate/instance/instance.weapon.aggregate.entity';
-import InstanceMetagameEntity from '../data/entities/instance/instance.metagame.entity';
+import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 import RestGlobalClassAggregateController from './controllers/aggregates/global/rest.aggregate.global.class.controller';
 import RestGlobalCharacterAggregateController from './controllers/aggregates/global/rest.aggregate.global.character.controller';
 import RestGlobalFactionCombatAggregateController from './controllers/aggregates/global/rest.aggregate.global.faction.combat.controller';
@@ -55,7 +55,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
             InstanceWeaponAggregateEntity,
             // Events
             InstanceFacilityControlEntity,
-            InstanceMetagameEntity,
+            InstanceMetagameTerritoryEntity,
         ]),
     ],
     controllers: [
