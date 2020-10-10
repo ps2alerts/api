@@ -49,7 +49,6 @@
       docker_container:
         name: ps2alerts-api-npm
         image: node:12
-        restart_policy: "no"
         volumes:
           - "{{ root_dir | realpath }}:/app:rw"
         user: "{{ id.stdout }}:{{ id.stdout }}"
