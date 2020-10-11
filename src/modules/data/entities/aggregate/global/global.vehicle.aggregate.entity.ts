@@ -3,28 +3,29 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import VehicleStatsEmbed from '../common/vehicle.vs.vehicle.embed';
+import {World} from '../../../constants/world.consts';
 import {Vehicle} from '../../../constants/vehicle.consts';
 
 @Entity({
-    name: 'aggregate_instance_vehicles',
+    name: 'aggregate_global_vehicles',
 })
-@Index(['instance', 'vehicle'], {unique: true})
-export default class InstanceVehicleAggregateEntity {
+@Index(['vehicle', 'world'], {unique: true})
+export default class GlobalVehicleAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
-
-    @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination'})
-    @Column({
-        type: 'string',
-    })
-    instance: string;
 
     @ApiProperty({type: Vehicle, example: 1, description: 'Vehicle ID'})
     @Column({
         type: 'number',
     })
     vehicle: Vehicle;
+
+    @ApiProperty({type: World, example: 10, description: 'World ID'})
+    @Column({
+        type: 'number',
+    })
+    world: World;
 
     @ApiProperty({type: VehicleStatsEmbed, description: 'Combat Statistics for Vehicle vs Vehicle combat'})
     @Column(() => VehicleStatsEmbed)

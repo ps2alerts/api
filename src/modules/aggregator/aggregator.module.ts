@@ -5,6 +5,7 @@ import AggregatorGlobalClassAggregateController from './controllers/aggregates/g
 import AggregatorGlobalFacilityControlAggregateController from './controllers/aggregates/global/aggregator.global.facility.control.aggregate.controller';
 import AggregatorGlobalFactionCombatAggregateController from './controllers/aggregates/global/aggregator.global.faction.combat.aggregate.controller';
 import AggregatorGlobalOutfitAggregateController from './controllers/aggregates/global/aggregator.global.outfit.aggregate.controller';
+import AggregatorGlobalVehicleAggregateController from './controllers/aggregates/global/aggregator.global.vehicle.aggregate.controller';
 import AggregatorGlobalWeaponAggregateController from './controllers/aggregates/global/aggregator.global.weapon.aggregate.controller';
 import AggregatorInstanceCharacterAggregateController from './controllers/aggregates/instance/aggregator.instance.character.aggregate.controller';
 import AggregatorInstanceClassAggregateController from './controllers/aggregates/instance/aggregator.instance.class.aggregate.controller';
@@ -33,6 +34,7 @@ import AggregatorDataHandler from './aggregator.data.handler';
         AggregatorGlobalFacilityControlAggregateController,
         AggregatorGlobalFactionCombatAggregateController,
         AggregatorGlobalOutfitAggregateController,
+        AggregatorGlobalVehicleAggregateController,
         AggregatorGlobalWeaponAggregateController,
         // Instance Aggregates
         AggregatorInstanceCharacterAggregateController,
