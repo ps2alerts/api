@@ -43,19 +43,26 @@ export default class InstanceVehicleAggregateEntity {
         type: 'json',
     })
     // eslint-disable-next-line @typescript-eslint/ban-types
-    vehicleKillMatrix: object; // Not gonna typehint this, feck it
+    vehicleKillMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
 
     @ApiProperty({type: 'json', example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles that have killed this vehicle'})
     @Column({
         type: 'json',
     })
     // eslint-disable-next-line @typescript-eslint/ban-types
-    vehicleDeathMatrix: object;
+    vehicleDeathMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
+
+    @ApiProperty({type: 'json', example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles this vehicle has teamkilled'})
+    @Column({
+        type: 'json',
+    })
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    vehicleTeamkillMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
 
     @ApiProperty({type: 'json', example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles that have teamkilled this vehicle'})
     @Column({
         type: 'json',
     })
     // eslint-disable-next-line @typescript-eslint/ban-types
-    vehicleTeamkillMatrix: object;
+    vehicleTeamkilledMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
 }
