@@ -13,6 +13,7 @@ export enum MQAcceptedPatterns {
     INSTANCE_FACTION_COMBAT_AGGREGATE = 'instanceFactionCombatAggregate',
     INSTANCE_OUTFIT_AGGREGATE = 'instanceOutfitAggregate',
     INSTANCE_POPULATION_AGGREGATE = 'instancePopulationAggregate',
+    INSTANCE_VEHICLE_AGGREGATE = 'instanceVehicleAggregate',
     INSTANCE_WEAPON_AGGREGATE = 'instanceWeaponAggregate',
     INSTANCE_DEATH = 'instanceDeathEvent',
     INSTANCE_FACILITY_CONTROL = 'instanceFacilityControlEvent',

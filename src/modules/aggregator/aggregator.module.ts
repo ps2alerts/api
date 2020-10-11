@@ -12,6 +12,7 @@ import AggregatorInstanceFacilityControlAggregateController from './controllers/
 import AggregatorInstanceFactionCombatAggregateController from './controllers/aggregates/instance/aggregator.instance.faction.combat.aggregate.controller';
 import AggregatorInstanceOutfitAggregateController from './controllers/aggregates/instance/aggregator.instance.outfit.aggregate.controller';
 import AggregatorInstancePopulationAggregateController from './controllers/aggregates/instance/aggregator.instance.population.aggregate.controller';
+import AggregatorInstanceVehicleAggregateController from './controllers/aggregates/instance/aggregator.instance.vehicle.aggregate.controller';
 import AggregatorInstanceWeaponAggregateController from './controllers/aggregates/instance/aggregator.instance.weapon.aggregate.controller';
 import AggregatorInstanceDeathEventController from './controllers/events/aggregator.instance.death.event.controller';
 import AggregatorInstanceFacilityControlEventController from './controllers/events/aggregator.instance.facility.control.event.controller';
@@ -40,6 +41,7 @@ import AggregatorDataHandler from './aggregator.data.handler';
         AggregatorInstanceFactionCombatAggregateController,
         AggregatorInstanceOutfitAggregateController,
         AggregatorInstancePopulationAggregateController,
+        AggregatorInstanceVehicleAggregateController,
         AggregatorInstanceWeaponAggregateController,
         // Instance Events
         AggregatorInstanceDeathEventController,
