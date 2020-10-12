@@ -15,13 +15,13 @@ export default class GlobalVehicleAggregateEntity {
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({type: Vehicle, example: 1, description: 'Vehicle ID'})
+    @ApiProperty({example: 1, description: 'Vehicle ID'})
     @Column({
         type: 'number',
     })
     vehicle: Vehicle;
 
-    @ApiProperty({type: World, example: 10, description: 'World ID'})
+    @ApiProperty({example: 10, description: 'World ID'})
     @Column({
         type: 'number',
     })
@@ -41,28 +41,28 @@ export default class GlobalVehicleAggregateEntity {
     })
     suicides: number;
 
-    @ApiProperty({type: 'json', example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles this vehicle has killed'})
+    @ApiProperty({example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles this vehicle has killed'})
     @Column({
         type: 'json',
     })
     // eslint-disable-next-line @typescript-eslint/ban-types
     vehicleKillMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
 
-    @ApiProperty({type: 'json', example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles that have killed this vehicle'})
+    @ApiProperty({example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles that have killed this vehicle'})
     @Column({
         type: 'json',
     })
     // eslint-disable-next-line @typescript-eslint/ban-types
     vehicleDeathMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
 
-    @ApiProperty({type: 'json', example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles this vehicle has teamkilled'})
+    @ApiProperty({example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles this vehicle has teamkilled'})
     @Column({
         type: 'json',
     })
     // eslint-disable-next-line @typescript-eslint/ban-types
     vehicleTeamkillMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
 
-    @ApiProperty({type: 'json', example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles that have teamkilled this vehicle'})
+    @ApiProperty({example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles that have teamkilled this vehicle'})
     @Column({
         type: 'json',
     })
