@@ -47,10 +47,19 @@ export default class MongoOperationsService {
 
     public async insertOne(entity: any, doc: any): Promise<ObjectID> {
         doc = this.transform(doc);
-        const result = await this.em.insertOne(entity, doc);
 
-        if (result.insertedCount > 0) {
-            return result.insertedId;
+        try {
+            const result = await this.em.insertOne(entity, doc);
+
+            if (result.insertedCount > 0) {
+                return result.insertedId;
+            }
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            if (!error.message.includes('E11000')) {
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
+                throw new Error(`insertOne failed! E: ${error.message}`);
+            }
         }
 
         throw new Error(`insertOne failed! No documents were inserted! ${JSON.stringify(doc)}`);
@@ -58,10 +67,19 @@ export default class MongoOperationsService {
 
     public async insertMany(entity: any, docs: any[]): Promise<ObjectID[]> {
         docs = this.transform(docs);
-        const result = await this.em.insertMany(entity, docs);
 
-        if (result.insertedCount > 0) {
-            return result.insertedIds;
+        try {
+            const result = await this.em.insertMany(entity, docs);
+
+            if (result.insertedCount > 0) {
+                return result.insertedIds;
+            }
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            if (!error.message.includes('E11000')) {
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
+                throw new Error(`insertMany failed! E: ${error.message}`);
+            }
         }
 
         throw new Error(`insertMany failed! No documents were inserted! ${JSON.stringify(docs)}`);
@@ -82,9 +100,18 @@ export default class MongoOperationsService {
             });
         });
 
-        const result = await this.em.bulkWrite(entity, operations, {ordered: true});
+        try {
+            const result = await this.em.bulkWrite(entity, operations, {ordered: true});
+            return result.upsertedCount ? result.upsertedCount > 0 : false;
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            if (!error.message.includes('E11000')) {
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
+                throw new Error(`upsert failed! E: ${error.message}`);
+            }
 
-        return result.upsertedCount ? result.upsertedCount > 0 : false;
+            return true;
+        }
     }
 
     /* eslint-disable */
