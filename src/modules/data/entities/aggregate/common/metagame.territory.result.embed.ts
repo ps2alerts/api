@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column} from 'typeorm';
+import {Faction} from '../../../constants/faction.consts';
 
 export default class MetagameTerritoryResultEmbed {
     @Column({
@@ -21,6 +22,11 @@ export default class MetagameTerritoryResultEmbed {
         type: 'number',
     })
     cutoff: number;
+
+    @Column({
+        type: 'number',
+    })
+    winner: Faction;
 
     @Column({
         type: 'boolean',
