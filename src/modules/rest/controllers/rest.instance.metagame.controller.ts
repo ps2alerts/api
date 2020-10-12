@@ -29,6 +29,7 @@ export class RestInstanceMetagameController {
         status: 200,
         description: 'A list of active metagame instances',
         type: InstanceMetagameTerritoryEntity,
+        isArray: true,
     })
     @UseInterceptors(ClassSerializerInterceptor)
     async findActives(@Query('world') world: string): Promise<InstanceMetagameTerritoryEntity[]> {
