@@ -19,6 +19,7 @@ import InstanceFactionCombatAggregateEntity from '../data/entities/aggregate/ins
 import InstanceOutfitAggregateEntity from '../data/entities/aggregate/instance/instance.outfit.aggregate.entity';
 import InstancePopulationAggregateEntity from '../data/entities/aggregate/instance/instance.population.aggregate.entity';
 import InstanceVehicleAggregateEntity from '../data/entities/aggregate/instance/instance.vehicle.aggregate.entity';
+import InstanceVehicleCharacterAggregateEntity from '../data/entities/aggregate/instance/instance.vehicle.character.aggregate.entity';
 import InstanceWeaponAggregateEntity from '../data/entities/aggregate/instance/instance.weapon.aggregate.entity';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 // REST Global Aggregate Controllers
@@ -36,6 +37,7 @@ import RestInstanceFacilityControlAggregateController from './controllers/aggreg
 import RestInstanceFactionCombatAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.faction.combat.controller';
 import RestInstanceOutfitAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.outfit.controller';
 import RestInstanceVehicleAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.vehicle.controller';
+import RestInstanceVehicleCharacterAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.vehicle.character.controller';
 import RestInstanceWeaponAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.weapon.controller';
 import RestInstancePopulationAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.population.controller';
 // Others
@@ -65,6 +67,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
             InstanceOutfitAggregateEntity,
             InstancePopulationAggregateEntity,
             InstanceVehicleAggregateEntity,
+            InstanceVehicleCharacterAggregateEntity,
             InstanceWeaponAggregateEntity,
             // Instance Event Entities
             InstanceFacilityControlEntity,
@@ -88,6 +91,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
         RestInstanceOutfitAggregateController,
         RestInstancePopulationAggregateController,
         RestInstanceVehicleAggregateController,
+        RestInstanceVehicleCharacterAggregateController,
         RestInstanceWeaponAggregateController,
         // Instance Event Controllers
         RestInstanceMetagameController,

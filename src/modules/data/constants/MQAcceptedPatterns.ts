@@ -17,6 +17,7 @@ export enum MQAcceptedPatterns {
     INSTANCE_OUTFIT_AGGREGATE = 'instanceOutfitAggregate',
     INSTANCE_POPULATION_AGGREGATE = 'instancePopulationAggregate',
     INSTANCE_VEHICLE_AGGREGATE = 'instanceVehicleAggregate',
+    INSTANCE_VEHICLE_CHARACTER_AGGREGATE = 'instanceVehicleCharacterAggregate',
     INSTANCE_WEAPON_AGGREGATE = 'instanceWeaponAggregate',
     // Event handles
     INSTANCE_DEATH = 'instanceDeathEvent',
