@@ -45,7 +45,6 @@ export class RestInstanceMetagameController {
 
     @Get('/territory-control')
     @ApiOperation({summary: 'Return a paginated list of metagame territory control instances, optionally requested by world'})
-    @UseInterceptors(ClassSerializerInterceptor)
     @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
     @ApiResponse({
         status: 200,
