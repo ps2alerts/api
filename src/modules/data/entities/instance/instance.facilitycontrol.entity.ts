@@ -58,7 +58,7 @@ export default class InstanceFacilityControlEntity {
     })
     isDefence: boolean;
 
-    @ApiProperty({example: '37537074285161814', description: 'Outfit ID of the outfit that captured the facility'})
+    @ApiProperty({example: '37509488620604883', description: 'Outfit ID of the outfit that captured the facility'})
     @Column({
         type: 'string',
         nullable: true,

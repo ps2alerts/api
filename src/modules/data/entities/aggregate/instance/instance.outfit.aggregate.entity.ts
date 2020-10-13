@@ -18,7 +18,7 @@ export default class InstanceOutfitAggregateEntity {
     })
     instance: string;
 
-    @ApiProperty({example: '37537074285161814', description: 'Census generated Outfit ID'})
+    @ApiProperty({example: '37509488620604883', description: 'Census generated Outfit ID'})
     @Column({
         type: 'string',
     })

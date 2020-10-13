@@ -13,7 +13,7 @@ export default class GlobalCharacterAggregateEntity {
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({example: '5428109895939169921', description: 'Unique Census generated string value ID assigned to each character'})
+    @ApiProperty({example: '5428010618035323201', description: 'Unique Census generated string value ID assigned to each character'})
     @Column({
         type: 'string',
     })

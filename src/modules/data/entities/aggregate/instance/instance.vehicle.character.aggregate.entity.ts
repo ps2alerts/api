@@ -26,7 +26,7 @@ export default class InstanceVehicleCharacterAggregateEntity {
     })
     vehicle: Vehicle;
 
-    @ApiProperty({example: 1, description: 'Character ID'})
+    @ApiProperty({example: '5428010618035323201', description: 'Character ID'})
     @Column({
         type: 'string',
     })

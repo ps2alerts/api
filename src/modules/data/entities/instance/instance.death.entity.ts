@@ -10,7 +10,7 @@ import {Loadout, loadoutArray} from '../../constants/loadout.consts';
 @Index(['instance', 'attacker', 'character', 'timestamp'], {unique: true})
 
 export default class InstanceDeathEntity {
-    @ObjectIdColumn()    
+    @ObjectIdColumn()
     @Exclude()
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _id: ObjectID;
@@ -27,7 +27,7 @@ export default class InstanceDeathEntity {
     })
     attacker: string;
 
-    @ApiProperty({example: '5428936604143528433', description: 'Character ID of the victim'})
+    @ApiProperty({example: '5428010618035323201', description: 'Character ID of the victim'})
     @Column({
         type: 'string',
     })

@@ -7,7 +7,6 @@ import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../constants/eve
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import MetagameTerritoryResultEmbed from '../aggregate/common/metagame.territory.result.embed';
-import {Faction} from '../../constants/faction.consts';
 
 @Entity({
     name: 'instance_metagame_territories',
@@ -78,7 +77,7 @@ export default class InstanceMetagameTerritoryEntity {
     })
     state: Ps2alertsEventState;
 
-    @ApiProperty({example: {vs: 34, nc: 33, tr: 33, cutoff: 0, winner: Faction.VANU_SOVEREIGNTY, draw: false}, description: 'Victory data for the instance'})
+    @ApiProperty({description: 'Victory data for the instance'})
     @Column(() => MetagameTerritoryResultEmbed)
     result: MetagameTerritoryResultEmbed;
 }

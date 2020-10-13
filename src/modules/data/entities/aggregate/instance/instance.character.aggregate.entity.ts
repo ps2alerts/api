@@ -18,7 +18,7 @@ export default class InstanceCharacterAggregateEntity {
     })
     instance: string;
 
-    @ApiProperty({example: '5428109895939169921', description: 'Unique Census generated string value ID assigned to each character'})
+    @ApiProperty({example: '5428010618035323201', description: 'Unique Census generated string value ID assigned to each character'})
     @Column({
         type: 'string',
     })
@@ -59,7 +59,7 @@ export default class InstanceCharacterAggregateEntity {
     })
     headshots: number;
 
-    @ApiProperty({example: '37537074285161814', description: 'Outfit ID'})
+    @ApiProperty({example: '37509488620604883', description: 'Outfit ID'})
     @Column({
         type: 'string',
         nullable: true,
