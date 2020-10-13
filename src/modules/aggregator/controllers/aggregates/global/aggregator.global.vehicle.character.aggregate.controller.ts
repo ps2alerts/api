@@ -6,7 +6,7 @@ import AggregatorDataHandler from '../../../aggregator.data.handler';
 import GlobalVehicleCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.vehicle.character.aggregate.entity';
 
 @Controller()
-export default class AggregatorGlobalVehicleAggregateController {
+export default class AggregatorGlobalVehicleCharacterAggregateController {
     constructor(private readonly aggregatorDataHandler: AggregatorDataHandler) {}
 
     @EventPattern(MQAcceptedPatterns.GLOBAL_VEHICLE_CHARACTER_AGGREGATE)

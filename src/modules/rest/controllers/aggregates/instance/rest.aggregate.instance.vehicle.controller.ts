@@ -1,7 +1,8 @@
-import {Controller, Get, Inject, Param} from '@nestjs/common';
+import {Controller, Get, Inject, Param, ParseIntPipe} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceVehicleAggregateEntity from '../../../../data/entities/aggregate/instance/instance.vehicle.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
+import {Vehicle} from '../../../../data/constants/vehicle.consts';
 
 @ApiTags('Instance Vehicle Aggregates')
 @Controller('aggregates')
@@ -29,7 +30,10 @@ export default class RestInstanceVehicleAggregateController {
         description: 'The InstanceVehicleAggregateEntity aggregate',
         type: InstanceVehicleAggregateEntity,
     })
-    async findOne(@Param('instance') instance: string, @Param('vehicle') vehicle: string): Promise<InstanceVehicleAggregateEntity> {
+    async findOne(
+        @Param('instance') instance: string,
+            @Param('vehicle', ParseIntPipe) vehicle: Vehicle,
+    ): Promise<InstanceVehicleAggregateEntity> {
         return await this.mongoOperationsService.findOne(InstanceVehicleAggregateEntity, {vehicle});
     }
 }

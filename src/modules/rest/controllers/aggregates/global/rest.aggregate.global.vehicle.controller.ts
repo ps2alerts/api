@@ -1,7 +1,9 @@
-import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Param, ParseIntPipe, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalVehicleAggregateEntity from '../../../../data/entities/aggregate/global/global.vehicle.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
+import {Vehicle} from '../../../../data/constants/vehicle.consts';
+import {World} from '../../../../data/constants/world.consts';
 
 @ApiTags('Global Vehicle Aggregates')
 @Controller('aggregates')
@@ -18,9 +20,9 @@ export default class RestGlobalVehicleAggregateController {
         type: GlobalVehicleAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world') world?: string): Promise<GlobalVehicleAggregateEntity[]> {
+    async findAll(@Query('world', ParseIntPipe) world?: World): Promise<GlobalVehicleAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world: parseInt(world, 10)})
+            ? await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity);
     }
 
@@ -31,9 +33,12 @@ export default class RestGlobalVehicleAggregateController {
         description: 'The GlobalVehicleAggregateEntity aggregate(s)',
         type: GlobalVehicleAggregateEntity,
     })
-    async findOne(@Param('vehicle') vehicle: string, @Query('world') world?: string): Promise<GlobalVehicleAggregateEntity | GlobalVehicleAggregateEntity[]> {
+    async findOne(
+        @Param('vehicle', ParseIntPipe) vehicle: Vehicle,
+            @Query('world', ParseIntPipe) world?: World,
+    ): Promise<GlobalVehicleAggregateEntity | GlobalVehicleAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalVehicleAggregateEntity, {vehicle: parseInt(vehicle, 10), world: parseInt(world, 10)})
-            : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {vehicle: parseInt(vehicle, 10)});
+            ? await this.mongoOperationsService.findOne(GlobalVehicleAggregateEntity, {vehicle, world})
+            : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {vehicle});
     }
 }

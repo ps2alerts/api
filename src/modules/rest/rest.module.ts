@@ -10,6 +10,7 @@ import GlobalFacilityControlAggregateEntity from '../data/entities/aggregate/glo
 import GlobalFactionCombatAggregateEntity from '../data/entities/aggregate/global/global.faction.combat.aggregate.entity';
 import GlobalOutfitAggregateEntity from '../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import GlobalVehicleAggregateEntity from '../data/entities/aggregate/global/global.vehicle.aggregate.entity';
+import GlobalVehicleCharacterAggregateEntity from '../data/entities/aggregate/global/global.vehicle.character.aggregate.entity';
 import GlobalWeaponAggregateEntity from '../data/entities/aggregate/global/global.weapon.aggregate.entity';
 // Instance Aggregate Entities
 import InstanceCharacterAggregateEntity from '../data/entities/aggregate/instance/instance.character.aggregate.entity';
@@ -28,6 +29,7 @@ import RestGlobalCharacterAggregateController from './controllers/aggregates/glo
 import RestGlobalFactionCombatAggregateController from './controllers/aggregates/global/rest.aggregate.global.faction.combat.controller';
 import RestGlobalOutfitAggregateController from './controllers/aggregates/global/rest.aggregate.global.outfit.controller';
 import RestGlobalVehicleAggregateController from './controllers/aggregates/global/rest.aggregate.global.vehicle.controller';
+import RestGlobalVehicleCharacterAggregateController from './controllers/aggregates/global/rest.aggregate.global.vehicle.character.controller';
 import RestGlobalWeaponAggregateController from './controllers/aggregates/global/rest.aggregate.global.weapon.controller';
 import RestGlobalFacilityControlAggregateController from './controllers/aggregates/global/rest.aggregate.global.facility.control.controller';
 // REST Instance Aggregate Controllers
@@ -58,6 +60,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
             GlobalFactionCombatAggregateEntity,
             GlobalOutfitAggregateEntity,
             GlobalVehicleAggregateEntity,
+            GlobalVehicleCharacterAggregateEntity,
             GlobalWeaponAggregateEntity,
             // Instance Aggregate Entities
             InstanceCharacterAggregateEntity,
@@ -82,6 +85,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
         RestGlobalFactionCombatAggregateController,
         RestGlobalOutfitAggregateController,
         RestGlobalVehicleAggregateController,
+        RestGlobalVehicleCharacterAggregateController,
         RestGlobalWeaponAggregateController,
         // Instance Aggregate Controllers
         RestInstanceCharacterAggregateController,
