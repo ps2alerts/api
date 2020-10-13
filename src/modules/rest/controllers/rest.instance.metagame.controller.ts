@@ -32,7 +32,7 @@ export class RestInstanceMetagameController {
         isArray: true,
     })
     @UseInterceptors(ClassSerializerInterceptor)
-    async findActives(@Query('world') world: string): Promise<InstanceMetagameTerritoryEntity[]> {
+    async findActives(@Query('world', NullableIntPipe) world: string): Promise<InstanceMetagameTerritoryEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {world: parseInt(world, 10), state: Ps2alertsEventState.STARTED})
             : await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED});
@@ -47,7 +47,7 @@ export class RestInstanceMetagameController {
         type: InstanceMetagameTerritoryEntity,
         isArray: true,
     })
-    async findAll(@Query('world') world: string): Promise<InstanceMetagameTerritoryEntity[]> {
+    async findAll(@Query('world', NullableIntPipe) world: string): Promise<InstanceMetagameTerritoryEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {world: parseInt(world, 10)})
             : await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity);

@@ -4,6 +4,9 @@ import GlobalVehicleCharacterAggregateEntity from '../../../../data/entities/agg
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {Vehicle} from '../../../../data/constants/vehicle.consts';
 import {World} from '../../../../data/constants/world.consts';
+import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
+import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
+import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
 
 @ApiTags('Global Vehicle Character Aggregates')
 @Controller('aggregates')
@@ -14,13 +17,14 @@ export default class RestGlobalVehicleCharacterController {
 
     @Get('global/vehicle/character')
     @ApiOperation({summary: 'Returns a list of GlobalVehicleCharacterAggregateEntity aggregates for a world'})
+    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
     @ApiResponse({
         status: 200,
         description: 'A list of GlobalVehicleCharacterAggregateEntity aggregates',
         type: GlobalVehicleCharacterAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', ParseIntPipe) world?: World): Promise<GlobalVehicleCharacterAggregateEntity[]> {
+    async findAll(@Query('world', NullableIntPipe) world?: World): Promise<GlobalVehicleCharacterAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity);
@@ -28,6 +32,7 @@ export default class RestGlobalVehicleCharacterController {
 
     @Get('global/vehicle/character/:character')
     @ApiOperation({summary: 'Returns GlobalVehicleCharacterAggregateEntity aggregate for a character'})
+    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
     @ApiResponse({
         status: 200,
         description: 'GlobalVehicleCharacterAggregateEntity aggregate for character',
@@ -36,7 +41,7 @@ export default class RestGlobalVehicleCharacterController {
     })
     async findOne(
         @Param('character') character: string,
-            @Query('world', ParseIntPipe) world?: World,
+            @Query('world', NullableIntPipe) world?: World,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, character})
@@ -45,6 +50,7 @@ export default class RestGlobalVehicleCharacterController {
 
     @Get('global/vehicle/character/:character/:vehicle')
     @ApiOperation({summary: 'Returns GlobalVehicleCharacterAggregateEntity aggregate for a character and a specific vehicle'})
+    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
     @ApiResponse({
         status: 200,
         description: 'GlobalVehicleCharacterAggregateEntity aggregate for character an vehicle',
@@ -54,7 +60,7 @@ export default class RestGlobalVehicleCharacterController {
     async findOneByVehicle(
         @Param('character') character: string,
             @Param('vehicle', ParseIntPipe) vehicle: Vehicle,
-            @Query('world', ParseIntPipe) world?: World,
+            @Query('world', NullableIntPipe) world?: World,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalVehicleCharacterAggregateEntity, {world, character, vehicle})

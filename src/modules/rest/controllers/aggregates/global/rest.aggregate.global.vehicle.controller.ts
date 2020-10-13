@@ -4,6 +4,9 @@ import GlobalVehicleAggregateEntity from '../../../../data/entities/aggregate/gl
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {Vehicle} from '../../../../data/constants/vehicle.consts';
 import {World} from '../../../../data/constants/world.consts';
+import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
+import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
+import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
 
 @ApiTags('Global Vehicle Aggregates')
 @Controller('aggregates')
@@ -14,13 +17,14 @@ export default class RestGlobalVehicleAggregateController {
 
     @Get('global/vehicle')
     @ApiOperation({summary: 'Return a filtered list of GlobalVehicleAggregateEntity aggregates'})
+    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalVehicleAggregateEntity aggregates',
         type: GlobalVehicleAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', ParseIntPipe) world?: World): Promise<GlobalVehicleAggregateEntity[]> {
+    async findAll(@Query('world', NullableIntPipe) world?: World): Promise<GlobalVehicleAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity);
@@ -28,6 +32,7 @@ export default class RestGlobalVehicleAggregateController {
 
     @Get('global/vehicle/:vehicle')
     @ApiOperation({summary: 'Returns GlobalVehicleAggregateEntity aggregate(s) with given Id (or one of each world)'})
+    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
     @ApiResponse({
         status: 200,
         description: 'The GlobalVehicleAggregateEntity aggregate(s)',
@@ -35,7 +40,7 @@ export default class RestGlobalVehicleAggregateController {
     })
     async findOne(
         @Param('vehicle', ParseIntPipe) vehicle: Vehicle,
-            @Query('world', ParseIntPipe) world?: World,
+            @Query('world', NullableIntPipe) world?: World,
     ): Promise<GlobalVehicleAggregateEntity | GlobalVehicleAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalVehicleAggregateEntity, {vehicle, world})

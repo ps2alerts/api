@@ -1,4 +1,4 @@
-import {Controller, Get, Inject, Param} from '@nestjs/common';
+import {Controller, Get, Inject, Param, ParseIntPipe} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceFacilityControlAggregateEntity from '../../../../data/entities/aggregate/instance/instance.facility.control.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
@@ -29,7 +29,10 @@ export default class RestInstanceFacilityControlAggregateController {
         description: 'The InstanceFacilityControlAggregateEntity aggregate',
         type: InstanceFacilityControlAggregateEntity,
     })
-    async findOne(@Param('instance') instance: string, @Param('facility') facility: string): Promise<InstanceFacilityControlAggregateEntity> {
-        return await this.mongoOperationsService.findOne(InstanceFacilityControlAggregateEntity, {instance, facility: parseInt(facility, 10)});
+    async findOne(
+        @Param('instance') instance: string,
+            @Param('facility', ParseIntPipe) facility: number,
+    ): Promise<InstanceFacilityControlAggregateEntity> {
+        return await this.mongoOperationsService.findOne(InstanceFacilityControlAggregateEntity, {instance, facility});
     }
 }

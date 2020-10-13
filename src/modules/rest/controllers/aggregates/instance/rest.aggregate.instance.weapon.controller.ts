@@ -1,4 +1,4 @@
-import {Controller, Get, Inject, Param} from '@nestjs/common';
+import {Controller, Get, Inject, Param, ParseIntPipe} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceWeaponAggregateEntity from '../../../../data/entities/aggregate/instance/instance.weapon.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
@@ -29,7 +29,10 @@ export default class RestInstanceWeaponAggregateController {
         description: 'The InstanceWeaponAggregateEntity aggregate',
         type: InstanceWeaponAggregateEntity,
     })
-    async findOne(@Param('instance') instance: number, @Param('weapon') weapon: string): Promise<InstanceWeaponAggregateEntity> {
-        return this.mongoOperationsService.findOne(InstanceWeaponAggregateEntity, {instance, weapon: parseInt(weapon, 10)});
+    async findOne(
+        @Param('instance') instance: number,
+            @Param('weapon', ParseIntPipe) weapon: number,
+    ): Promise<InstanceWeaponAggregateEntity> {
+        return this.mongoOperationsService.findOne(InstanceWeaponAggregateEntity, {instance, weapon});
     }
 }
