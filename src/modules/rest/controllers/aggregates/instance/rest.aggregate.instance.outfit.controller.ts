@@ -29,7 +29,10 @@ export default class RestInstanceOutfitAggregateController {
         description: 'The InstanceOutfitAggregateEntity aggregate',
         type: InstanceOutfitAggregateEntity,
     })
-    async findOne(@Param('instance') instance: string, @Param('outfit') outfit: string): Promise<InstanceOutfitAggregateEntity> {
+    async findOne(
+        @Param('instance') instance: string,
+            @Param('outfit') outfit: string,
+    ): Promise<InstanceOutfitAggregateEntity> {
         return this.mongoOperationsService.findOne(InstanceOutfitAggregateEntity, {instance, outfit});
     }
 }

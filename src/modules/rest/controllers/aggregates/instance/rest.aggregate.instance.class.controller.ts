@@ -1,7 +1,8 @@
-import {Controller, Get, Inject, Param} from '@nestjs/common';
+import {Controller, Get, Inject, Param, ParseIntPipe} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceClassAggregateEntity from '../../../../data/entities/aggregate/instance/instance.class.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
+import {Loadout} from '../../../../data/constants/loadout.consts';
 
 @ApiTags('Instance Class Aggregates')
 @Controller('aggregates')
@@ -30,7 +31,10 @@ export default class RestInstanceClassAggregateController {
         description: 'The InstanceClassAggregateEntity aggregate',
         type: InstanceClassAggregateEntity,
     })
-    async findOne(@Param('instance') instance: string, @Param('loadout') loadout: string): Promise<InstanceClassAggregateEntity> {
-        return await this.mongoOperationsService.findOne(InstanceClassAggregateEntity, {instance, class: parseInt(loadout, 10)});
+    async findOne(
+        @Param('instance') instance: string,
+            @Param('loadout', ParseIntPipe) loadout: Loadout,
+    ): Promise<InstanceClassAggregateEntity> {
+        return await this.mongoOperationsService.findOne(InstanceClassAggregateEntity, {instance, class: loadout});
     }
 }

@@ -29,7 +29,10 @@ export default class RestInstanceCharacterAggregateController {
         description: 'The InstanceCharacterAggregateEntity aggregate',
         type: InstanceCharacterAggregateEntity,
     })
-    async findOne(@Param('instance') instance: string, @Param('character') character: string): Promise<InstanceCharacterAggregateEntity> {
+    async findOne(
+        @Param('instance') instance: string,
+            @Param('character') character: string,
+    ): Promise<InstanceCharacterAggregateEntity> {
         return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {instance, character});
     }
 }
