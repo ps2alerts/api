@@ -55,38 +55,3 @@
         command: "npm install --prefix /app"
         labels:
           traefik.enable: "false"
-
-    - name: Start API Dev Image
-      docker_container:
-        name: ps2alerts-api
-        image: ps2alerts/api:dev
-        state: started
-        restart: no
-        recreate: yes
-        restart_policy: "no"
-        volumes:
-          - "{{ root_dir | realpath }}:/app:rw"
-        ports:
-          - "3000:3000"
-        networks:
-          - name: "ps2alerts"
-        networks_cli_compatible: no
-        tty: true
-        env:
-          NODE_ENV: "development"
-          VERSION: "12345"
-          DB_HOST: "ps2alerts-db"
-          DB_PORT: "27017"
-          DB_USER: "root"
-          DB_PASS: "foobar"
-          DB_NAME: "ps2alerts"
-          DB_DEBUG: "true"
-          RABBITMQ_HOST: "ps2alerts-mq"
-        labels:
-          traefik.enable: "true"
-          traefik.http.routers.ps2alerts_api.rule: "Host(`dev.api.ps2alerts.com`)"
-          traefik.http.routers.ps2alerts_api.service: "ps2alerts_api_service"
-          traefik.http.services.ps2alerts_api_service.loadbalancer.server.port: "3000"
-          traefik.http.services.ps2alerts_api_service.loadbalancer.server.scheme: "http"
-          traefik.http.services.myservice.loadbalancer.passhostheader: true
-          traefik.port: "3000"

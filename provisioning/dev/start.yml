@@ -4,6 +4,11 @@
     - "{{ playbook_dir }}/../vars.yml"
 #    - "{{ playbook_dir }}/../vars_local.yml"
   tasks:
+    - name: Delete dist folder
+      file:
+        path: "{{ root_dir }}/dist"
+        state: absent
+
     - name: Start API Dev Image
       docker_container:
         name: ps2alerts-api
