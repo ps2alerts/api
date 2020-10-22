@@ -4,7 +4,7 @@ import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggreg
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
-import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
 import {World} from '../../../../data/constants/world.consts';
 
 @ApiTags('Global Faction Combat Aggregates')
@@ -34,7 +34,7 @@ export default class RestGlobalFactionCombatAggregateController {
         description: 'The GlobalFactionCombatAggregateEntity aggregate',
         type: GlobalFactionCombatAggregateEntity,
     })
-    async findOne(@Param('world', NullableIntPipe) world: World): Promise<GlobalFactionCombatAggregateEntity> {
+    async findOne(@Param('world', OptionalIntPipe) world: World): Promise<GlobalFactionCombatAggregateEntity> {
         return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world});
     }
 }

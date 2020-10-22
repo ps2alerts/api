@@ -33,16 +33,10 @@ export default class MongoOperationsService {
      * If no filter is provided, all entities of the type is provided
      * @param entity entity type to return
      * @param filter object provided to filter entities
+     * @param pageObject object provided for sorting and pagination
      */
-    public async findMany(entity: any, filter?: any): Promise<any[]> {
-        if (filter) {
-            return await this.em.find(
-                entity,
-                {where: filter},
-            );
-        }
-
-        return this.em.find(entity);
+    public async findMany(entity: any, filter?: any, pageObject?: object): Promise<any[]> {
+        return await this.em.find(entity, this.createFindOptions(filter, pageObject));
     }
 
     public async insertOne(entity: any, doc: any): Promise<ObjectID> {
@@ -115,6 +109,16 @@ export default class MongoOperationsService {
     }
 
     /* eslint-disable */
+    private createFindOptions(filter?:any, pageObject?:object): object{
+        var findOptions: {[k: string]: any} = {};
+        if(filter) findOptions.where = filter;
+        if(pageObject) {
+            findOptions = {...findOptions, ...pageObject};
+        }
+        console.log("FindOptions",findOptions);
+        return findOptions;
+    }
+
     private transform(docs: any): any {
         // Date handling
         if (docs.constructor === Array) {

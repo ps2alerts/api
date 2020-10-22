@@ -4,7 +4,7 @@ import GlobalVehicleCharacterAggregateEntity from '../../../../data/entities/agg
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {Vehicle} from '../../../../data/constants/vehicle.consts';
 import {World} from '../../../../data/constants/world.consts';
-import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
 
@@ -24,7 +24,7 @@ export default class RestGlobalVehicleCharacterController {
         type: GlobalVehicleCharacterAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', NullableIntPipe) world?: World): Promise<GlobalVehicleCharacterAggregateEntity[]> {
+    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalVehicleCharacterAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity);
@@ -41,7 +41,7 @@ export default class RestGlobalVehicleCharacterController {
     })
     async findOne(
         @Param('character') character: string,
-            @Query('world', NullableIntPipe) world?: World,
+            @Query('world', OptionalIntPipe) world?: World,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, character})
@@ -60,7 +60,7 @@ export default class RestGlobalVehicleCharacterController {
     async findOneByVehicle(
         @Param('character') character: string,
             @Param('vehicle', ParseIntPipe) vehicle: Vehicle,
-            @Query('world', NullableIntPipe) world?: World,
+            @Query('world', OptionalIntPipe) world?: World,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalVehicleCharacterAggregateEntity, {world, character, vehicle})

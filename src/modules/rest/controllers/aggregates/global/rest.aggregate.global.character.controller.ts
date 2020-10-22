@@ -4,7 +4,7 @@ import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
-import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
 import {World} from '../../../../data/constants/world.consts';
 
 @ApiTags('Global Character Aggregates')
@@ -23,7 +23,7 @@ export default class RestGlobalCharacterAggregateController {
         type: GlobalCharacterAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', NullableIntPipe) world?: World): Promise<GlobalCharacterAggregateEntity[]> {
+    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalCharacterAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity);
