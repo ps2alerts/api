@@ -36,7 +36,7 @@ async function bootstrap(): Promise<void> {
             queue: config.get('rabbitmq.queue'),
             queueOptions: {
                 durable: true,
-                messageTtl: 7200000,
+                messageTtl: 10800000,
             },
             noAck: false,
             prefetchCount: 1000,
