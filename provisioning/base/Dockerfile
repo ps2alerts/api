@@ -2,9 +2,9 @@ FROM node:12
 
 USER root
 
-COPY ./files/entrypoint.sh /etc/service/entrypoint.sh
-
 RUN npm i -g @nestjs/cli
+
+COPY ./files/entrypoint.sh /etc/service/entrypoint.sh
 
 USER node
 
