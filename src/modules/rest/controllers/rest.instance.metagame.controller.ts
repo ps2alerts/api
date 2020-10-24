@@ -40,15 +40,17 @@ export class RestInstanceMetagameController {
     @UseInterceptors(ClassSerializerInterceptor)
     async findActives(
         @Query('world', OptionalIntPipe) world?: World,
-        @Query('sortBy') sortBy?: string,
-        @Query('order') order?: string,
-        @Query('page', OptionalIntPipe) page?: number,
-        @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
         const worldObject: {[k: string]: any} = {state: Ps2alertsEventState.STARTED};
+
         if (world) {
             worldObject.world = world;
         }
+
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, Pagination.create(sortBy, order, page, pageSize));
     }
 
@@ -63,15 +65,17 @@ export class RestInstanceMetagameController {
     })
     async findAllTerritoryControl(
         @Query('world', OptionalIntPipe) world?: World,
-        @Query('sortBy') sortBy?: string,
-        @Query('order') order?: string,
-        @Query('page', OptionalIntPipe) page?: number,
-        @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
         const worldObject: {[k: string]: any} = {};
+
         if (world) {
             worldObject.world = world;
         }
+
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, Pagination.create(sortBy, order, page, pageSize));
     }
 

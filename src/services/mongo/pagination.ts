@@ -6,10 +6,10 @@ export default class Pagination {
 
     // Defaults
     private constructor(
-        sortBy: string = "_id",
-        order: string = "ASC",
-        page: number = 1,
-        pageSize: number = 100,
+        sortBy = '_id',
+        order = 'ASC',
+        page = 1,
+        pageSize = 100,
     ) {
         this.sortBy = sortBy;
         this.order = order;
@@ -22,7 +22,7 @@ export default class Pagination {
             take: this.pageSize,
             skip: ((this.page - 1) * this.pageSize),
             order: {
-                [this.sortBy]: this.order
+                [this.sortBy]: this.order,
             },
         };
     }
@@ -36,6 +36,7 @@ export default class Pagination {
         if (sortBy === undefined && order === undefined && page === undefined && pageSize === undefined) {
             return {};
         }
+
         return new Pagination(sortBy, order, page, pageSize).toFindOptions();
     }
 }
