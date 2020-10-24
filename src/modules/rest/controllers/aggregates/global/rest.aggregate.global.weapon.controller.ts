@@ -2,7 +2,7 @@ import {Controller, Get, Inject, Param, ParseIntPipe, Query} from '@nestjs/commo
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalWeaponAggregateEntity from '../../../../data/entities/aggregate/global/global.weapon.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
-import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
 import {World} from '../../../../data/constants/world.consts';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
@@ -23,7 +23,7 @@ export default class RestGlobalWeaponAggregateController {
         type: GlobalWeaponAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', NullableIntPipe) world?: World): Promise<GlobalWeaponAggregateEntity[]> {
+    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalWeaponAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity);
@@ -39,7 +39,7 @@ export default class RestGlobalWeaponAggregateController {
     })
     async findOne(
         @Param('weapon', ParseIntPipe) weapon: number,
-            @Query('world', NullableIntPipe) world?: World,
+            @Query('world', OptionalIntPipe) world?: World,
     ): Promise<GlobalWeaponAggregateEntity | GlobalWeaponAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalWeaponAggregateEntity, {weapon, world})

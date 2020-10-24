@@ -2,6 +2,7 @@
 import {MongoEntityManager, ObjectID} from 'typeorm';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
+import Pagination from './pagination';
 
 @Injectable()
 export default class MongoOperationsService {
@@ -33,16 +34,10 @@ export default class MongoOperationsService {
      * If no filter is provided, all entities of the type is provided
      * @param entity entity type to return
      * @param filter object provided to filter entities
+     * @param pageObject object provided for sorting and pagination
      */
-    public async findMany(entity: any, filter?: any): Promise<any[]> {
-        if (filter) {
-            return await this.em.find(
-                entity,
-                {where: filter},
-            );
-        }
-
-        return this.em.find(entity);
+    public async findMany(entity: any, filter?: object, pagination?: Pagination): Promise<any[]> {
+        return await this.em.find(entity, this.createFindOptions(filter, pagination));
     }
 
     public async insertOne(entity: any, doc: any): Promise<ObjectID> {
@@ -115,6 +110,15 @@ export default class MongoOperationsService {
     }
 
     /* eslint-disable */
+    private createFindOptions(filter?: object, pagination?: Pagination): object {
+        let findOptions: {[k: string]: any} = {};
+        if (filter) findOptions.where = filter;
+        if (pagination) {
+            findOptions = {...findOptions, ...pagination};
+        }
+        return findOptions;
+    }
+
     private transform(docs: any): any {
         // Date handling
         if (docs.constructor === Array) {

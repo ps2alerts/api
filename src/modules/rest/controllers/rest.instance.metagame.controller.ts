@@ -3,10 +3,11 @@ import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceMetagameTerritoryEntity from '../../data/entities/instance/instance.metagame.territory.entity';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {Ps2alertsEventState} from '../../data/constants/eventstate.consts';
-import {NullableIntPipe} from '../pipes/NullableIntPipe';
+import {OptionalIntPipe} from '../pipes/OptionalIntPIpe';
 import {World} from '../../data/constants/world.consts';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from './common/rest.world.query';
+import Pagination from '../../../services/mongo/pagination';
 
 @ApiTags('Instances')
 @Controller('instances')
@@ -37,10 +38,20 @@ export class RestInstanceMetagameController {
         isArray: true,
     })
     @UseInterceptors(ClassSerializerInterceptor)
-    async findActives(@Query('world', NullableIntPipe) world?: World): Promise<InstanceMetagameTerritoryEntity[]> {
-        return world
-            ? await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {world, state: Ps2alertsEventState.STARTED})
-            : await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED});
+    async findActives(
+        @Query('world', OptionalIntPipe) world?: World,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<InstanceMetagameTerritoryEntity[]> {
+        const worldObject: {[k: string]: any} = {state: Ps2alertsEventState.STARTED};
+
+        if (world) {
+            worldObject.world = world;
+        }
+
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('/territory-control')
@@ -52,10 +63,20 @@ export class RestInstanceMetagameController {
         type: InstanceMetagameTerritoryEntity,
         isArray: true,
     })
-    async findAllTerritoryControl(@Query('world', NullableIntPipe) world?: World): Promise<InstanceMetagameTerritoryEntity[]> {
-        return world
-            ? await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {world})
-            : await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity);
+    async findAllTerritoryControl(
+        @Query('world', OptionalIntPipe) world?: World,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<InstanceMetagameTerritoryEntity[]> {
+        const worldObject: {[k: string]: any} = {};
+
+        if (world) {
+            worldObject.world = world;
+        }
+
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, new Pagination({sortBy, order, page, pageSize}));
     }
 
 }

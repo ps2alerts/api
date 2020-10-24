@@ -2,7 +2,7 @@ import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalOutfitAggregateEntity from '../../../../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
-import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
 import {World} from '../../../../data/constants/world.consts';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
@@ -23,7 +23,7 @@ export default class RestGlobalOutfitAggregateController {
         type: GlobalOutfitAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', NullableIntPipe) world?: World): Promise<GlobalOutfitAggregateEntity[]> {
+    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalOutfitAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity);
@@ -38,7 +38,7 @@ export default class RestGlobalOutfitAggregateController {
     })
     async findOne(
         @Param('outfit') outfit: string,
-            @Query('world', NullableIntPipe) world?: World,
+            @Query('world', OptionalIntPipe) world?: World,
     ): Promise<GlobalOutfitAggregateEntity | GlobalOutfitAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit, world})
