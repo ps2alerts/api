@@ -4,7 +4,7 @@ import GlobalFacilityControlAggregateEntity from '../../../../data/entities/aggr
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
-import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
 import {World} from '../../../../data/constants/world.consts';
 
 @ApiTags('Global Facility Control Aggregates')
@@ -23,7 +23,7 @@ export default class RestGlobalFacilityControlAggregateController {
         type: GlobalFacilityControlAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', NullableIntPipe) world?: World): Promise<GlobalFacilityControlAggregateEntity[]> {
+    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalFacilityControlAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity);
@@ -39,7 +39,7 @@ export default class RestGlobalFacilityControlAggregateController {
     })
     async findOne(
         @Param('facility', ParseIntPipe) facility: number,
-            @Query('world', NullableIntPipe) world?: World,
+            @Query('world', OptionalIntPipe) world?: World,
     ): Promise<GlobalFacilityControlAggregateEntity | GlobalFacilityControlAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility, world})

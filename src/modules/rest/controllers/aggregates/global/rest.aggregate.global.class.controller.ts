@@ -4,7 +4,7 @@ import GlobalClassAggregateEntity from '../../../../data/entities/aggregate/glob
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
-import {NullableIntPipe} from '../../../pipes/NullableIntPipe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
 import {Loadout} from '../../../../data/constants/loadout.consts';
 import {World} from '../../../../data/constants/world.consts';
 
@@ -24,7 +24,7 @@ export default class RestGlobalClassAggregateController {
         type: GlobalClassAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', NullableIntPipe) world?: World): Promise<GlobalClassAggregateEntity[]> {
+    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalClassAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findMany(GlobalClassAggregateEntity, {world})
             : await this.mongoOperationsService.findMany(GlobalClassAggregateEntity);
@@ -40,7 +40,7 @@ export default class RestGlobalClassAggregateController {
     })
     async findOne(
         @Param('loadout', ParseIntPipe) loadout: Loadout,
-            @Query('world', NullableIntPipe) world?: World,
+            @Query('world', OptionalIntPipe) world?: World,
     ): Promise<GlobalClassAggregateEntity | GlobalClassAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: loadout, world})
