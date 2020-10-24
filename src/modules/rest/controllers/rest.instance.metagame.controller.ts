@@ -51,7 +51,7 @@ export class RestInstanceMetagameController {
             worldObject.world = world;
         }
 
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, Pagination.create(sortBy, order, page, pageSize));
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('/territory-control')
@@ -76,7 +76,7 @@ export class RestInstanceMetagameController {
             worldObject.world = world;
         }
 
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, Pagination.create(sortBy, order, page, pageSize));
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, new Pagination({sortBy, order, page, pageSize}));
     }
 
 }

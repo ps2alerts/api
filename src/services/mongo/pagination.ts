@@ -1,42 +1,21 @@
 export default class Pagination {
-    private readonly sortBy: string;
-    private readonly order: string;
-    private readonly page: number; // Starts from 1
-    private readonly pageSize: number;
+    private readonly take: number | undefined;
+    private readonly skip: number | undefined;
+    private readonly order: {[k: string]: string} | undefined;
 
-    // Defaults
-    private constructor(
-        sortBy = '_id',
-        order = 'ASC',
-        page = 1,
-        pageSize = 100,
-    ) {
-        this.sortBy = sortBy;
-        this.order = order;
-        this.page = page;
-        this.pageSize = pageSize;
-    }
-
-    private toFindOptions(): object {
-        return {
-            take: this.pageSize,
-            skip: ((this.page - 1) * this.pageSize),
-            order: {
-                [this.sortBy]: this.order,
-            },
-        };
-    }
-
-    public static create(
-        sortBy: string | undefined,
-        order: string | undefined,
-        page: number | undefined,
-        pageSize: number | undefined,
-    ): object {
-        if (sortBy === undefined && order === undefined && page === undefined && pageSize === undefined) {
-            return {};
+    public constructor(pageQuery: {sortBy?: string, order?: string, pageSize?: number, page?: number}) {
+        if (pageQuery.pageSize) {
+            this.take = pageQuery.pageSize;
         }
 
-        return new Pagination(sortBy, order, page, pageSize).toFindOptions();
+        if (pageQuery.pageSize && pageQuery.page) {
+            this.skip = (pageQuery.page - 1) * pageQuery.pageSize;
+        }
+
+        if (pageQuery.sortBy && pageQuery.order) {
+            this.order = {
+                [pageQuery.sortBy]: pageQuery.order,
+            };
+        }
     }
 }
