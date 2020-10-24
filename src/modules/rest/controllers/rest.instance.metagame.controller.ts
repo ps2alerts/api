@@ -39,13 +39,16 @@ export class RestInstanceMetagameController {
     })
     @UseInterceptors(ClassSerializerInterceptor)
     async findActives(
-        @Query('world', OptionalIntPipe) world?: World, 
-        @Query('sortBy') sortBy?: string, 
-        @Query('order') order?: string, 
+        @Query('world', OptionalIntPipe) world?: World,
+        @Query('sortBy') sortBy?: string,
+        @Query('order') order?: string,
         @Query('page', OptionalIntPipe) page?: number,
-        @Query('pageSize', OptionalIntPipe) pageSize?: number): Promise<InstanceMetagameTerritoryEntity[]> {
-        var worldObject: {[k: string]: any} = {state: Ps2alertsEventState.STARTED};
-        if(world) worldObject.world = world;
+        @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<InstanceMetagameTerritoryEntity[]> {
+        const worldObject: {[k: string]: any} = {state: Ps2alertsEventState.STARTED};
+        if (world) {
+            worldObject.world = world;
+        }
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, Pagination.create(sortBy, order, page, pageSize));
     }
 
@@ -58,10 +61,18 @@ export class RestInstanceMetagameController {
         type: InstanceMetagameTerritoryEntity,
         isArray: true,
     })
-    async findAllTerritoryControl(@Query('world', OptionalIntPipe) world?: World): Promise<InstanceMetagameTerritoryEntity[]> {
-        return world
-            ? await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {world})
-            : await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity);
+    async findAllTerritoryControl(
+        @Query('world', OptionalIntPipe) world?: World,
+        @Query('sortBy') sortBy?: string,
+        @Query('order') order?: string,
+        @Query('page', OptionalIntPipe) page?: number,
+        @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<InstanceMetagameTerritoryEntity[]> {
+        const worldObject: {[k: string]: any} = {};
+        if (world) {
+            worldObject.world = world;
+        }
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, Pagination.create(sortBy, order, page, pageSize));
     }
 
 }

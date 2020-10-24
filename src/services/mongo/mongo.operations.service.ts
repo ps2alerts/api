@@ -35,7 +35,7 @@ export default class MongoOperationsService {
      * @param filter object provided to filter entities
      * @param pageObject object provided for sorting and pagination
      */
-    public async findMany(entity: any, filter?: any, pageObject?: object): Promise<any[]> {
+    public async findMany(entity: any, filter?: object, pageObject?: object): Promise<any[]> {
         return await this.em.find(entity, this.createFindOptions(filter, pageObject));
     }
 
@@ -109,13 +109,12 @@ export default class MongoOperationsService {
     }
 
     /* eslint-disable */
-    private createFindOptions(filter?:any, pageObject?:object): object{
-        var findOptions: {[k: string]: any} = {};
-        if(filter) findOptions.where = filter;
-        if(pageObject) {
+    private createFindOptions(filter?: object, pageObject?: object): object {
+        let findOptions: {[k: string]: any} = {};
+        if (filter) findOptions.where = filter;
+        if (pageObject) {
             findOptions = {...findOptions, ...pageObject};
         }
-        console.log("FindOptions",findOptions);
         return findOptions;
     }
 
