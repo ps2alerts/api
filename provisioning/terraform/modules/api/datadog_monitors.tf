@@ -67,7 +67,7 @@ resource datadog_monitor "api_high_errors" {
   tags = jsondecode(templatefile("${path.module}/../../dd-tags.tmpl", {environment: var.environment, application: "api"}))
 }
 
-resource datadog_monitor "api_high_restarts_short" {
+resource datadog_monitor "api_high_restarts" {
   name = "PS2Alerts API restarts [${var.environment}]"
   type = "query alert"
   query = "change(sum(last_5m),last_5m):avg:kubernetes.containers.restarts{kube_deployment:ps2alerts-api-${var.environment} > 0.5}, 'agile', 2, direction='above', alert_window='last_5m', interval=20, count_default_zero='true', seasonality='hourly') >= 1"
