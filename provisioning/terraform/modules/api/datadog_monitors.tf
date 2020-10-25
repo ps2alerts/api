@@ -52,11 +52,11 @@ resource datadog_monitor "api_high_cpu" {
 resource datadog_monitor "api_high_errors" {
   name = "PS2Alerts API high errors [${var.environment}]"
   type = "log alert"
-  query = "logs(\"container_name:*api\\-${var.environment}* status:error\").index(\"*\").rollup(\"count\").last(\"10m\") > 1"
+  query = "logs(\"container_name:*api\\-${var.environment}* status:error\").index(\"*\").rollup(\"count\").last(\"10m\") > 5"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "high errors"})
 
   thresholds = {
-    critical = 1
+    critical = 5
   }
 
   notify_no_data = true

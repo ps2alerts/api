@@ -1,2 +1,3 @@
+---
 root_dir: "{{ playbook_dir }}/../../"
 app_dir: "{{ root_dir }}/src"
