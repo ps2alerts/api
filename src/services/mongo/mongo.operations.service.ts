@@ -37,7 +37,7 @@ export default class MongoOperationsService {
      * @param pagination object provided for sorting and pagination
      */
     public async findMany(entity: any, filter?: object, pagination?: Pagination): Promise<any[]> {
-        return await this.em.find(entity, this.createFindOptions(filter, pagination));
+        return await this.em.find(entity, MongoOperationsService.createFindOptions(filter, pagination));
     }
 
     public async insertOne(entity: any, doc: any): Promise<ObjectID> {
@@ -109,16 +109,22 @@ export default class MongoOperationsService {
         }
     }
 
-    /* eslint-disable */
-    private createFindOptions(filter?: object, pagination?: Pagination): object {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    private static createFindOptions(filter?: object, pagination?: Pagination): object {
         let findOptions: {[k: string]: any} = {};
-        if (filter) findOptions.where = filter;
+
+        if (filter) {
+            findOptions.where = filter;
+        }
+
         if (pagination) {
             findOptions = {...findOptions, ...pagination};
         }
+
         return findOptions;
     }
 
+    /* eslint-disable */
     private transform(docs: any): any {
         // Date handling
         if (docs.constructor === Array) {
