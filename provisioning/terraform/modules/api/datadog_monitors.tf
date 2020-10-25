@@ -18,11 +18,11 @@ resource datadog_monitor "api_not_running" {
 resource datadog_monitor "api_high_mem" {
   name = "PS2Alerts API high memory [${var.environment}]"
   type = "metric alert"
-  query = "avg(last_5m):avg:kubernetes.memory.rss{kube_container_name:ps2alerts-api-${var.environment}} > 209715000"
+  query = "avg(last_5m):avg:kubernetes.memory.rss{kube_container_name:ps2alerts-api-${var.environment}} > 235930000"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "high memory"})
 
   thresholds = {
-    critical = 209715000 # 200MB
+    critical = 235930000 # 225MB
   }
 
   notify_no_data = true
