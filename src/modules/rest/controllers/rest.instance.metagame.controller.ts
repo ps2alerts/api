@@ -5,9 +5,9 @@ import MongoOperationsService from '../../../services/mongo/mongo.operations.ser
 import {Ps2alertsEventState} from '../../data/constants/eventstate.consts';
 import {OptionalIntPipe} from '../pipes/OptionalIntPIpe';
 import {World} from '../../data/constants/world.consts';
-import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
-import {WORLD_IMPLICIT_QUERY} from './common/rest.world.query';
+import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import Pagination from '../../../services/mongo/pagination';
+import {COMMON_IMPLICIT_QUERIES} from './common/rest.common.queries';
 
 @ApiTags('Instances')
 @Controller('instances')
@@ -25,12 +25,15 @@ export class RestInstanceMetagameController {
     })
     @UseInterceptors(ClassSerializerInterceptor)
     async findOne(@Param('instance') instanceId: string): Promise<InstanceMetagameTerritoryEntity> {
-        return await this.mongoOperationsService.findOne(InstanceMetagameTerritoryEntity, {instanceId});
+        return await this.mongoOperationsService.findOne(
+            InstanceMetagameTerritoryEntity,
+            {instanceId},
+        );
     }
 
     @Get('/active')
     @ApiOperation({summary: 'Returns all currently running metagame instances, optionally requested by world'})
-    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
+    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'A list of active metagame instances',
@@ -56,7 +59,7 @@ export class RestInstanceMetagameController {
 
     @Get('/territory-control')
     @ApiOperation({summary: 'Return a paginated list of metagame territory control instances, optionally requested by world'})
-    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
+    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'List of MetagameTerritory Instances',
@@ -78,5 +81,4 @@ export class RestInstanceMetagameController {
 
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, new Pagination({sortBy, order, page, pageSize}));
     }
-
 }

@@ -12,9 +12,9 @@ export default class Pagination {
             this.skip = (pageQuery.page - 1) * pageQuery.pageSize;
         }
 
-        if (pageQuery.sortBy && pageQuery.order) {
+        if (pageQuery.sortBy) {
             this.order = {
-                [pageQuery.sortBy]: pageQuery.order,
+                [pageQuery.sortBy]: pageQuery.order ? pageQuery.order.toUpperCase() : 'ASC',
             };
         }
     }
