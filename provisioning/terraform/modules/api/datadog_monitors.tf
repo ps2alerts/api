@@ -35,11 +35,11 @@ resource datadog_monitor "api_high_mem" {
 resource datadog_monitor "api_high_cpu" {
   name = "PS2Alerts API high CPU [${var.environment}]"
   type = "metric alert"
-  query = "avg(last_5m):avg:kubernetes.cpu.usage.total{kube_container_name:ps2alerts-api-${var.environment}} > 150000000"
+  query = "avg(last_5m):avg:kubernetes.cpu.usage.total{kube_container_name:ps2alerts-api-${var.environment}} > 225000000"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "high CPU"})
 
   thresholds = {
-    critical = 150000000
+    critical = 225000000 // 0.225 CPU
   }
 
   notify_no_data = true
