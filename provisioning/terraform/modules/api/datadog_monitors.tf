@@ -70,7 +70,7 @@ resource datadog_monitor "api_high_errors" {
 resource datadog_monitor "api_high_restarts" {
   name = "PS2Alerts API restarts [${var.environment}]"
   type = "query alert"
-  query = "change(sum(last_5m),last_5m):avg:kubernetes.containers.restarts{kube_deployment:ps2alerts-api-${var.environment} > 0.5}, 'agile', 2, direction='above', alert_window='last_5m', interval=20, count_default_zero='true', seasonality='hourly') >= 1"
+  query = "change(sum(last_5m),last_5m):avg:kubernetes.containers.restarts{kube_deployment:ps2alerts-api-${var.environment}} > 0.5"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "restarts"})
 
   thresholds = {
