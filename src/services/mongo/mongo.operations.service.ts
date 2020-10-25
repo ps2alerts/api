@@ -34,7 +34,7 @@ export default class MongoOperationsService {
      * If no filter is provided, all entities of the type is provided
      * @param entity entity type to return
      * @param filter object provided to filter entities
-     * @param pageObject object provided for sorting and pagination
+     * @param pagination object provided for sorting and pagination
      */
     public async findMany(entity: any, filter?: object, pagination?: Pagination): Promise<any[]> {
         return await this.em.find(entity, this.createFindOptions(filter, pagination));
