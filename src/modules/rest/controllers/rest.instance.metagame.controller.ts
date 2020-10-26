@@ -3,7 +3,7 @@ import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceMetagameTerritoryEntity from '../../data/entities/instance/instance.metagame.territory.entity';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {Ps2alertsEventState} from '../../data/constants/eventstate.consts';
-import {OptionalIntPipe} from '../pipes/OptionalIntPIpe';
+import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
 import {World} from '../../data/constants/world.consts';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import Pagination from '../../../services/mongo/pagination';
@@ -48,13 +48,8 @@ export class RestInstanceMetagameController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
-        const worldObject: {[k: string]: any} = {state: Ps2alertsEventState.STARTED};
-
-        if (world) {
-            worldObject.world = world;
-        }
-
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, new Pagination({sortBy, order, page, pageSize}));
+        const filterObject: {[k: string]: any} = {state: Ps2alertsEventState.STARTED, world};
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filterObject, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('/territory-control')
@@ -73,12 +68,6 @@ export class RestInstanceMetagameController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
-        const worldObject: {[k: string]: any} = {};
-
-        if (world) {
-            worldObject.world = world;
-        }
-
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, worldObject, new Pagination({sortBy, order, page, pageSize}));
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {world}, new Pagination({sortBy, order, page, pageSize}));
     }
 }

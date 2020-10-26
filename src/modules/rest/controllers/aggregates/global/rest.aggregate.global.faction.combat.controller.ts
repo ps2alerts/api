@@ -1,11 +1,14 @@
-import {Controller, Get, Inject, Param} from '@nestjs/common';
+import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggregate/global/global.faction.combat.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
-import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {World} from '../../../../data/constants/world.consts';
+import Pagination from '../../../../../services/mongo/pagination';
+import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
+import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 
 @ApiTags('Global Faction Combat Aggregates')
 @Controller('aggregates')
@@ -16,14 +19,20 @@ export default class RestGlobalFactionCombatAggregateController {
 
     @Get('global/faction')
     @ApiOperation({summary: 'Return a filtered list of GlobalFactionCombatAggregateEntity aggregates'})
+    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalFactionCombatAggregateEntity aggregates',
         type: GlobalFactionCombatAggregateEntity,
         isArray: true,
     })
-    async findAll(): Promise<GlobalFactionCombatAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity);
+    async findAll(
+        @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<GlobalFactionCombatAggregateEntity[]> {
+        return await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity, undefined, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('global/faction/:world')
