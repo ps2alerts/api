@@ -2,10 +2,11 @@ import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalOutfitAggregateEntity from '../../../../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
-import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {World} from '../../../../data/constants/world.consts';
-import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
-import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
+import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
+import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import Pagination from '../../../../../services/mongo/pagination';
 
 @ApiTags('Global Outfit Aggregates')
 @Controller('aggregates')
@@ -16,21 +17,26 @@ export default class RestGlobalOutfitAggregateController {
 
     @Get('global/outfit')
     @ApiOperation({summary: 'Return a filtered list of GlobalOutfitAggregateEntity aggregates'})
-    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
+    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalOutfitAggregateEntity aggregates',
         type: GlobalOutfitAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalOutfitAggregateEntity[]> {
-        return world
-            ? await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world})
-            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity);
+    async findAll(
+        @Query('world', OptionalIntPipe) world?: World,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<GlobalOutfitAggregateEntity[]> {
+        return await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('global/outfit/:outfit')
     @ApiOperation({summary: 'Returns a GlobalOutfitAggregateEntity aggregate with given Id (or one of each world as a PS4 outfit may share the same ID as PC)'})
+    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The GlobalOutfitAggregateEntity aggregate(s)',
@@ -39,9 +45,13 @@ export default class RestGlobalOutfitAggregateController {
     async findOne(
         @Param('outfit') outfit: string,
             @Query('world', OptionalIntPipe) world?: World,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<GlobalOutfitAggregateEntity | GlobalOutfitAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {outfit, world})
-            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {outfit});
+            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {outfit}, new Pagination({sortBy, order, page, pageSize}));
     }
 }

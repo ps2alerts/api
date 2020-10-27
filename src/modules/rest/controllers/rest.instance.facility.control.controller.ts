@@ -1,7 +1,9 @@
-import {Controller, Get, Inject, Param, ParseIntPipe} from '@nestjs/common';
+import {Controller, Get, Inject, Param, Query, ParseIntPipe} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceFacilityControlEntity from '../../data/entities/instance/instance.facilitycontrol.entity';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
+import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
+import Pagination from '../../../services/mongo/pagination';
 
 @ApiTags('Instance Facility Control Entries')
 @Controller('instance-entries')
@@ -18,15 +20,21 @@ export default class RestInstanceFacilityControlController {
         type: InstanceFacilityControlEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance: string): Promise<InstanceFacilityControlEntity[]> {
-        return await this.mongoOperationsService.findMany(InstanceFacilityControlEntity, {instance});
+    async findAll(
+        @Param('instance') instance: string,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<InstanceFacilityControlEntity[]> {
+        return await this.mongoOperationsService.findMany(InstanceFacilityControlEntity, {instance}, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get(':instance/facility/:facility')
-    @ApiOperation({summary: 'Return a filtered list of InstanceFacilityControlEntity for an instance'})
+    @ApiOperation({summary: 'Return a single InstanceFacilityControlEntity of an instance'})
     @ApiResponse({
         status: 200,
-        description: 'The list of InstanceFacilityControlEntity',
+        description: 'The InstanceFacilityControlEntity instance',
         type: InstanceFacilityControlEntity,
     })
     async findOne(
