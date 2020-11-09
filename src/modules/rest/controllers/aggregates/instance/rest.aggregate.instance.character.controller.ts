@@ -1,7 +1,11 @@
-import {Controller, Get, Inject, Param} from '@nestjs/common';
+import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceCharacterAggregateEntity from '../../../../data/entities/aggregate/instance/instance.character.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
+import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
+import Pagination from '../../../../../services/mongo/pagination';
+import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 
 @ApiTags('Instance Character Aggregates')
 @Controller('aggregates')
@@ -12,14 +16,21 @@ export default class RestInstanceCharacterAggregateController {
 
     @Get('instance/:instance/character')
     @ApiOperation({summary: 'Returns a list of InstanceCharacterAggregateEntity aggregates for an instance'})
+    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceCharacterAggregateEntity aggregates',
         type: InstanceCharacterAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance: string): Promise<InstanceCharacterAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {instance});
+    async findAll(
+        @Param('instance') instance: string,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<InstanceCharacterAggregateEntity[]> {
+        return this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('instance/:instance/character/:character')

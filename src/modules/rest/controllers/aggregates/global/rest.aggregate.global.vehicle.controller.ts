@@ -4,9 +4,10 @@ import GlobalVehicleAggregateEntity from '../../../../data/entities/aggregate/gl
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {Vehicle} from '../../../../data/constants/vehicle.consts';
 import {World} from '../../../../data/constants/world.consts';
-import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
-import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
-import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
+import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
+import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import Pagination from '../../../../../services/mongo/pagination';
 
 @ApiTags('Global Vehicle Aggregates')
 @Controller('aggregates')
@@ -17,22 +18,26 @@ export default class RestGlobalVehicleAggregateController {
 
     @Get('global/vehicle')
     @ApiOperation({summary: 'Return a filtered list of GlobalVehicleAggregateEntity aggregates'})
-    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
+    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalVehicleAggregateEntity aggregates',
         type: GlobalVehicleAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalVehicleAggregateEntity[]> {
-        return world
-            ? await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world})
-            : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity);
+    async findAll(
+        @Query('world', OptionalIntPipe) world?: World,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<GlobalVehicleAggregateEntity[]> {
+        return await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('global/vehicle/:vehicle')
     @ApiOperation({summary: 'Returns GlobalVehicleAggregateEntity aggregate(s) with given Id (or one of each world)'})
-    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
+    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The GlobalVehicleAggregateEntity aggregate(s)',
@@ -41,9 +46,13 @@ export default class RestGlobalVehicleAggregateController {
     async findOne(
         @Param('vehicle', ParseIntPipe) vehicle: Vehicle,
             @Query('world', OptionalIntPipe) world?: World,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<GlobalVehicleAggregateEntity | GlobalVehicleAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalVehicleAggregateEntity, {vehicle, world})
-            : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {vehicle});
+            : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {vehicle}, new Pagination({sortBy, order, page, pageSize}));
     }
 }

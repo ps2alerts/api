@@ -1,7 +1,11 @@
-import {Controller, Get, Inject, Param} from '@nestjs/common';
+import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceOutfitAggregateEntity from '../../../../data/entities/aggregate/instance/instance.outfit.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
+import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
+import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
+import Pagination from '../../../../../services/mongo/pagination';
 
 @ApiTags('Instance Outfit Aggregates')
 @Controller('aggregates')
@@ -12,14 +16,21 @@ export default class RestInstanceOutfitAggregateController {
 
     @Get('instance/:instance/outfit')
     @ApiOperation({summary: 'Returns a list of InstanceOutfitAggregateEntity for an instance'})
+    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceOutfitAggregateEntity aggregates',
         type: InstanceOutfitAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance: string): Promise<InstanceOutfitAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance});
+    async findAll(
+        @Param('instance') instance: string,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<InstanceOutfitAggregateEntity[]> {
+        return this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('instance/:instance/outfit/:outfit')

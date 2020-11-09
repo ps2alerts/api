@@ -2,10 +2,11 @@ import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.character.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
-import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
-import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
-import {OptionalIntPipe} from '../../../pipes/OptionalIntPIpe';
+import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
+import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {World} from '../../../../data/constants/world.consts';
+import Pagination from '../../../../../services/mongo/pagination';
 
 @ApiTags('Global Character Aggregates')
 @Controller('aggregates')
@@ -16,17 +17,21 @@ export default class RestGlobalCharacterAggregateController {
 
     @Get('global/character')
     @ApiOperation({summary: 'Return a filtered list of GlobalCharacterAggregateEntity instances'})
-    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
+    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of matching GlobalCharacterAggregateEntity aggregates',
         type: GlobalCharacterAggregateEntity,
         isArray: true,
     })
-    async findAll(@Query('world', OptionalIntPipe) world?: World): Promise<GlobalCharacterAggregateEntity[]> {
-        return world
-            ? await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world})
-            : await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity);
+    async findAll(
+        @Query('world', OptionalIntPipe) world?: World,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    ): Promise<GlobalCharacterAggregateEntity[]> {
+        return await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}));
     }
 
     @Get('global/character/:character')

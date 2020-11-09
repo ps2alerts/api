@@ -111,10 +111,11 @@ export default class MongoOperationsService {
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-types
-    private static createFindOptions(filter?: object, pagination?: Pagination): object {
+    private static createFindOptions(filter?: {[k: string]: any}, pagination?: Pagination): object {
         let findOptions: {[k: string]: any} = {};
 
-        if (filter) {
+        if (filter && filter !== {}) {
+            Object.keys(filter).forEach((key) => (filter[key] === undefined ? delete filter[key] : {}));
             findOptions.where = filter;
         }
 
