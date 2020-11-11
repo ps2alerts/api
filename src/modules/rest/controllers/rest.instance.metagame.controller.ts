@@ -8,6 +8,10 @@ import {World} from '../../data/constants/world.consts';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import Pagination from '../../../services/mongo/pagination';
 import {COMMON_IMPLICIT_QUERIES} from './common/rest.common.queries';
+import {MONGO_QUERIES} from './common/rest.mongo.queries';
+import {JsonQueryPipe} from '../pipes/JsonQueryPipe';
+import ApiQuery from '../../../services/mongo/api.query';
+import {ObjectLiteral} from 'typeorm';
 
 @ApiTags('Instances')
 @Controller('instances')
@@ -54,7 +58,7 @@ export class RestInstanceMetagameController {
 
     @Get('/territory-control')
     @ApiOperation({summary: 'Return a paginated list of metagame territory control instances, optionally requested by world'})
-    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(MONGO_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'List of MetagameTerritory Instances',
@@ -62,12 +66,11 @@ export class RestInstanceMetagameController {
         isArray: true,
     })
     async findAllTerritoryControl(
-        @Query('world', OptionalIntPipe) world?: World,
-            @Query('sortBy') sortBy?: string,
-            @Query('order') order?: string,
-            @Query('page', OptionalIntPipe) page?: number,
-            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+        @Query('filter', JsonQueryPipe) filter?: ObjectLiteral,
+            @Query('sort', JsonQueryPipe) sort?: ObjectLiteral,
+            @Query('limit', OptionalIntPipe) limit?: number,
+            @Query('skip', OptionalIntPipe) skip?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {world}, new Pagination({sortBy, order, page, pageSize}));
+        return await this.mongoOperationsService.findManyTest(InstanceMetagameTerritoryEntity, new ApiQuery(filter, sort, limit, skip));
     }
 }

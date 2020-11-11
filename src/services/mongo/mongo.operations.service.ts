@@ -3,6 +3,8 @@ import {MongoEntityManager, ObjectID} from 'typeorm';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
 import Pagination from './pagination';
+import ApiQuery from './api.query';
+import {FindManyOptions} from 'typeorm/find-options/FindManyOptions';
 
 @Injectable()
 export default class MongoOperationsService {
@@ -39,6 +41,11 @@ export default class MongoOperationsService {
     // eslint-disable-next-line @typescript-eslint/ban-types
     public async findMany(entity: any, filter?: object, pagination?: Pagination): Promise<any[]> {
         return await this.em.find(entity, MongoOperationsService.createFindOptions(filter, pagination));
+    }
+
+    public async findManyTest(entity: any, apiQuery: ApiQuery): Promise<any[]> {
+        const findObject = MongoOperationsService.parseApiQueryIntoMongo(apiQuery);
+        return await this.em.find(entity, findObject);
     }
 
     public async insertOne(entity: any, doc: any): Promise<ObjectID> {
@@ -115,6 +122,7 @@ export default class MongoOperationsService {
         let findOptions: {[k: string]: any} = {};
 
         if (filter && filter !== {}) {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             Object.keys(filter).forEach((key) => (filter[key] === undefined ? delete filter[key] : {}));
             findOptions.where = filter;
         }
@@ -122,6 +130,27 @@ export default class MongoOperationsService {
         if (pagination) {
             findOptions = {...findOptions, ...pagination};
         }
+
+        return findOptions;
+    }
+
+    private static parseApiQueryIntoMongo(apiQuery: ApiQuery): FindManyOptions {
+        const findOptions: {[k: string]: any} = {};
+
+        if (apiQuery.filter) {
+            Object.keys(apiQuery.filter).forEach((key: string) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions,@typescript-eslint/no-dynamic-delete
+                apiQuery.filter[key] === undefined ? delete apiQuery.filter[key] : {};
+            });
+            findOptions.where = apiQuery.filter;
+        }
+
+        if (apiQuery.sort) {
+            findOptions.order = apiQuery.sort;
+        }
+
+        findOptions.take = apiQuery.limit;
+        findOptions.skip = apiQuery.skip;
 
         return findOptions;
     }
