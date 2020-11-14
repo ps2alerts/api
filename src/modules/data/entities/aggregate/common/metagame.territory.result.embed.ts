@@ -28,6 +28,12 @@ export default class MetagameTerritoryResultEmbed {
     })
     cutoff: number;
 
+    @ApiProperty({example: 0, description: 'Percentage of bases out of play and not cannot be captured (e.g. for underpowered alerts)'})
+    @Column({
+        type: 'number',
+    })
+    outOfPlay: number;
+
     @ApiProperty({example: Faction.VANU_SOVEREIGNTY, enum: factionArray, description: 'Winner of the instance. 1 = VS, 2 = NC, 3 = TR'})
     @Column({
         type: 'number',
