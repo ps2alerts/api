@@ -39,7 +39,7 @@ async function bootstrap(): Promise<void> {
                 messageTtl: 10800000,
             },
             noAck: false,
-            prefetchCount: 1000,
+            prefetchCount: 2000,
         },
     });
 
