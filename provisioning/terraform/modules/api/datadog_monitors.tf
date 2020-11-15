@@ -82,3 +82,20 @@ resource datadog_monitor "api_high_restarts" {
 
   tags = jsondecode(templatefile("${path.module}/../../dd-tags.tmpl", {environment: var.environment, application: "api"}))
 }
+
+resource datadog_monitor "api_rabbit_channel_closed" {
+  name = "PS2Alerts API rabbit channels closed [${var.environment}]"
+  type = "log alert"
+  query = "logs(\"container_name:*api\\-${var.environment}* channel closed\").index(\"*\").rollup(\"count\").last(\"10m\") > 50"
+  message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "channels closed"})
+
+  thresholds = {
+    critical = 50
+  }
+
+  notify_no_data = true
+  require_full_window = false
+  no_data_timeframe = 10
+
+  tags = jsondecode(templatefile("${path.module}/../../dd-tags.tmpl", {environment: var.environment, application: "api"}))
+}
