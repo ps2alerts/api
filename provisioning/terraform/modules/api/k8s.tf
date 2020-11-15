@@ -63,7 +63,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
             initial_delay_seconds = 30
             period_seconds        = 10
             success_threshold = 1
-            failure_threshold = 3
+            failure_threshold = 10
           }
           readiness_probe {
             http_get {
