@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
           image = join("", ["maelstromeous/applications:", var.identifier, "-", var.checksum_version])
           liveness_probe {
             http_get {
-              path = "/"
+              path = "/static/index.html"
               port = 3000
             }
             initial_delay_seconds = 30
@@ -68,7 +68,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
           }
           readiness_probe {
             http_get {
-              path = "/"
+              path = "/static/index.html"
               port = 3000
             }
             initial_delay_seconds = 10
