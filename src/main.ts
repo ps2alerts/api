@@ -39,7 +39,7 @@ async function bootstrap(): Promise<void> {
                 messageTtl: 10800000,
             },
             noAck: false,
-            prefetchCount: 2000,
+            prefetchCount: process.env.RABBIT_PREFETCH ? parseInt(process.env.RABBIT_PREFETCH, 10) : 2000,
         },
     });
 

@@ -18,6 +18,7 @@ variable "rabbitmq_user" {}
 variable "rabbitmq_pass" {}
 variable "rabbitmq_vhost" {}
 variable "rabbitmq_queue" {}
+variable "rabbitmq_prefetch" {}
 variable "cpu_limit" {
   default = "250m"
 }

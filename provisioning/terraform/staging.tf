@@ -9,13 +9,14 @@ module "api_staging" {
   database_host      = "ps2alerts-db"
   database_port      = 27017
   database_name      = "ps2alerts-staging"
-  database_pool_size = 200
+  database_pool_size = 100
   database_debug     = false
   rabbitmq_host      = "ps2alerts-rabbitmq"
   rabbitmq_user      = "ps2alerts"
   rabbitmq_pass      = var.rabbitmq_pass
   rabbitmq_vhost     = "/ps2alerts"
   rabbitmq_queue     = "api-queue-staging"
+  rabbitmq_prefetch  = 5000
   cpu_limit          = "250m"
   mem_limit          = "0.25Gi"
   cpu_request        = "150m"
