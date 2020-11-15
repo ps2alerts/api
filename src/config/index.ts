@@ -14,7 +14,7 @@ export const config = () => ({
             database: process.env.DB_NAME ?? 'ps2alerts',
             synchronize: true,
             logging: true,
-            poolSize: 100,
+            poolSize: process.env.DB_POOL_SIZE,
             authSource: 'admin',
             useUnifiedTopology: false,
             useNewUrlParser: false,

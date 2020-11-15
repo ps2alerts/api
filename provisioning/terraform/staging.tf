@@ -9,7 +9,7 @@ module "api_staging" {
   database_host      = "ps2alerts-db"
   database_port      = 27017
   database_name      = "ps2alerts-staging"
-  database_pool_size = 20
+  database_pool_size = 200
   database_debug     = false
   rabbitmq_host      = "ps2alerts-rabbitmq"
   rabbitmq_user      = "ps2alerts"
