@@ -145,7 +145,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
             value = var.rabbitmq_queue
           }
           env {
-            name = "RABBITMQ_QUEUE"
+            name = "RABBITMQ_PREFETCH"
             value = var.rabbitmq_prefetch
           }
           env {
