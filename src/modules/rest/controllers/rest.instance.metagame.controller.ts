@@ -18,6 +18,12 @@ const INSTANCE_IMPLICIT_QUERIES = [
     ...COMMON_IMPLICIT_QUERIES,
 ];
 
+interface TerritoryControlFilterInterface {
+    world?: World;
+    zone?: Zone;
+    timeStarted?: Range;
+}
+
 @ApiTags('Instances')
 @Controller('instances')
 export class RestInstanceMetagameController {
@@ -89,10 +95,15 @@ export class RestInstanceMetagameController {
     ): Promise<InstanceMetagameTerritoryEntity[]> {
         const timeStartedObj = new Range('timeStarted', timeStartedFrom?.toISOString(), timeStartedTo?.toISOString());
         console.log(timeStartedObj.build());
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {
+        const filter: TerritoryControlFilterInterface = {
             world,
             zone,
-            timeStarted: timeStartedObj.build(),
-        }, new Pagination({sortBy, order, page, pageSize}));
+        };
+
+        if (timeStartedObj.valid) {
+            filter.timeStarted = timeStartedObj;
+        }
+
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}));
     }
 }
