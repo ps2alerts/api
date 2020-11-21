@@ -3,7 +3,6 @@ import {
     Controller,
     Get,
     Inject,
-    Logger,
     Param,
     Query,
     UseInterceptors,
@@ -23,10 +22,12 @@ import {OptionalDatePipe} from '../pipes/OptionalDatePipe';
 import Range from '../../../services/mongo/range';
 import {Bracket} from '../../data/constants/bracket.consts';
 import {BRACKET_IMPLICIT_QUERY} from './common/rest.bracket.query';
+import {RESULT_VICTOR_QUERY} from './common/rest.result.victor.query';
 import {Faction} from '../../data/constants/faction.consts';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
+    RESULT_VICTOR_QUERY,
     ...TIME_STARTED_IMPLICIT_QUERIES,
     ...COMMON_IMPLICIT_QUERIES,
 ];
