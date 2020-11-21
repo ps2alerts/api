@@ -42,8 +42,6 @@ interface TerritoryControlFilterInterface {
 @ApiTags('Instances')
 @Controller('instances')
 export class RestInstanceMetagameController {
-    private readonly logger = new Logger('RestInstanceMetagameController');
-
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
     ) {}
@@ -112,8 +110,6 @@ export class RestInstanceMetagameController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
-        this.logger.debug(victor, 'victor');
-
         const filter: TerritoryControlFilterInterface = {
             world,
             zone,
@@ -121,8 +117,6 @@ export class RestInstanceMetagameController {
             timeStarted: new Range('timeStarted', timeStartedFrom, timeStartedTo).build(),
             'result.victor': victor ? victor : undefined,
         };
-
-        this.logger.debug(filter, 'filter');
 
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}));
     }
