@@ -34,12 +34,12 @@ export default class MetagameTerritoryResultEmbed {
     })
     outOfPlay: number;
 
-    @ApiProperty({example: Faction.VANU_SOVEREIGNTY, enum: factionArray, description: 'Winner of the instance. 1 = VS, 2 = NC, 3 = TR'})
+    @ApiProperty({example: Faction.VANU_SOVEREIGNTY, enum: factionArray, description: 'victor of the instance. 1 = VS, 2 = NC, 3 = TR'})
     @Column({
         type: 'number',
         enum: factionArray,
     })
-    winner: Faction;
+    victor: Faction;
 
     @ApiProperty({example: false, description: 'If instance was a draw or not. In-game this won\'t be a draw (technically), but we represent it as one in the meta.'})
     @Column({

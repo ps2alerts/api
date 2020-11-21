@@ -1,5 +1,5 @@
 export const BRACKET_IMPLICIT_QUERY = {
-    name: 'winner',
+    name: 'victor',
     required: false,
     type: String,
 };

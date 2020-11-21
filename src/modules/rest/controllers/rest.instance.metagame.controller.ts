@@ -36,7 +36,7 @@ interface TerritoryControlFilterInterface {
     zone?: Zone;
     timeStarted?: Record<string, unknown> | undefined;
     bracket?: Bracket;
-    'result.winner'?: Faction | undefined;
+    'result.victor'?: Faction | undefined;
 }
 
 @ApiTags('Instances')
@@ -106,20 +106,20 @@ export class RestInstanceMetagameController {
             @Query('timeStartedFrom', OptionalDatePipe) timeStartedFrom?: Date,
             @Query('timeStartedTo', OptionalDatePipe) timeStartedTo?: Date,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
-            @Query('winner', OptionalIntPipe) winner?: Faction,
+            @Query('victor', OptionalIntPipe) victor?: Faction,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
-        this.logger.debug(winner, 'winner');
+        this.logger.debug(victor, 'victor');
 
         const filter: TerritoryControlFilterInterface = {
             world,
             zone,
             bracket,
             timeStarted: new Range('timeStarted', timeStartedFrom, timeStartedTo).build(),
-            'result.winner': winner ? winner : undefined,
+            'result.victor': victor ? victor : undefined,
         };
 
         this.logger.debug(filter, 'filter');
