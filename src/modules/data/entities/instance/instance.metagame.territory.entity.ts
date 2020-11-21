@@ -7,6 +7,7 @@ import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../constants/eve
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import MetagameTerritoryResultEmbed from '../aggregate/common/metagame.territory.result.embed';
+import {Bracket, bracketArray} from '../../constants/bracket.consts';
 
 @Entity({
     name: 'instance_metagame_territories',
@@ -76,6 +77,13 @@ export default class InstanceMetagameTerritoryEntity {
         enum: ps2alertsEventStateArray,
     })
     state: Ps2alertsEventState;
+
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Time bracket of the alert based on time started. 1 = morning (00:00-11:59), 2 = afternoon (12:00 - 16:59), 3 = prime (17:00 - 23:59)'})
+    @Column({
+        type: 'enum',
+        enum: ps2alertsEventStateArray,
+    })
+    bracket: Bracket;
 
     @ApiProperty({description: 'Victory data for the instance'})
     @Column(() => MetagameTerritoryResultEmbed)
