@@ -1,4 +1,13 @@
-import {ClassSerializerInterceptor, Controller, Get, Inject, Param, Query, UseInterceptors} from '@nestjs/common';
+import {
+    ClassSerializerInterceptor,
+    Controller,
+    Get,
+    Inject,
+    Logger,
+    Param,
+    Query,
+    UseInterceptors,
+} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceMetagameTerritoryEntity from '../../data/entities/instance/instance.metagame.territory.entity';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
@@ -12,21 +21,29 @@ import {Zone} from '../../data/constants/zone.consts';
 import {TIME_STARTED_IMPLICIT_QUERIES} from './common/rest.time.started.query';
 import {OptionalDatePipe} from '../pipes/OptionalDatePipe';
 import Range from '../../../services/mongo/range';
+import {Bracket} from '../../data/constants/bracket.consts';
+import {BRACKET_IMPLICIT_QUERY} from './common/rest.bracket.query';
+import {Faction} from '../../data/constants/faction.consts';
 
 const INSTANCE_IMPLICIT_QUERIES = [
-    TIME_STARTED_IMPLICIT_QUERIES,
+    BRACKET_IMPLICIT_QUERY,
+    ...TIME_STARTED_IMPLICIT_QUERIES,
     ...COMMON_IMPLICIT_QUERIES,
 ];
 
 interface TerritoryControlFilterInterface {
     world?: World;
     zone?: Zone;
-    timeStarted?: Range;
+    timeStarted?: Record<string, unknown> | undefined;
+    bracket?: Bracket;
+    'result.winner'?: Faction | undefined;
 }
 
 @ApiTags('Instances')
 @Controller('instances')
 export class RestInstanceMetagameController {
+    private readonly logger = new Logger('RestInstanceMetagameController');
+
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
     ) {}
@@ -88,21 +105,24 @@ export class RestInstanceMetagameController {
             @Query('zone', OptionalIntPipe) zone?: Zone,
             @Query('timeStartedFrom', OptionalDatePipe) timeStartedFrom?: Date,
             @Query('timeStartedTo', OptionalDatePipe) timeStartedTo?: Date,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('winner', OptionalIntPipe) winner?: Faction,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
-        const timeStartedObj = new Range('timeStarted', timeStartedFrom?.toISOString(), timeStartedTo?.toISOString());
-        console.log(timeStartedObj.build());
+        this.logger.debug(winner, 'winner');
+
         const filter: TerritoryControlFilterInterface = {
             world,
             zone,
+            bracket,
+            timeStarted: new Range('timeStarted', timeStartedFrom, timeStartedTo).build(),
+            'result.winner': winner ? winner : undefined,
         };
 
-        if (timeStartedObj.valid) {
-            filter.timeStarted = timeStartedObj;
-        }
+        this.logger.debug(filter, 'filter');
 
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}));
     }

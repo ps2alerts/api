@@ -1,41 +1,28 @@
 export default class Range {
     private readonly field: string;
-    private readonly from: string | number | undefined;
-    private readonly to: string | number | undefined;
-    public valid: boolean;
+    private readonly from: string | Date | undefined;
+    private readonly to: string | Date | undefined;
 
-    public constructor(field: string, from: string | number | undefined, to?: string | number | undefined) {
+    public constructor(field: string, from: Date | undefined, to: Date | undefined = undefined) {
         this.field = field;
-        this.from = from;
-        this.valid = false;
-
-        if (this.to) {
-            this.to = to;
-        }
+        this.from = from instanceof Date ? from : from;
+        this.to = to instanceof Date ? to : to;
     }
 
-    public build(): any {
-        let obj = {};
-
+    public build(): Record<string, unknown> | undefined {
         if (this.from && this.to) {
-            obj = {
-                [this.field]: {
-                    $gte: this.from,
-                    $lte: this.to,
-                },
+            return {
+                $gte: this.from,
+                $lte: this.to,
             };
-            this.valid = true;
         }
 
         if (this.from && !this.to) {
-            obj = {
-                [this.field]: {
-                    $gte: this.from,
-                },
+            return {
+                $gte: this.from,
             };
-            this.valid = true;
         }
 
-        return obj;
+        return undefined;
     }
 }
