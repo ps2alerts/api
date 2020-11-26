@@ -2,7 +2,7 @@ import {Module} from '@nestjs/common';
 import {DataModule} from '../data/data.module';
 // Global Aggregates
 import AggregatorGlobalCharacterAggregateController from './controllers/aggregates/global/aggregator.global.character.aggregate.controller';
-import AggregatorGlobalClassAggregateController from './controllers/aggregates/global/aggregator.global.class.aggregate.controller';
+import AggregatorGlobalLoadoutAggregateController from './controllers/aggregates/global/aggregator.global.loadout.aggregate.controller';
 import AggregatorGlobalFacilityControlAggregateController from './controllers/aggregates/global/aggregator.global.facility.control.aggregate.controller';
 import AggregatorGlobalFactionCombatAggregateController from './controllers/aggregates/global/aggregator.global.faction.combat.aggregate.controller';
 import AggregatorGlobalOutfitAggregateController from './controllers/aggregates/global/aggregator.global.outfit.aggregate.controller';
@@ -11,7 +11,7 @@ import AggregatorGlobalVehicleCharacterAggregateController from './controllers/a
 import AggregatorGlobalWeaponAggregateController from './controllers/aggregates/global/aggregator.global.weapon.aggregate.controller';
 // Instance Aggregates
 import AggregatorInstanceCharacterAggregateController from './controllers/aggregates/instance/aggregator.instance.character.aggregate.controller';
-import AggregatorInstanceClassAggregateController from './controllers/aggregates/instance/aggregator.instance.class.aggregate.controller';
+import AggregatorInstanceLoadoutAggregateController from './controllers/aggregates/instance/aggregator.instance.loadout.aggregate.controller';
 import AggregatorInstanceFacilityControlAggregateController from './controllers/aggregates/instance/aggregator.instance.facility.control.aggregate.controller';
 import AggregatorInstanceFactionCombatAggregateController from './controllers/aggregates/instance/aggregator.instance.faction.combat.aggregate.controller';
 import AggregatorInstanceOutfitAggregateController from './controllers/aggregates/instance/aggregator.instance.outfit.aggregate.controller';
@@ -36,7 +36,7 @@ import AggregatorDataHandler from './aggregator.data.handler';
     controllers: [
         // Global Aggregates
         AggregatorGlobalCharacterAggregateController,
-        AggregatorGlobalClassAggregateController,
+        AggregatorGlobalLoadoutAggregateController,
         AggregatorGlobalFacilityControlAggregateController,
         AggregatorGlobalFactionCombatAggregateController,
         AggregatorGlobalOutfitAggregateController,
@@ -45,7 +45,7 @@ import AggregatorDataHandler from './aggregator.data.handler';
         AggregatorGlobalWeaponAggregateController,
         // Instance Aggregates
         AggregatorInstanceCharacterAggregateController,
-        AggregatorInstanceClassAggregateController,
+        AggregatorInstanceLoadoutAggregateController,
         AggregatorInstanceFacilityControlAggregateController,
         AggregatorInstanceFactionCombatAggregateController,
         AggregatorInstanceOutfitAggregateController,

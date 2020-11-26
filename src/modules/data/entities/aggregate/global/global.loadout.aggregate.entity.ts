@@ -6,20 +6,20 @@ import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
 import {World, worldArray} from '../../../constants/world.consts';
 
 @Entity({
-    name: 'aggregate_global_classes',
+    name: 'aggregate_global_loadouts',
 })
-@Index(['class', 'world'], {unique: true})
-export default class GlobalClassAggregateEntity {
+@Index(['loadout', 'world'], {unique: true})
+export default class GlobalLoadoutAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({enum: loadoutArray, description: 'Class / Loadout ID'})
+    @ApiProperty({enum: loadoutArray, description: 'Loadout ID'})
     @Column({
         type: 'enum',
         enum: loadoutArray,
     })
-    class: Loadout; // Subject to change to a PlayerInterface
+    loadout: Loadout; // Subject to change to a PlayerInterface
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({

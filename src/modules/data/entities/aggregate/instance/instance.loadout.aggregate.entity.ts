@@ -5,10 +5,10 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
 
 @Entity({
-    name: 'aggregate_instance_classes',
+    name: 'aggregate_instance_loadouts',
 })
-@Index(['instance', 'class'], {unique: true})
-export default class InstanceClassAggregateEntity {
+@Index(['instance', 'loadout'], {unique: true})
+export default class InstanceLoadoutAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
@@ -19,12 +19,12 @@ export default class InstanceClassAggregateEntity {
     })
     instance: string;
 
-    @ApiProperty({enum: loadoutArray, description: 'Class / Loadout ID'})
+    @ApiProperty({enum: loadoutArray, description: 'Loadout ID'})
     @Column({
         type: 'enum',
         enum: loadoutArray,
     })
-    class: Loadout; // Subject to change to a PlayerInterface
+    loadout: Loadout; // Subject to change to a PlayerInterface
 
     @ApiProperty({example: 22, description: 'Total number of kills'})
     @Column({

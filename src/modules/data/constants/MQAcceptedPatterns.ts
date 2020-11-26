@@ -3,16 +3,16 @@
 export enum MQAcceptedPatterns {
     // Global Aggregates
     GLOBAL_CHARACTER_AGGREGATE = 'globalCharacterAggregate',
-    GLOBAL_CLASS_AGGREGATE = 'globalClassAggregate',
     GLOBAL_FACILITY_CONTROL_AGGREGATE = 'globalFacilityControlAggregate',
     GLOBAL_FACTION_COMBAT_AGGREGATE = 'globalFactionCombatAggregate',
+    GLOBAL_LOADOUT_AGGREGATE = 'globalLoadoutAggregate',
     GLOBAL_OUTFIT_AGGREGATE = 'globalOutfitAggregate',
     GLOBAL_VEHICLE_AGGREGATE = 'globalVehicleAggregate',
     GLOBAL_VEHICLE_CHARACTER_AGGREGATE = 'globalVehicleCharacterAggregate',
     GLOBAL_WEAPON_AGGREGATE = 'globalWeaponAggregate',
     // Instance aggregates
     INSTANCE_CHARACTER_AGGREGATE = 'instanceCharacterAggregate',
-    INSTANCE_CLASS_AGGREGATE = 'instanceClassAggregate',
+    INSTANCE_LOADOUT_AGGREGATE = 'instanceLoadoutAggregate',
     INSTANCE_FACILITY_CONTROL_AGGREGATE = 'instanceFacilityControlAggregate',
     INSTANCE_FACTION_COMBAT_AGGREGATE = 'instanceFactionCombatAggregate',
     INSTANCE_OUTFIT_AGGREGATE = 'instanceOutfitAggregate',

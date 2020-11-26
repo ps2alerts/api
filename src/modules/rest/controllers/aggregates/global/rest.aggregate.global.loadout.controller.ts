@@ -1,6 +1,6 @@
 import {Controller, Get, Inject, Param, ParseIntPipe, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import GlobalClassAggregateEntity from '../../../../data/entities/aggregate/global/global.class.aggregate.entity';
+import GlobalLoadoutAggregateEntity from '../../../../data/entities/aggregate/global/global.loadout.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
@@ -9,20 +9,20 @@ import {Loadout} from '../../../../data/constants/loadout.consts';
 import {World} from '../../../../data/constants/world.consts';
 import Pagination from '../../../../../services/mongo/pagination';
 
-@ApiTags('Global Class Aggregates')
+@ApiTags('Global Loadout Aggregates')
 @Controller('aggregates')
-export default class RestGlobalClassAggregateController {
+export default class RestGlobalLoadoutAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
     ) {}
 
-    @Get('global/class')
-    @ApiOperation({summary: 'Return a filtered list of GlobalClassAggregateEntity aggregates'})
+    @Get('global/loadout')
+    @ApiOperation({summary: 'Return a filtered list of GlobalLoadoutAggregateEntity aggregates'})
     @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
-        description: 'The list of matching GlobalClassAggregateEntity aggregates',
-        type: GlobalClassAggregateEntity,
+        description: 'The list of matching GlobalLoadoutAggregateEntity aggregates',
+        type: GlobalLoadoutAggregateEntity,
         isArray: true,
     })
     async findAll(
@@ -31,17 +31,17 @@ export default class RestGlobalClassAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-    ): Promise<GlobalClassAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalClassAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}));
+    ): Promise<GlobalLoadoutAggregateEntity[]> {
+        return await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}));
     }
 
-    @Get('global/class/:loadout')
-    @ApiOperation({summary: 'Returns a single/many GlobalClassAggregateEntity aggregate(s) by loadout ID (and world)'})
+    @Get('global/loadout/:loadout')
+    @ApiOperation({summary: 'Returns a single/many GlobalLoadoutAggregateEntity aggregate(s) by loadout ID (and world)'})
     @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
-        description: 'The GlobalClassAggregateEntity aggregate(s)',
-        type: GlobalClassAggregateEntity,
+        description: 'The GlobalLoadoutAggregateEntity aggregate(s)',
+        type: GlobalLoadoutAggregateEntity,
     })
     async findOne(
         @Param('loadout', ParseIntPipe) loadout: Loadout,
@@ -50,9 +50,9 @@ export default class RestGlobalClassAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-    ): Promise<GlobalClassAggregateEntity | GlobalClassAggregateEntity[]> {
+    ): Promise<GlobalLoadoutAggregateEntity | GlobalLoadoutAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalClassAggregateEntity, {class: loadout, world})
-            : await this.mongoOperationsService.findMany(GlobalClassAggregateEntity, {class: loadout}, new Pagination({sortBy, order, page, pageSize}));
+            ? await this.mongoOperationsService.findOne(GlobalLoadoutAggregateEntity, {class: loadout, world})
+            : await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {class: loadout}, new Pagination({sortBy, order, page, pageSize}));
     }
 }
