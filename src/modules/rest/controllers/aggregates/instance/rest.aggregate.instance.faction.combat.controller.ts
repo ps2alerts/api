@@ -21,7 +21,7 @@ export default class RestInstanceFactionCombatAggregateController {
         status: 200,
         description: 'The list of InstanceFactionCombatAggregateEntity aggregates',
         type: InstanceFactionCombatAggregateEntity,
-        isArray: true,
+        isArray: false,
     })
     async findAll(
         @Param('instance') instance: string,
