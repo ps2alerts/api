@@ -3,21 +3,20 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
+import CharacterEmbed from '../common/character.embed';
 
 @Entity({
     name: 'aggregate_global_characters',
 })
-@Index(['character', 'world'], {unique: true})
+@Index(['character.id', 'world'], {unique: true})
 export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({example: '5428010618035323201', description: 'Unique Census generated string value ID assigned to each character'})
-    @Column({
-        type: 'string',
-    })
-    character: string;
+    @ApiProperty({type: CharacterEmbed, description: 'Character details'})
+    @Column(() => CharacterEmbed)
+    character: CharacterEmbed;
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({
