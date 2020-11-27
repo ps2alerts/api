@@ -3,21 +3,20 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
+import OutfitEmbed from '../common/outfit.embed';
 
 @Entity({
     name: 'aggregate_global_outfits',
 })
-@Index(['outfit', 'world'], {unique: true})
+@Index(['outfit.id', 'world'], {unique: true})
 export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({example: '37509488620604883', description: 'Census generated Outfit ID'})
-    @Column({
-        type: 'string',
-    })
-    outfit: string;
+    @ApiProperty({type: OutfitEmbed, description: 'Outfit details'})
+    @Column(() => OutfitEmbed)
+    outfit: OutfitEmbed;
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({

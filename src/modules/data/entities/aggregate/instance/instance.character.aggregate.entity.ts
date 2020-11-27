@@ -2,11 +2,13 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import OutfitEmbed from '../common/outfit.embed';
+import CharacterEmbed from '../common/character.embed';
 
 @Entity({
     name: 'aggregate_instance_characters',
 })
-@Index(['instance', 'character'], {unique: true})
+@Index(['instance', 'character.id'], {unique: true})
 export default class InstanceCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -18,11 +20,9 @@ export default class InstanceCharacterAggregateEntity {
     })
     instance: string;
 
-    @ApiProperty({example: '5428010618035323201', description: 'Unique Census generated string value ID assigned to each character'})
-    @Column({
-        type: 'string',
-    })
-    character: string;
+    @ApiProperty({type: CharacterEmbed, description: 'Character details'})
+    @Column(() => CharacterEmbed)
+    character: CharacterEmbed;
 
     @ApiProperty({example: 22, description: 'Total number of kills'})
     @Column({
@@ -58,11 +58,4 @@ export default class InstanceCharacterAggregateEntity {
         default: 0,
     })
     headshots: number;
-
-    @ApiProperty({example: '37509488620604883', description: 'Outfit ID'})
-    @Column({
-        type: 'string',
-        nullable: true,
-    })
-    outfit?: string;
 }
