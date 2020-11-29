@@ -43,6 +43,6 @@ export default class RestInstanceWeaponAggregateController {
         @Param('instance') instance: number,
             @Param('weapon', ParseIntPipe) weapon: number,
     ): Promise<InstanceWeaponAggregateEntity> {
-        return this.mongoOperationsService.findOne(InstanceWeaponAggregateEntity, {instance, weapon});
+        return this.mongoOperationsService.findOne(InstanceWeaponAggregateEntity, {instance, 'weapon.id': weapon});
     }
 }
