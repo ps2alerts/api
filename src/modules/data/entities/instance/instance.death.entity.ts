@@ -3,11 +3,12 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {Loadout, loadoutArray} from '../../constants/loadout.consts';
+import CharacterEmbed from '../aggregate/common/character.embed';
 
 @Entity({
     name: 'instance_deaths',
 })
-@Index(['instance', 'attacker', 'character', 'timestamp'], {unique: true})
+@Index(['instance', 'attacker.id', 'character.id', 'timestamp'], {unique: true})
 
 export default class InstanceDeathEntity {
     @ObjectIdColumn()
@@ -21,17 +22,13 @@ export default class InstanceDeathEntity {
     })
     instance: string;
 
-    @ApiProperty({example: '5428109895939169921', description: 'Character ID of the killer'})
-    @Column({
-        type: 'string',
-    })
-    attacker: string;
+    @ApiProperty({type: CharacterEmbed, description: 'Attacker Character details'})
+    @Column(() => CharacterEmbed)
+    attacker: CharacterEmbed;
 
-    @ApiProperty({example: '5428010618035323201', description: 'Character ID of the victim'})
-    @Column({
-        type: 'string',
-    })
-    character: string;
+    @ApiProperty({type: CharacterEmbed, description: 'Character details'})
+    @Column(() => CharacterEmbed)
+    character: CharacterEmbed;
 
     @ApiProperty({example: new Date(), description: 'Time of event instance in UTC'})
     @Column({

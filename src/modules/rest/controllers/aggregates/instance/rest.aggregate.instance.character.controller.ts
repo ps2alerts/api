@@ -44,6 +44,6 @@ export default class RestInstanceCharacterAggregateController {
         @Param('instance') instance: string,
             @Param('character') character: string,
     ): Promise<InstanceCharacterAggregateEntity> {
-        return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {instance, character});
+        return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {instance, 'character.id': character});
     }
 }

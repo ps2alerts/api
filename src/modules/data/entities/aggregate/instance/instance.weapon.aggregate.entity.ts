@@ -2,11 +2,12 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import ItemEmbed from '../common/item.embed';
 
 @Entity({
     name: 'aggregate_instance_weapons',
 })
-@Index(['instance', 'weapon'], {unique: true})
+@Index(['instance', 'weapon.id'], {unique: true})
 export default class InstanceWeaponAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -18,11 +19,9 @@ export default class InstanceWeaponAggregateEntity {
     })
     instance: string;
 
-    @ApiProperty({example: 3104, description: 'Weapon ID'})
-    @Column({
-        type: 'number',
-    })
-    weapon: number;
+    @ApiProperty({type: ItemEmbed, description: 'Weapon'})
+    @Column(() => ItemEmbed)
+    weapon: ItemEmbed;
 
     @ApiProperty({example: 22, description: 'Total number of kills'})
     @Column({

@@ -44,6 +44,6 @@ export default class RestInstanceOutfitAggregateController {
         @Param('instance') instance: string,
             @Param('outfit') outfit: string,
     ): Promise<InstanceOutfitAggregateEntity> {
-        return this.mongoOperationsService.findOne(InstanceOutfitAggregateEntity, {instance, outfit});
+        return this.mongoOperationsService.findOne(InstanceOutfitAggregateEntity, {instance, 'outfit.id': outfit});
     }
 }

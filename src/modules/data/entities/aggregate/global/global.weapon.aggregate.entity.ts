@@ -3,21 +3,20 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
+import ItemEmbed from '../common/item.embed';
 
 @Entity({
     name: 'aggregate_global_weapons',
 })
-@Index(['weapon', 'world'], {unique: true})
+@Index(['weapon.id', 'world'], {unique: true})
 export default class GlobalWeaponAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({example: 3104, description: 'Weapon ID'})
-    @Column({
-        type: 'number',
-    })
-    weapon: number;
+    @ApiProperty({type: ItemEmbed, description: 'Weapon'})
+    @Column(() => ItemEmbed)
+    weapon: ItemEmbed;
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({

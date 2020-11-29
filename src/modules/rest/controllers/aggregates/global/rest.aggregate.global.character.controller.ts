@@ -42,6 +42,6 @@ export default class RestGlobalCharacterAggregateController {
         type: GlobalCharacterAggregateEntity,
     })
     async findOne(@Param('character') character: string): Promise<GlobalCharacterAggregateEntity> {
-        return await this.mongoOperationsService.findOne(GlobalCharacterAggregateEntity, {character});
+        return await this.mongoOperationsService.findOne(GlobalCharacterAggregateEntity, {'character.id': character});
     }
 }

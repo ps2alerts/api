@@ -51,7 +51,7 @@ export default class RestGlobalWeaponAggregateController {
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<GlobalWeaponAggregateEntity | GlobalWeaponAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalWeaponAggregateEntity, {weapon, world})
-            : await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {weapon}, new Pagination({sortBy, order, page, pageSize}));
+            ? await this.mongoOperationsService.findOne(GlobalWeaponAggregateEntity, {'weapon.id': weapon, world})
+            : await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {'weapon.id': weapon}, new Pagination({sortBy, order, page, pageSize}));
     }
 }

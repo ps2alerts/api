@@ -2,7 +2,6 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import OutfitEmbed from '../common/outfit.embed';
 import CharacterEmbed from '../common/character.embed';
 
 @Entity({
