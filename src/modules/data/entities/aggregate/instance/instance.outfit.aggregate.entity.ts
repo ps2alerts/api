@@ -8,6 +8,7 @@ import OutfitEmbed from '../common/outfit.embed';
     name: 'aggregate_instance_outfits',
 })
 @Index(['instance', 'outfit.id'], {unique: true})
+@Index(['outfit.id'])
 export default class InstanceOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

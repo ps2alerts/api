@@ -8,6 +8,7 @@ import CharacterEmbed from '../common/character.embed';
     name: 'aggregate_instance_characters',
 })
 @Index(['instance', 'character.id'], {unique: true})
+@Index(['character.id'])
 export default class InstanceCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

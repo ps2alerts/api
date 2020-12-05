@@ -8,6 +8,7 @@ import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
     name: 'aggregate_instance_loadouts',
 })
 @Index(['instance', 'loadout'], {unique: true})
+@Index(['loadout'])
 export default class InstanceLoadoutAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

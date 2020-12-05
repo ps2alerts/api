@@ -8,6 +8,7 @@ import ItemEmbed from '../common/item.embed';
     name: 'aggregate_instance_weapons',
 })
 @Index(['instance', 'weapon.id'], {unique: true})
+@Index(['weapon.id'])
 export default class InstanceWeaponAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

@@ -8,7 +8,8 @@ import OutfitEmbed from '../common/outfit.embed';
 @Entity({
     name: 'aggregate_global_outfits',
 })
-@Index(['outfit.id', 'world'], {unique: true})
+@Index(['world', 'outfit.id'], {unique: true})
+@Index(['outfit.id'])
 export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

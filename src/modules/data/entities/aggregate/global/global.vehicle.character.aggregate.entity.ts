@@ -9,23 +9,24 @@ import {Vehicle, vehicleArray} from '../../../constants/vehicle.consts';
 @Entity({
     name: 'aggregate_global_vehicles_characters',
 })
-@Index(['vehicle', 'world', 'character'], {unique: true})
+@Index(['world', 'vehicle', 'character'], {unique: true})
+@Index(['character'])
 export default class GlobalVehicleCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
-
-    @ApiProperty({example: Vehicle.FLASH, enum: vehicleArray, description: 'Vehicle ID'})
-    @Column({
-        type: 'number',
-    })
-    vehicle: Vehicle;
 
     @ApiProperty({example: World.MILLER, enum: worldArray, description: 'World ID'})
     @Column({
         type: 'number',
     })
     world: World;
+
+    @ApiProperty({example: Vehicle.FLASH, enum: vehicleArray, description: 'Vehicle ID'})
+    @Column({
+        type: 'number',
+    })
+    vehicle: Vehicle;
 
     @ApiProperty({example: '5428010618035323201', description: 'Character ID'})
     @Column({

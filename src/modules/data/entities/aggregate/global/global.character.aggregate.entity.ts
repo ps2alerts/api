@@ -8,15 +8,12 @@ import CharacterEmbed from '../common/character.embed';
 @Entity({
     name: 'aggregate_global_characters',
 })
-@Index(['character.id', 'world'], {unique: true})
+@Index(['world', 'character.id'], {unique: true})
+@Index(['character.id'])
 export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
-
-    @ApiProperty({type: CharacterEmbed, description: 'Character details'})
-    @Column(() => CharacterEmbed)
-    character: CharacterEmbed;
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({
@@ -24,6 +21,10 @@ export default class GlobalCharacterAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({type: CharacterEmbed, description: 'Character details'})
+    @Column(() => CharacterEmbed)
+    character: CharacterEmbed;
 
     @ApiProperty({example: 22, description: 'Total number of kills'})
     @Column({

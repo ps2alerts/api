@@ -13,23 +13,12 @@ import {Bracket, bracketArray} from '../../constants/bracket.consts';
     name: 'instance_metagame_territories',
 })
 @Index(['world', 'censusInstanceId'], {unique: true})
+@Index(['zone'])
 export default class InstanceMetagameTerritoryEntity {
     @ObjectIdColumn()
     @Exclude()
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _id: ObjectID;
-
-    @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination to create a unique metagame instance ID that\'s human readable'})
-    @Column({
-        type: 'string',
-    })
-    instanceId: string;
-
-    @ApiProperty({example: '10-12345', description: 'An ID as reported to us from Census. This in combination with world gives us a unique identifier.'})
-    @Column({
-        type: 'number',
-    })
-    censusInstanceId: number;
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({
@@ -37,6 +26,18 @@ export default class InstanceMetagameTerritoryEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({example: '10-12345', description: 'An ID as reported to us from Census. This in combination with world gives us a unique identifier.'})
+    @Column({
+        type: 'number',
+    })
+    censusInstanceId: number;
+
+    @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination to create a unique metagame instance ID that\'s human readable'})
+    @Column({
+        type: 'string',
+    })
+    instanceId: string;
 
     @ApiProperty({enum: zoneArray, description: 'Continent / Zone ID'})
     @Column({

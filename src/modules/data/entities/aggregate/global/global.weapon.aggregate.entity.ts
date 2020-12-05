@@ -8,15 +8,12 @@ import ItemEmbed from '../common/item.embed';
 @Entity({
     name: 'aggregate_global_weapons',
 })
-@Index(['weapon.id', 'world'], {unique: true})
+@Index(['world', 'weapon.id'], {unique: true})
+@Index(['weapon.id'])
 export default class GlobalWeaponAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
-
-    @ApiProperty({type: ItemEmbed, description: 'Weapon'})
-    @Column(() => ItemEmbed)
-    weapon: ItemEmbed;
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({
@@ -24,6 +21,10 @@ export default class GlobalWeaponAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({type: ItemEmbed, description: 'Weapon'})
+    @Column(() => ItemEmbed)
+    weapon: ItemEmbed;
 
     @ApiProperty({example: 22, description: 'Total number of kills'})
     @Column({

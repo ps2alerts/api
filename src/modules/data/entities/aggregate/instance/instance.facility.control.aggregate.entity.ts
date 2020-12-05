@@ -8,6 +8,7 @@ import FacilityFactionControl from '../common/facility.faction.control.embed';
     name: 'aggregate_instance_facility_controls',
 })
 @Index(['instance', 'facility'], {unique: true})
+@Index(['facility'])
 export default class InstanceFacilityControlAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

@@ -8,18 +8,12 @@ import {World, worldArray} from '../../../constants/world.consts';
 @Entity({
     name: 'aggregate_global_loadouts',
 })
-@Index(['loadout', 'world'], {unique: true})
+@Index(['world', 'loadout'], {unique: true})
+@Index(['loadout'])
 export default class GlobalLoadoutAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
-
-    @ApiProperty({enum: loadoutArray, description: 'Loadout ID'})
-    @Column({
-        type: 'enum',
-        enum: loadoutArray,
-    })
-    loadout: Loadout; // Subject to change to a PlayerInterface
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({
@@ -27,6 +21,13 @@ export default class GlobalLoadoutAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({enum: loadoutArray, description: 'Loadout ID'})
+    @Column({
+        type: 'enum',
+        enum: loadoutArray,
+    })
+    loadout: Loadout; // Subject to change to a PlayerInterface
 
     @ApiProperty({example: 22, description: 'Total number of kills'})
     @Column({

@@ -9,6 +9,7 @@ import {Vehicle} from '../../../constants/vehicle.consts';
     name: 'aggregate_instance_vehicles_characters',
 })
 @Index(['instance', 'vehicle', 'character'], {unique: true})
+@Index(['character'])
 export default class InstanceVehicleCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

@@ -8,17 +8,12 @@ import FacilityFactionControl from '../common/facility.faction.control.embed';
 @Entity({
     name: 'aggregate_global_facility_controls',
 })
-@Index(['facility', 'world'], {unique: true})
+@Index(['world', 'facility'], {unique: true})
+@Index(['facility'])
 export default class GlobalFacilityControlAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
-
-    @ApiProperty({example: 242, description: 'Facility ID'})
-    @Column({
-        type: 'number',
-    })
-    facility: number;
 
     @ApiProperty({enum: worldArray, description: 'Server / World ID'})
     @Column({
@@ -26,6 +21,12 @@ export default class GlobalFacilityControlAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({example: 242, description: 'Facility ID'})
+    @Column({
+        type: 'number',
+    })
+    facility: number;
 
     @ApiProperty({type: FacilityFactionControl, description: 'Facility Capture / Defenses for VS faction'})
     @Column(() => FacilityFactionControl)
