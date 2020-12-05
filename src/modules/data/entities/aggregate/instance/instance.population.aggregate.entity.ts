@@ -6,7 +6,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 @Entity({
     name: 'aggregate_instance_populations',
 })
-@Index(['instance', 'timestamp'], {unique: true})
+@Index(['instance'], {unique: true})
 export default class InstancePopulationAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
