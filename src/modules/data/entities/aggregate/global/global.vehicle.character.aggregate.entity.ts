@@ -9,8 +9,7 @@ import {Vehicle, vehicleArray} from '../../../constants/vehicle.consts';
 @Entity({
     name: 'aggregate_global_vehicles_characters',
 })
-@Index(['world', 'vehicle', 'character'], {unique: true})
-@Index(['character'])
+@Index(['world', 'character', 'vehicle'], {unique: true})
 export default class GlobalVehicleCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -22,17 +21,17 @@ export default class GlobalVehicleCharacterAggregateEntity {
     })
     world: World;
 
-    @ApiProperty({example: Vehicle.FLASH, enum: vehicleArray, description: 'Vehicle ID'})
-    @Column({
-        type: 'number',
-    })
-    vehicle: Vehicle;
-
     @ApiProperty({example: '5428010618035323201', description: 'Character ID'})
     @Column({
         type: 'string',
     })
     character: string;
+
+    @ApiProperty({example: Vehicle.FLASH, enum: vehicleArray, description: 'Vehicle ID'})
+    @Column({
+        type: 'number',
+    })
+    vehicle: Vehicle;
 
     @ApiProperty({type: VehicleStatsEmbed, description: 'Combat Statistics for Vehicle vs Vehicle combat'})
     @Column(() => VehicleStatsEmbed)

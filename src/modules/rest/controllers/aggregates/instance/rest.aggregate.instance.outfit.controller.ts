@@ -46,4 +46,18 @@ export default class RestInstanceOutfitAggregateController {
     ): Promise<InstanceOutfitAggregateEntity> {
         return this.mongoOperationsService.findOne(InstanceOutfitAggregateEntity, {instance, 'outfit.id': outfit});
     }
+
+    @Get('instance/outfit/:outfit')
+    @ApiOperation({summary: 'Returns a InstanceOutfitAggregateEntity aggregate for all instances'})
+    @ApiResponse({
+        status: 200,
+        description: 'The list of InstanceOutfitAggregateEntity aggregates by outfit ID',
+        type: InstanceOutfitAggregateEntity,
+        isArray: true,
+    })
+    async findByOutfitId(
+        @Param('outfit') outfit: string,
+    ): Promise<InstanceOutfitAggregateEntity[]> {
+        return this.mongoOperationsService.findOne(InstanceOutfitAggregateEntity, {'outfit.id': outfit});
+    }
 }

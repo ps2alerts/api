@@ -46,4 +46,18 @@ export default class RestInstanceCharacterAggregateController {
     ): Promise<InstanceCharacterAggregateEntity> {
         return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {instance, 'character.id': character});
     }
+
+    @Get('instance/character/:character')
+    @ApiOperation({summary: 'Finds all InstanceCharacterAggregateEntity for a character'})
+    @ApiResponse({
+        status: 200,
+        description: 'The InstanceCharacterAggregateEntity aggregates by character ID',
+        type: InstanceCharacterAggregateEntity,
+        isArray: true,
+    })
+    async findByCharacterId(
+        @Param('character') character: string,
+    ): Promise<InstanceCharacterAggregateEntity[]> {
+        return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {'character.id': character});
+    }
 }
