@@ -9,7 +9,8 @@ import {Vehicle, vehicleArray} from '../../../constants/vehicle.consts';
 @Entity({
     name: 'aggregate_global_vehicles_characters',
 })
-@Index(['world', 'character', 'vehicle'], {unique: true})
+@Index(['world', 'vehicle', 'character'], {unique: true})
+@Index(['character'])
 export default class GlobalVehicleCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
