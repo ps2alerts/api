@@ -52,7 +52,7 @@ export default class RestGlobalLoadoutAggregateController {
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<GlobalLoadoutAggregateEntity | GlobalLoadoutAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalLoadoutAggregateEntity, {class: loadout, world})
-            : await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {class: loadout}, new Pagination({sortBy, order, page, pageSize}));
+            ? await this.mongoOperationsService.findOne(GlobalLoadoutAggregateEntity, {loadout, world})
+            : await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {loadout}, new Pagination({sortBy, order, page, pageSize}));
     }
 }
