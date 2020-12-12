@@ -37,7 +37,7 @@
     "@nestjs/platform-ws": "^7.4.2",
     "@nestjs/swagger": "^4.6.1",
     "@nestjs/typeorm": "^7.1.0",
-    "@nestjs/websockets": "^7.4.2",
+    "@nestjs/websockets": "^7.6.1",
     "amqp-connection-manager": "^3.2.0",
     "amqplib": "^0.6.0",
     "class-transformer": "^0.3.1",
