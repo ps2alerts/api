@@ -48,7 +48,7 @@
     "nestjs-swagger-api-implicit-queries-decorator": "^1.0.0",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.2",
-    "typeorm": "^0.2.25"
+    "typeorm": "^0.2.29"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
