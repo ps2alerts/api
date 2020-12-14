@@ -4,6 +4,8 @@ import InstanceFacilityControlEntity from '../../data/entities/instance/instance
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
 import Pagination from '../../../services/mongo/pagination';
+import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
+import {PAGINATION_IMPLICIT_QUERIES} from './common/rest.pagination.queries';
 
 @ApiTags('Instance Facility Control Entries')
 @Controller('instance-entries')
@@ -14,6 +16,7 @@ export default class RestInstanceFacilityControlController {
 
     @Get(':instance/facility')
     @ApiOperation({summary: 'Returns a list of InstanceFacilityControlEntity for an instance'})
+    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceFacilityControlEntity for an instance',

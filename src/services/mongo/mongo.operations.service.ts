@@ -17,12 +17,13 @@ export default class MongoOperationsService {
      * If no filter is provided, a single entity of the type is provided
      * @param entity entity type to return
      * @param filter object provided to filter entities
+     * @param pagination object handles pagination / sorting
      */
-    public async findOne(entity: any, filter?: any): Promise<any> {
+    public async findOne<T>(entity: any, filter?: any, pagination?: Pagination): Promise<T> {
         if (filter) {
             return await this.em.findOneOrFail(
                 entity,
-                {where: filter},
+                MongoOperationsService.createFindOptions(filter, pagination),
             );
         }
 
