@@ -15,7 +15,7 @@ export class CombatHistoryCron {
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
     ) {}
 
-    @Cron(CronExpression.EVERY_30_SECONDS)
+    @Cron(CronExpression.EVERY_MINUTE)
     async handleCron(): Promise<void> {
         this.logger.debug('Running Combat History job');
 
