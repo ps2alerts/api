@@ -15,12 +15,15 @@ const metadata = {
             imports: [ConfigModule],
             useClass: MongoConfig,
         }),
-        AggregatorModule,
-        RestModule,
+        RestModule, // For some strange reason you need a module defined, so we're going to have REST here but not in the load balancer.
     ],
     controllers: [DefaultController],
     providers: [],
 };
+
+if (process.env.AGGREGATOR_ENABLED === 'true') {
+    metadata.imports.push(AggregatorModule);
+}
 
 if (process.env.CRON_ENABLED === 'true') {
     metadata.imports.push(ScheduleModule.forRoot(), CronModule);
