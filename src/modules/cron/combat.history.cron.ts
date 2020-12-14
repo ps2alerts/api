@@ -41,9 +41,11 @@ export class CombatHistoryCron {
             ));
         }
 
-        await this.mongoOperationsService.insertMany(
-            InstanceCombatHistoryAggregateEntity,
-            documents,
-        );
+        if (documents.length > 0) {
+            await this.mongoOperationsService.insertMany(
+                InstanceCombatHistoryAggregateEntity,
+                documents,
+            );
+        }
     }
 }
