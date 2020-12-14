@@ -174,7 +174,7 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
 
 resource "kubernetes_deployment" "ps2alerts_api_cron_deployment" {
   metadata {
-    name = var.identifier
+    name = join("-", [var.identifier, "cron"])
     namespace = var.namespace
     labels = {
       app = join("-", [var.identifier, "cron"])
@@ -186,14 +186,14 @@ resource "kubernetes_deployment" "ps2alerts_api_cron_deployment" {
     revision_history_limit = 1
     selector {
       match_labels = {
-        app = var.identifier
+        app = join("-", [var.identifier, "cron"])
         environment = var.environment
       }
     }
     template {
       metadata {
         labels = {
-          app = var.identifier
+          app = join("-", [var.identifier, "cron"])
           environment = var.environment
         }
       }
@@ -202,7 +202,7 @@ resource "kubernetes_deployment" "ps2alerts_api_cron_deployment" {
           name = "regcred"
         }
         container {
-          name = var.identifier
+          name = join("-", [var.identifier, "cron"])
           image = join("", ["maelstromeous/applications:", var.identifier, "-", var.checksum_version])
           liveness_probe {
             http_get {
