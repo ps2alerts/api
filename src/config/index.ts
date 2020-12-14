@@ -29,4 +29,6 @@ export const config = () => ({
         url: [process.env.RABBITMQ_URL ?? `amqp://${process.env.RABBITMQ_USER ?? 'user'}:${process.env.RABBITMQ_PASS ?? 'bitnami'}@${process.env.RABBITMQ_HOST ?? 'localhost'}:5672${process.env.RABBITMQ_VHOST ?? ''}?heartbeat=10&connection_timeout=10000`],
         queue: process.env.RABBITMQ_QUEUE ?? 'api-queue',
     },
+
+    cron: process.env.CRON_ENABLED ?? false,
 });

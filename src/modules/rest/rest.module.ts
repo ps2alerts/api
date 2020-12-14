@@ -14,6 +14,7 @@ import GlobalVehicleCharacterAggregateEntity from '../data/entities/aggregate/gl
 import GlobalWeaponAggregateEntity from '../data/entities/aggregate/global/global.weapon.aggregate.entity';
 // Instance Aggregate Entities
 import InstanceCharacterAggregateEntity from '../data/entities/aggregate/instance/instance.character.aggregate.entity';
+import InstanceCombatHistoryAggregateEntity from '../data/entities/aggregate/instance/instance.combat.history.aggregate.entity';
 import InstanceFacilityControlAggregateEntity from '../data/entities/aggregate/instance/instance.facility.control.aggregate.entity';
 import InstanceFactionCombatAggregateEntity from '../data/entities/aggregate/instance/instance.faction.combat.aggregate.entity';
 import InstanceLoadoutAggregateEntity from '../data/entities/aggregate/instance/instance.loadout.aggregate.entity';
@@ -34,6 +35,7 @@ import RestGlobalVehicleCharacterAggregateController from './controllers/aggrega
 import RestGlobalWeaponAggregateController from './controllers/aggregates/global/rest.aggregate.global.weapon.controller';
 // REST Instance Aggregate Controllers
 import RestInstanceCharacterAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.character.controller';
+import RestInstanceCombatHistoryAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.combat.history.controller';
 import RestInstanceFacilityControlAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.facility.control.controller';
 import RestInstanceFactionCombatAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.faction.combat.controller';
 import RestInstanceLoadoutAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.loadout.controller';
@@ -64,6 +66,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
             GlobalWeaponAggregateEntity,
             // Instance Aggregate Entities
             InstanceCharacterAggregateEntity,
+            InstanceCombatHistoryAggregateEntity,
             InstanceFacilityControlAggregateEntity,
             InstanceFactionCombatAggregateEntity,
             InstanceLoadoutAggregateEntity,
@@ -89,6 +92,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
         RestGlobalWeaponAggregateController,
         // Instance Aggregate Controllers
         RestInstanceCharacterAggregateController,
+        RestInstanceCombatHistoryAggregateController,
         RestInstanceFacilityControlAggregateController,
         RestInstanceFactionCombatAggregateController,
         RestInstanceLoadoutAggregateController,

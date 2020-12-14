@@ -36,6 +36,7 @@
           DB_NAME: "ps2alerts"
           DB_DEBUG: "true"
           RABBITMQ_HOST: "ps2alerts-mq"
+          CRON_ENABLED: "true"
         labels:
           traefik.enable: "true"
           traefik.http.routers.ps2alerts_api.rule: "Host(`dev.api.ps2alerts.com`)"
