@@ -26,19 +26,22 @@ export class CombatHistoryCron {
 
         for await (const row of actives) {
             // Pull latest faction combat entity
-            const factionCombat: InstanceFactionCombatAggregateEntity = await this.mongoOperationsService.findOne(
-                InstanceFactionCombatAggregateEntity,
-                {instance: row.instanceId},
-            );
+            try {
+                const factionCombat: InstanceFactionCombatAggregateEntity = await this.mongoOperationsService.findOne(
+                    InstanceFactionCombatAggregateEntity,
+                    {instance: row.instanceId},
+                );
+                delete factionCombat._id;
 
-            delete factionCombat._id;
-
-            documents.push(Object.assign(
-                factionCombat,
-                {
-                    timestamp: new Date(),
-                },
-            ));
+                documents.push(Object.assign(
+                    factionCombat,
+                    {
+                        timestamp: new Date(),
+                    },
+                ));
+            } catch (e) {
+                // Ignore error if there isn't any
+            }
         }
 
         if (documents.length > 0) {
