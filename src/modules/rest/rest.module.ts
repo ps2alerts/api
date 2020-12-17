@@ -32,6 +32,7 @@ import RestGlobalLoadoutAggregateController from './controllers/aggregates/globa
 import RestGlobalOutfitAggregateController from './controllers/aggregates/global/rest.aggregate.global.outfit.controller';
 import RestGlobalVehicleAggregateController from './controllers/aggregates/global/rest.aggregate.global.vehicle.controller';
 import RestGlobalVehicleCharacterAggregateController from './controllers/aggregates/global/rest.aggregate.global.vehicle.character.controller';
+import RestGlobalVictoryAggregateController from './controllers/aggregates/global/rest.aggregate.global.victory.controller';
 import RestGlobalWeaponAggregateController from './controllers/aggregates/global/rest.aggregate.global.weapon.controller';
 // REST Instance Aggregate Controllers
 import RestInstanceCharacterAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.character.controller';
@@ -89,6 +90,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
         RestGlobalOutfitAggregateController,
         RestGlobalVehicleAggregateController,
         RestGlobalVehicleCharacterAggregateController,
+        RestGlobalVictoryAggregateController,
         RestGlobalWeaponAggregateController,
         // Instance Aggregate Controllers
         RestInstanceCharacterAggregateController,
