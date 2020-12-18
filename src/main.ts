@@ -29,21 +29,23 @@ async function bootstrap(): Promise<void> {
         },
     });
 
-    app.connectMicroservice<RmqOptions>({
-        transport: Transport.RMQ,
-        options: {
-            urls: config.get('rabbitmq.url'),
-            queue: config.get('rabbitmq.queue'),
-            queueOptions: {
-                durable: true,
-                messageTtl: 10800000,
+    if (process.env.AGGREGATOR_ENABLED === 'true') {
+        app.connectMicroservice<RmqOptions>({
+            transport: Transport.RMQ,
+            options: {
+                urls: config.get('rabbitmq.url'),
+                queue: config.get('rabbitmq.queue'),
+                queueOptions: {
+                    durable: true,
+                    messageTtl: 10800000,
+                },
+                noAck: false,
+                prefetchCount: process.env.RABBITMQ_PREFETCH ? parseInt(process.env.RABBITMQ_PREFETCH, 10) : 2000,
             },
-            noAck: false,
-            prefetchCount: process.env.RABBITMQ_PREFETCH ? parseInt(process.env.RABBITMQ_PREFETCH, 10) : 2000,
-        },
-    });
+        });
 
-    app.useWebSocketAdapter(new WsAdapter(app));
+        app.useWebSocketAdapter(new WsAdapter(app));
+    }
 
     const options = new DocumentBuilder()
         .setTitle('PS2Alerts API')
