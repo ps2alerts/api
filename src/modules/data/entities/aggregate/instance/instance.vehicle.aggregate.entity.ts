@@ -41,6 +41,12 @@ export default class InstanceVehicleAggregateEntity {
     })
     suicides: number;
 
+    @ApiProperty({example: 123, description: 'Number of times a player has rammed / roadkilled someone with their vehicle'})
+    @Column({
+        type: 'number',
+    })
+    roadkills: number;
+
     @ApiProperty({example: {1: 123, 2: 123, 3: 123}, description: 'Counts of other vehicles this vehicle has killed'})
     @Column({
         type: 'json',
