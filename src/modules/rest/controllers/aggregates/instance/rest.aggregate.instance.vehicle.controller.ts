@@ -44,6 +44,6 @@ export default class RestInstanceVehicleAggregateController {
         @Param('instance') instance: string,
             @Param('vehicle', ParseIntPipe) vehicle: Vehicle,
     ): Promise<InstanceVehicleAggregateEntity> {
-        return await this.mongoOperationsService.findOne(InstanceVehicleAggregateEntity, {vehicle});
+        return await this.mongoOperationsService.findOne(InstanceVehicleAggregateEntity, {instance, vehicle});
     }
 }
