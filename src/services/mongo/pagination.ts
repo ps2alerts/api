@@ -4,8 +4,14 @@ export default class Pagination {
     private readonly order: {[k: string]: string} | undefined;
 
     public constructor(pageQuery: {sortBy?: string, order?: string, pageSize?: number, page?: number}) {
+        this.take = 100;
+
         if (pageQuery.pageSize) {
-            this.take = pageQuery.pageSize;
+            if (pageQuery.pageSize < 500) {
+                this.take = pageQuery.pageSize;
+            } else {
+                this.take = 500;
+            }
         }
 
         if (pageQuery.pageSize && pageQuery.page) {
