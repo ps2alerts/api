@@ -49,7 +49,7 @@ async function bootstrap(): Promise<void> {
 
     const options = new DocumentBuilder()
         .setTitle('PS2Alerts API')
-        .setDescription('PS2Alerts API documentation')
+        .setDescription('PS2Alerts API. Please visit our <a href="https://github.com/ps2alerts/api">GitHub project</a> for more information or to support the project. <br><br>There are the following limits applied to this API: <br><ol><li>You are limited to taking 1000 maximum documents from any */global/* endpoint, you must then paginate thereafter. */instance/* endpoints don\'t have such limitations.</li><li>There are <b>currently</b> no rate limits, however requests are being monitored and any abuse will result in rate limit implementation.</li></ol>')
         .setVersion('3.0-alpha')
         .build();
     const document = SwaggerModule.createDocument(app, options);
