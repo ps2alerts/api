@@ -31,7 +31,7 @@ export default class RestGlobalFacilityControlAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<GlobalFacilityControlAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}));
+        return await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, 'global'));
     }
 
     @Get('global/facility/:facility')
@@ -52,6 +52,6 @@ export default class RestGlobalFacilityControlAggregateController {
     ): Promise<GlobalFacilityControlAggregateEntity | GlobalFacilityControlAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility, world})
-            : await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {facility}, new Pagination({sortBy, order, page, pageSize}));
+            : await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {facility}, new Pagination({sortBy, order, page, pageSize}, 'global'));
     }
 }

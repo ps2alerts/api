@@ -30,7 +30,7 @@ export default class RestInstanceVehicleAggregateController {
         @Query('order') order?: string,
         @Query('page', OptionalIntPipe) page?: number,
         @Query('pageSize', OptionalIntPipe) pageSize?: number): Promise<InstanceVehicleAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceVehicleAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}));
+        return this.mongoOperationsService.findMany(InstanceVehicleAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
     }
 
     @Get('instance/:instance/vehicle/:vehicle')

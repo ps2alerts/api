@@ -31,7 +31,7 @@ export default class RestInstanceLoadoutAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceLoadoutAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceLoadoutAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}));
+        return this.mongoOperationsService.findMany(InstanceLoadoutAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
     }
 
     // Note we use loadout here because loadout is a NodeJS reserved name and TS gets confused

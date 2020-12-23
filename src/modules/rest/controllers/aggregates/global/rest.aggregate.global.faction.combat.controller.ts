@@ -32,7 +32,7 @@ export default class RestGlobalFactionCombatAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<GlobalFactionCombatAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity, undefined, new Pagination({sortBy, order, page, pageSize}));
+        return await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity, undefined, new Pagination({sortBy, order, page, pageSize}, 'global'));
     }
 
     @Get('global/faction/:world')
