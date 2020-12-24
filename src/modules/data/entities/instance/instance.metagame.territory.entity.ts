@@ -20,7 +20,7 @@ export default class InstanceMetagameTerritoryEntity {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _id: ObjectID;
 
-    @ApiProperty({enum: worldArray, description: 'Server / World ID'})
+    @ApiProperty({enum: worldArray, example: 10, description: 'Server / World ID'})
     @Column({
         type: 'enum',
         enum: worldArray,
