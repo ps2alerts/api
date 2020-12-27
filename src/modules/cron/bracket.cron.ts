@@ -122,21 +122,10 @@ export class BracketCron {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
                         this.logger.error(`Unable to update bracket for instance ${result._id} - E: ${e.message}`);
                     }
-
-                    this.logger.debug(`Updated bracket for ${result._id} = ${bracket}`);
-
                 }
-
             } catch (e) {
                 // Ignore error if there isn't any
             }
         }
-
-        // if (documents.length > 0) {
-        //     await this.mongoOperationsService.insertMany(
-        //         InstanceCombatHistoryAggregateEntity,
-        //         documents,
-        //     );
-        // }
     }
 }
