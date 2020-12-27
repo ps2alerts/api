@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-assignment */
-import {MongoEntityManager, ObjectID} from 'typeorm';
+import {CollectionAggregationOptions, MongoEntityManager, ObjectID} from 'typeorm';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
 import Pagination from './pagination';
@@ -108,6 +108,15 @@ export default class MongoOperationsService {
             }
 
             return true;
+        }
+    }
+
+    public aggregate <T>(entity: any, pipeline: any, options?: CollectionAggregationOptions): Promise<T[]> {
+        try {
+            return this.em.aggregate(entity, pipeline, options).toArray();
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
+            throw new Error(`Aggregate search failed! E: ${error.message}`);
         }
     }
 
