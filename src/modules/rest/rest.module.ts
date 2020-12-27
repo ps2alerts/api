@@ -21,6 +21,7 @@ import InstanceLoadoutAggregateEntity from '../data/entities/aggregate/instance/
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 import InstanceOutfitAggregateEntity from '../data/entities/aggregate/instance/instance.outfit.aggregate.entity';
 import InstancePopulationAggregateEntity from '../data/entities/aggregate/instance/instance.population.aggregate.entity';
+import InstancePopulationAveragesAggregateEntity from '../data/entities/aggregate/instance/instance.population.averages.aggregate.entity';
 import InstanceVehicleAggregateEntity from '../data/entities/aggregate/instance/instance.vehicle.aggregate.entity';
 import InstanceVehicleCharacterAggregateEntity from '../data/entities/aggregate/instance/instance.vehicle.character.aggregate.entity';
 import InstanceWeaponAggregateEntity from '../data/entities/aggregate/instance/instance.weapon.aggregate.entity';
@@ -42,6 +43,7 @@ import RestInstanceFactionCombatAggregateController from './controllers/aggregat
 import RestInstanceLoadoutAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.loadout.controller';
 import RestInstanceOutfitAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.outfit.controller';
 import RestInstancePopulationAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.population.controller';
+import RestInstancePopulationAggregateAveragesController from './controllers/aggregates/instance/rest.aggregate.instance.population.averages.controller';
 import RestInstanceVehicleAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.vehicle.controller';
 import RestInstanceVehicleCharacterAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.vehicle.character.controller';
 import RestInstanceWeaponAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.weapon.controller';
@@ -73,6 +75,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
             InstanceLoadoutAggregateEntity,
             InstanceOutfitAggregateEntity,
             InstancePopulationAggregateEntity,
+            InstancePopulationAveragesAggregateEntity,
             InstanceVehicleAggregateEntity,
             InstanceVehicleCharacterAggregateEntity,
             InstanceWeaponAggregateEntity,
@@ -100,6 +103,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
         RestInstanceLoadoutAggregateController,
         RestInstanceOutfitAggregateController,
         RestInstancePopulationAggregateController,
+        RestInstancePopulationAggregateAveragesController,
         RestInstanceVehicleAggregateController,
         RestInstanceVehicleCharacterAggregateController,
         RestInstanceWeaponAggregateController,

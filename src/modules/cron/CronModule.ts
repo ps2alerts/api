@@ -7,6 +7,7 @@ import InstanceFactionCombatAggregateEntity
     from '../data/entities/aggregate/instance/instance.faction.combat.aggregate.entity';
 import InstanceCombatHistoryAggregateEntity
     from '../data/entities/aggregate/instance/instance.combat.history.aggregate.entity';
+import {BracketCron} from './bracket.cron';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import InstanceCombatHistoryAggregateEntity
     providers: [
         MongoOperationsService,
         CombatHistoryCron,
+        BracketCron,
     ],
 })
 export class CronModule {}
