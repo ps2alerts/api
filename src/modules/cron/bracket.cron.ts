@@ -26,7 +26,7 @@ export class BracketCron {
 
     @Cron(CronExpression.EVERY_MINUTE)
     async handleCron(): Promise<void> {
-        this.logger.debug('Running Alert Bracket job');
+        // this.logger.debug('Running Alert Bracket job');
 
         const primeMin = 240;
         const highMin = 144;
