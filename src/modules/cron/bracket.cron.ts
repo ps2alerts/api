@@ -28,10 +28,10 @@ export class BracketCron {
     async handleCron(): Promise<void> {
         // this.logger.debug('Running Alert Bracket job');
 
-        const primeMin = 240;
-        const highMin = 144;
-        const medMin = 96;
-        const lowMin = 48;
+        const primeMin = 192; // 4+ platoons
+        const highMin = 144; // 3-4 platoons
+        const medMin = 96; // 2-3 platoons
+        const lowMin = 48; // 1-2 platoons
 
         // Grab the current actives
         const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED});
