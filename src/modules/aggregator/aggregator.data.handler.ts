@@ -55,11 +55,11 @@ export default class AggregatorDataHandler {
     }
 
     public async upsertGlobal(data: GlobalAggregatorMessageInterface, context: RmqContext, entity: any): Promise<void> {
-        // If there is no bracket available now, reject the message and republish to the DLQ
+        // If there is no bracket available now, reject the message as it shouldn't be possible.
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (data.conditionals[0].bracket === undefined) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            context.getChannelRef().ack(context.getMessage());
+            await context.getChannelRef().reject(context.getMessage());
 
             this.logger.error(`Attempted to add GlobalAggregator without a bracket for instance ${data.instance}`);
             return;
