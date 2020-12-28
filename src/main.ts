@@ -38,6 +38,9 @@ async function bootstrap(): Promise<void> {
                 queueOptions: {
                     durable: true,
                     messageTtl: 10800000, // 3 hours
+                    arguments: {
+                        'x-queue-mode': 'lazy',
+                    },
                 },
                 noAck: false,
                 prefetchCount: process.env.RABBITMQ_PREFETCH ? parseInt(process.env.RABBITMQ_PREFETCH, 10) : 2000,
