@@ -59,7 +59,7 @@ export default class AggregatorDataHandler {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (data.conditionals[0].bracket === undefined) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            await context.getChannelRef().reject(context.getMessage());
+            await context.getChannelRef().ack(context.getMessage());
 
             this.logger.error(`Attempted to add GlobalAggregator without a bracket for instance ${data.instance}`);
             return;
