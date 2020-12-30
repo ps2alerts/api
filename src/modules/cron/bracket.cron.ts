@@ -8,6 +8,7 @@ import InstancePopulationAggregateEntity
     from '../data/entities/aggregate/instance/instance.population.aggregate.entity';
 import {Bracket} from '../data/constants/bracket.consts';
 import InstancePopulationAveragesAggregateEntity from '../data/entities/aggregate/instance/instance.population.averages.aggregate.entity';
+import {World} from '../data/constants/world.consts';
 
 interface PipelineResult {
     _id: string;
@@ -37,6 +38,12 @@ export class BracketCron {
         const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED});
 
         for await (const row of actives) {
+            // If Jaeger, skip and keep as 0 (N/A)
+            if (row.world === World.JAEGER) {
+                this.logger.debug('Jaeger instance detected, skipping bracket calculation');
+                continue;
+            }
+
             // Pull latest faction combat entity
             try {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
