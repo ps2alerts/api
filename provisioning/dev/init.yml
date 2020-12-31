@@ -1,0 +1,57 @@
+---
+- hosts: localhost
+  vars_files:
+    - "{{ playbook_dir }}/../vars.yml"
+#    - "{{ playbook_dir }}/../vars_local.yml"
+  tasks:
+    - debug:
+        msg: "========= 🔗 Initializing API Module 🔗 ========="
+
+    - name: Install docker
+      pip:
+        name: docker
+        state: present
+
+    - name: Get user's current UID
+      command: "id -u {{ ansible_user_id }}"
+      register: id
+      when: id is undefined
+
+    - name: Create docker network
+      docker_network:
+        name: ps2alerts
+        state: present
+
+    - name: Build API Base image (grab a snickers)
+      docker_image:
+        name: ps2alerts/api
+        state: present
+        source: build
+        tag: base
+        force_source: yes
+        build:
+          pull: no
+          path: "{{ root_dir | realpath }}/provisioning/base"
+
+    - name: Build API Dev image
+      docker_image:
+        name: ps2alerts/api
+        state: present
+        source: build
+        tag: dev
+        force_source: yes
+        build:
+          pull: no
+          path: "{{ root_dir | realpath }}/provisioning/dev"
+
+    # Issues with MacOSX due to docker root directory permission errors which can't be solved. Run npm install manually if you're on OSX.
+    - name: Run npm install for API deps
+      docker_container:
+        name: ps2alerts-api-npm
+        image: node:12
+        volumes:
+          - "{{ root_dir | realpath }}:/app:rw"
+        user: "{{ id.stdout }}:{{ id.stdout }}"
+        command: "npm install --prefix /app"
+        labels:
+          traefik.enable: "false"
