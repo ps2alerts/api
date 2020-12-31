@@ -22,7 +22,7 @@ export default class GlobalLoadoutAggregateEntity {
     })
     world: World;
 
-    @ApiProperty({enum: loadoutArray, description: 'Loadout ID'})
+    @ApiProperty({enum: loadoutArray, example: 3, description: 'Loadout ID'})
     @Column({
         type: 'enum',
         enum: loadoutArray,
