@@ -31,6 +31,6 @@ export default class RestInstancePopulationAggregateAveragesController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstancePopulationAveragesAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstancePopulationAveragesAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return this.mongoOperationsService.findMany(InstancePopulationAveragesAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }

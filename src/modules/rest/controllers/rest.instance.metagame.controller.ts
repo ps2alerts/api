@@ -87,7 +87,7 @@ export class RestInstanceMetagameController {
                 world,
                 zone,
             },
-            new Pagination({sortBy, order, page, pageSize}, 'instance'));
+            new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('/territory-control')
@@ -119,6 +119,6 @@ export class RestInstanceMetagameController {
             'result.victor': victor ? victor : undefined,
         };
 
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }

@@ -30,6 +30,6 @@ export default class RestInstanceCombatHistoryAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceCombatHistoryAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceCombatHistoryAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return this.mongoOperationsService.findMany(InstanceCombatHistoryAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }

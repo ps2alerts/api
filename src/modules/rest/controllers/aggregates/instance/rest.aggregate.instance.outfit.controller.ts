@@ -30,7 +30,7 @@ export default class RestInstanceOutfitAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceOutfitAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('instance/:instance/outfit/:outfit')

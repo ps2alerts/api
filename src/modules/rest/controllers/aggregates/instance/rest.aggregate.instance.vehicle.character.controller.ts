@@ -29,7 +29,7 @@ export default class RestInstanceVehicleCharacterController {
         @Query('order') order?: string,
         @Query('page', OptionalIntPipe) page?: number,
         @Query('pageSize', OptionalIntPipe) pageSize?: number): Promise<InstanceVehicleCharacterAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceVehicleCharacterAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return this.mongoOperationsService.findMany(InstanceVehicleCharacterAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('instance/:instance/vehicle/character/:character')
@@ -49,7 +49,7 @@ export default class RestInstanceVehicleCharacterController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceVehicleCharacterAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceVehicleCharacterAggregateEntity, {instance, character}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return this.mongoOperationsService.findMany(InstanceVehicleCharacterAggregateEntity, {instance, character}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('instance/:instance/vehicle/character/:character/:vehicle')

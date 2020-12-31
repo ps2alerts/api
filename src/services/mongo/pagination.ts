@@ -3,7 +3,7 @@ export default class Pagination {
     private readonly skip: number | undefined;
     private readonly order: {[k: string]: string} | undefined;
 
-    public constructor(pageQuery: {sortBy?: string, order?: string, pageSize?: number, page?: number}, endpointNamespace: string) {
+    public constructor(pageQuery: {sortBy?: string, order?: string, pageSize?: number, page?: number}, limited = false) {
         this.take = 100;
 
         if (pageQuery.pageSize) {
@@ -14,7 +14,7 @@ export default class Pagination {
             }
         }
 
-        if (endpointNamespace === 'instance' && !pageQuery.pageSize) {
+        if (!limited && !pageQuery.pageSize) {
             this.take = undefined;
         }
 

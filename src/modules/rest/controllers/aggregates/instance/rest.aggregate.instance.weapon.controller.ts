@@ -29,7 +29,7 @@ export default class RestInstanceWeaponAggregateController {
         @Query('order') order?: string,
         @Query('page', OptionalIntPipe) page?: number,
         @Query('pageSize', OptionalIntPipe) pageSize?: number): Promise<InstanceWeaponAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceWeaponAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return this.mongoOperationsService.findMany(InstanceWeaponAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('instance/:instance/weapon/:weapon')

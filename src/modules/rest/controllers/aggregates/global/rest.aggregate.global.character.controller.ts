@@ -31,7 +31,7 @@ export default class RestGlobalCharacterAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<GlobalCharacterAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, 'global'));
+        return await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/character/:character')

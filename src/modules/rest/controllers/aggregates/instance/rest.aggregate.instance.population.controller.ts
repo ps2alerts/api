@@ -30,6 +30,6 @@ export default class RestInstancePopulationAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstancePopulationAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstancePopulationAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return this.mongoOperationsService.findMany(InstancePopulationAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }

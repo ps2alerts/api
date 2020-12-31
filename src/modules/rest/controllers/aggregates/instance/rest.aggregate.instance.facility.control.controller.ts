@@ -29,7 +29,7 @@ export default class RestInstanceFacilityControlAggregateController {
         @Query('page', OptionalIntPipe) page?: number,
         @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceFacilityControlAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceFacilityControlAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, 'instance'));
+        return this.mongoOperationsService.findMany(InstanceFacilityControlAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('instance/:instance/facility/:facility')

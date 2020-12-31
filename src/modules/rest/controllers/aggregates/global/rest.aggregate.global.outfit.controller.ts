@@ -31,7 +31,7 @@ export default class RestGlobalOutfitAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<GlobalOutfitAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, 'global'));
+        return await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/outfit/:outfit')
@@ -52,6 +52,6 @@ export default class RestGlobalOutfitAggregateController {
     ): Promise<GlobalOutfitAggregateEntity | GlobalOutfitAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {'outfit.id': outfit, world})
-            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {'outfit.id': outfit}, new Pagination({sortBy, order, page, pageSize}, 'global'));
+            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {'outfit.id': outfit}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 }
