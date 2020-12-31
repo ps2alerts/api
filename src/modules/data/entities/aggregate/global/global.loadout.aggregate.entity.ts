@@ -27,7 +27,7 @@ export default class GlobalLoadoutAggregateEntity {
         type: 'enum',
         enum: loadoutArray,
     })
-    loadout: Loadout; // Subject to change to a PlayerInterface
+    loadout: Loadout;
 
     @ApiProperty({example: 22, description: 'Total number of kills'})
     @Column({
