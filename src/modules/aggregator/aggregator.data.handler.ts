@@ -104,6 +104,8 @@ export default class AggregatorDataHandler {
                 data.conditionals = newConditionals;
             } else {
                 this.logger.error(`Received Global Aggregate message for unfinished instance ${data.instance}`);
+                // eslint-disable-next-line no-console
+                console.log(data);
             }
 
             return data;
