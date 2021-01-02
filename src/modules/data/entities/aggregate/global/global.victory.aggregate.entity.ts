@@ -36,6 +36,12 @@ export default class GlobalVictoryAggregateEntity {
     })
     bracket: Bracket;
 
+    @ApiProperty({example: '2020-01-01', description: 'Date of the aggregate in UTC'})
+    @Column({
+        type: 'date',
+    })
+    date: Date;
+
     @ApiProperty({example: 123, description: 'VS victories'})
     @Column({
         type: 'number',
