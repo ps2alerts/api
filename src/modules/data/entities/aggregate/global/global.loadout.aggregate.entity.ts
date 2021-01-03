@@ -4,11 +4,12 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
 import {World, worldArray} from '../../../constants/world.consts';
+import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 
 @Entity({
     name: 'aggregate_global_loadouts',
 })
-@Index(['world', 'loadout'], {unique: true})
+@Index(['world', 'bracket', 'loadout'], {unique: true})
 @Index(['loadout'])
 export default class GlobalLoadoutAggregateEntity {
     @ObjectIdColumn()
@@ -21,6 +22,13 @@ export default class GlobalLoadoutAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @Column({
+        type: 'enum',
+        enum: bracketArray,
+    })
+    bracket: Bracket;
 
     @ApiProperty({enum: loadoutArray, example: 3, description: 'Loadout ID'})
     @Column({

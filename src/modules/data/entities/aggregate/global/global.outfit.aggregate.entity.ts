@@ -4,11 +4,12 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
 import OutfitEmbed from '../common/outfit.embed';
+import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 
 @Entity({
     name: 'aggregate_global_outfits',
 })
-@Index(['world', 'outfit.id'], {unique: true})
+@Index(['world', 'bracket', 'outfit.id'], {unique: true})
 @Index(['outfit.id'])
 export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
@@ -25,6 +26,13 @@ export default class GlobalOutfitAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @Column({
+        type: 'enum',
+        enum: bracketArray,
+    })
+    bracket: Bracket;
 
     @ApiProperty({example: 22, description: 'Total number of kills'})
     @Column({

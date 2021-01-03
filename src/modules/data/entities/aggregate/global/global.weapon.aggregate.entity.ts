@@ -4,11 +4,12 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
 import ItemEmbed from '../common/item.embed';
+import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 
 @Entity({
     name: 'aggregate_global_weapons',
 })
-@Index(['world', 'weapon.id'], {unique: true})
+@Index(['world', 'bracket', 'weapon.id'], {unique: true})
 @Index(['weapon.id'])
 export default class GlobalWeaponAggregateEntity {
     @ObjectIdColumn()
@@ -21,6 +22,13 @@ export default class GlobalWeaponAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @Column({
+        type: 'enum',
+        enum: bracketArray,
+    })
+    bracket: Bracket;
 
     @ApiProperty({type: ItemEmbed, description: 'Weapon'})
     @Column(() => ItemEmbed)

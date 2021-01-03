@@ -4,11 +4,12 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {World, worldArray} from '../../../constants/world.consts';
 import FacilityFactionControl from '../common/facility.faction.control.embed';
+import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 
 @Entity({
     name: 'aggregate_global_facility_controls',
 })
-@Index(['world', 'facility'], {unique: true})
+@Index(['world', 'bracket', 'facility'], {unique: true})
 @Index(['facility'])
 export default class GlobalFacilityControlAggregateEntity {
     @ObjectIdColumn()
@@ -21,6 +22,13 @@ export default class GlobalFacilityControlAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @Column({
+        type: 'enum',
+        enum: bracketArray,
+    })
+    bracket: Bracket;
 
     @ApiProperty({example: 242, description: 'Facility ID'})
     @Column({

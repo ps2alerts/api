@@ -4,11 +4,12 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
 import CharacterEmbed from '../common/character.embed';
+import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 
 @Entity({
     name: 'aggregate_global_characters',
 })
-@Index(['world', 'character.id'], {unique: true})
+@Index(['world', 'bracket', 'character.id'], {unique: true})
 @Index(['character.id'])
 export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
@@ -21,6 +22,13 @@ export default class GlobalCharacterAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @Column({
+        type: 'enum',
+        enum: bracketArray,
+    })
+    bracket: Bracket;
 
     @ApiProperty({type: CharacterEmbed, description: 'Character details'})
     @Column(() => CharacterEmbed)

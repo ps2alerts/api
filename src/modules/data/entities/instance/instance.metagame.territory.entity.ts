@@ -79,10 +79,10 @@ export default class InstanceMetagameTerritoryEntity {
     })
     state: Ps2alertsEventState;
 
-    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Time bracket of the alert based on time started. 1 = morning (00:00-11:59), 2 = afternoon (12:00 - 16:59), 3 = prime (17:00 - 23:59)'})
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the instance'})
     @Column({
         type: 'enum',
-        enum: ps2alertsEventStateArray,
+        enum: bracketArray,
     })
     bracket: Bracket;
 
