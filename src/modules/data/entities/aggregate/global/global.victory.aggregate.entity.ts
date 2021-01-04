@@ -9,7 +9,9 @@ import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 @Entity({
     name: 'aggregate_global_victories',
 })
-@Index(['world', 'zone', 'bracket'], {unique: true})
+@Index(['world', 'zone', 'bracket', 'date'], {unique: true})
+@Index(['bracket'])
+@Index(['date'])
 export default class GlobalVictoryAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -35,6 +37,12 @@ export default class GlobalVictoryAggregateEntity {
         enum: bracketArray,
     })
     bracket: Bracket;
+
+    @ApiProperty({example: '2020-01-01', description: 'Date of the aggregate in UTC'})
+    @Column({
+        type: 'date',
+    })
+    date: Date;
 
     @ApiProperty({example: 123, description: 'VS victories'})
     @Column({

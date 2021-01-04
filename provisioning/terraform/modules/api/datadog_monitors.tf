@@ -52,11 +52,11 @@ resource datadog_monitor "api_high_mem" {
 resource datadog_monitor "api_cron_high_mem" {
   name = "PS2Alerts API Cron high memory [${var.environment}]"
   type = "metric alert"
-  query = "max(last_5m):avg:kubernetes.memory.rss{kube_container_name:ps2alerts-api-${var.environment}-cron} > 136315000"
+  query = "max(last_5m):avg:kubernetes.memory.rss{kube_container_name:ps2alerts-api-${var.environment}-cron} > 84829800"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API Cron", description: "high memory"})
 
   thresholds = {
-    critical = 136315000 # 130MB
+    critical = 84829800 # 80
   }
 
   notify_no_data = true

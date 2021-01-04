@@ -5,11 +5,12 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import VehicleStatsEmbed from '../common/vehicle.vs.vehicle.embed';
 import {World, worldArray} from '../../../constants/world.consts';
 import {Vehicle, vehicleArray} from '../../../constants/vehicle.consts';
+import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 
 @Entity({
     name: 'aggregate_global_vehicles_characters',
 })
-@Index(['world', 'vehicle', 'character'], {unique: true})
+@Index(['world', 'bracket', 'vehicle', 'character'], {unique: true})
 @Index(['character'])
 export default class GlobalVehicleCharacterAggregateEntity {
     @ObjectIdColumn()
@@ -21,6 +22,13 @@ export default class GlobalVehicleCharacterAggregateEntity {
         type: 'number',
     })
     world: World;
+
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @Column({
+        type: 'enum',
+        enum: bracketArray,
+    })
+    bracket: Bracket;
 
     @ApiProperty({example: '5428010618035323201', description: 'Character ID'})
     @Column({

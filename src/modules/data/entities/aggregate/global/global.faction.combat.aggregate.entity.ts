@@ -4,11 +4,12 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, ObjectID, Index} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
 import CombatStats from '../common/combat.stats.embed';
+import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 
 @Entity({
     name: 'aggregate_global_faction_combats',
 })
-@Index(['world'], {unique: true})
+@Index(['world', 'bracket'], {unique: true})
 export default class GlobalFactionCombatAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -20,6 +21,13 @@ export default class GlobalFactionCombatAggregateEntity {
         enum: worldArray,
     })
     world: World;
+
+    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @Column({
+        type: 'enum',
+        enum: bracketArray,
+    })
+    bracket: Bracket;
 
     @ApiProperty({type: CombatStats, description: 'Combat Statistics for VS faction'})
     @Column(() => CombatStats)
