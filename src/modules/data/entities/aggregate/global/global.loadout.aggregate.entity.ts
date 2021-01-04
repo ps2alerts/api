@@ -9,8 +9,9 @@ import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 @Entity({
     name: 'aggregate_global_loadouts',
 })
-@Index(['world', 'bracket', 'loadout'], {unique: true})
+@Index(['world', 'loadout', 'bracket'], {unique: true})
 @Index(['loadout'])
+@Index(['bracket'])
 export default class GlobalLoadoutAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
