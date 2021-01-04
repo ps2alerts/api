@@ -7,6 +7,7 @@ import {World} from '../../../../data/constants/world.consts';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
+import {Bracket} from '../../../../data/constants/bracket.consts';
 
 @ApiTags('Global Outfit Aggregates')
 @Controller('aggregates')
@@ -30,8 +31,9 @@ export default class RestGlobalOutfitAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalOutfitAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/outfit/:outfit')
@@ -49,9 +51,10 @@ export default class RestGlobalOutfitAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalOutfitAggregateEntity | GlobalOutfitAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {'outfit.id': outfit, world})
-            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {'outfit.id': outfit}, new Pagination({sortBy, order, page, pageSize}, true));
+            ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {'outfit.id': outfit, world, bracket})
+            : await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {'outfit.id': outfit, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 }

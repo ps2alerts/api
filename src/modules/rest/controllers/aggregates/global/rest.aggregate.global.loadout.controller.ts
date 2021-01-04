@@ -8,6 +8,7 @@ import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {Loadout} from '../../../../data/constants/loadout.consts';
 import {World} from '../../../../data/constants/world.consts';
 import Pagination from '../../../../../services/mongo/pagination';
+import {Bracket} from '../../../../data/constants/bracket.consts';
 
 @ApiTags('Global Loadout Aggregates')
 @Controller('aggregates')
@@ -31,8 +32,9 @@ export default class RestGlobalLoadoutAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalLoadoutAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/loadout/:loadout')
@@ -50,9 +52,10 @@ export default class RestGlobalLoadoutAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalLoadoutAggregateEntity | GlobalLoadoutAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalLoadoutAggregateEntity, {loadout, world})
-            : await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {loadout}, new Pagination({sortBy, order, page, pageSize}, true));
+            ? await this.mongoOperationsService.findOne(GlobalLoadoutAggregateEntity, {loadout, world, bracket})
+            : await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {loadout, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 }

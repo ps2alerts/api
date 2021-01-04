@@ -7,6 +7,7 @@ import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
+import {Bracket} from '../../../../data/constants/bracket.consts';
 
 @ApiTags('Global Weapon Aggregates')
 @Controller('aggregates')
@@ -30,8 +31,9 @@ export default class RestGlobalWeaponAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalWeaponAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, false));
+        return await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('global/weapon/:weapon')
