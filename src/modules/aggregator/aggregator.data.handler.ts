@@ -6,6 +6,7 @@ import MongoOperationsService from '../../services/mongo/mongo.operations.servic
 import GlobalAggregatorMessageInterface from './interfaces/global.aggregator.message.interface';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 import {Ps2alertsEventState} from '../data/constants/eventstate.consts';
+import {Bracket} from '../data/constants/bracket.consts';
 
 @Injectable()
 export default class AggregatorDataHandler {
@@ -85,33 +86,43 @@ export default class AggregatorDataHandler {
     }
 
     public async transformGlobal(data: GlobalAggregatorMessageInterface): Promise<GlobalAggregatorMessageInterface> {
-        try {
-            const instance: InstanceMetagameTerritoryEntity = await this.mongoOperationsService.findOne(
-                InstanceMetagameTerritoryEntity,
-                {instanceId: data.instance},
-            );
+        const newConditionals: any[] = [];
 
-            // Pull out conditionals and apply bracket to them
-            if (instance.state === Ps2alertsEventState.ENDED) {
-                const newConditionals: any[] = [];
+        // If bracket has been supplied intentionally (such as the "Total" bracket (0)) then add it in now
+        if (data.bracket === Bracket.TOTAL) {
+            data.conditionals.forEach((conditional) => {
+                newConditionals.push(Object.assign(conditional, {
+                    bracket: Bracket.TOTAL,
+                }));
+            });
+        } else {
+            try {
+                const instance: InstanceMetagameTerritoryEntity = await this.mongoOperationsService.findOne(
+                    InstanceMetagameTerritoryEntity,
+                    {instanceId: data.instance},
+                );
 
-                data.conditionals.forEach((conditional) => {
-                    newConditionals.push(Object.assign(conditional, {
-                        bracket: instance.bracket,
-                    }));
-                });
+                // Pull out conditionals and apply bracket to them
+                if (instance.state === Ps2alertsEventState.ENDED) {
+                    data.conditionals.forEach((conditional) => {
+                        newConditionals.push(Object.assign(conditional, {
+                            bracket: instance.bracket,
+                        }));
+                    });
+                } else {
+                    this.logger.error(`Received Global Aggregate message for unfinished instance ${data.instance}`);
+                    // eslint-disable-next-line no-console
+                    console.log(data);
+                }
 
-                data.conditionals = newConditionals;
-            } else {
-                this.logger.error(`Received Global Aggregate message for unfinished instance ${data.instance}`);
-                // eslint-disable-next-line no-console
-                console.log(data);
+            } catch (error) {
+                this.logger.error(`Unable to get instance ${data.instance} from the database and unable to transform`);
+                return data;
             }
-
-            return data;
-        } catch (error) {
-            this.logger.error(`Unable to get instance ${data.instance} from the database and unable to transform`);
-            return data;
         }
+
+        data.conditionals = newConditionals;
+
+        return data;
     }
 }
