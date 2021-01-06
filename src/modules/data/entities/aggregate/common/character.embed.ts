@@ -30,13 +30,13 @@ export default class CharacterEmbed {
     })
     world: World;
 
-    @ApiProperty({example: 100, description: 'Character Battle Rank'})
+    @ApiProperty({example: 120, description: 'Character Battle Rank'})
     @Column({
         type: 'number',
     })
     battleRank: number;
 
-    @ApiProperty({example: false, description: 'Character is ASPed'})
+    @ApiProperty({example: true, description: 'Character is ASPed'})
     @Column({
         type: 'boolean',
         default: false,
