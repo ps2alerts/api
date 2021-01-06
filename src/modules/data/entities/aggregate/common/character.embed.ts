@@ -34,7 +34,7 @@ export default class CharacterEmbed {
     @Column({
         type: 'number',
     })
-    battleRank: World;
+    battleRank: number;
 
     @ApiProperty({example: false, description: 'Character is ASPed'})
     @Column({
