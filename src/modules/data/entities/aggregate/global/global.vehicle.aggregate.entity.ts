@@ -10,7 +10,7 @@ import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 @Entity({
     name: 'aggregate_global_vehicles',
 })
-@Index(['world', 'bracket', 'vehicle'], {unique: true})
+@Index(['world', 'vehicle', 'bracket'], {unique: true})
 @Index(['vehicle'])
 export default class GlobalVehicleAggregateEntity {
     @ObjectIdColumn()

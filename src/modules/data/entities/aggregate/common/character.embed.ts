@@ -36,7 +36,7 @@ export default class CharacterEmbed {
     })
     battleRank: World;
 
-    @ApiProperty({example: 100, description: 'Character is ASPed'})
+    @ApiProperty({example: false, description: 'Character is ASPed'})
     @Column({
         type: 'boolean',
         default: false,

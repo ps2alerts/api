@@ -9,7 +9,9 @@ import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 @Entity({
     name: 'aggregate_global_faction_combats',
 })
-@Index(['world', 'bracket'], {unique: true})
+@Index(['world', 'date', 'bracket'], {unique: true})
+@Index(['date'])
+@Index(['bracket'])
 export default class GlobalFactionCombatAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -28,6 +30,12 @@ export default class GlobalFactionCombatAggregateEntity {
         enum: bracketArray,
     })
     bracket: Bracket;
+
+    @ApiProperty({example: '2020-01-01', description: 'Date of the aggregate in UTC'})
+    @Column({
+        type: 'date',
+    })
+    date: Date;
 
     @ApiProperty({type: CombatStats, description: 'Combat Statistics for VS faction'})
     @Column(() => CombatStats)

@@ -7,6 +7,7 @@ import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {World} from '../../../../data/constants/world.consts';
 import Pagination from '../../../../../services/mongo/pagination';
+import {Bracket} from '../../../../data/constants/bracket.consts';
 
 @ApiTags('Global Facility Control Aggregates')
 @Controller('aggregates')
@@ -30,8 +31,9 @@ export default class RestGlobalFacilityControlAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalFacilityControlAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/facility/:facility')
@@ -49,9 +51,10 @@ export default class RestGlobalFacilityControlAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalFacilityControlAggregateEntity | GlobalFacilityControlAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility, world})
-            : await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {facility}, new Pagination({sortBy, order, page, pageSize}, true));
+            ? await this.mongoOperationsService.findOne(GlobalFacilityControlAggregateEntity, {facility, world, bracket})
+            : await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {facility, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 }

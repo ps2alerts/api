@@ -9,8 +9,9 @@ import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 @Entity({
     name: 'aggregate_global_outfits',
 })
-@Index(['world', 'bracket', 'outfit.id'], {unique: true})
+@Index(['world', 'outfit.id', 'bracket'], {unique: true})
 @Index(['outfit.id'])
+@Index(['bracket'])
 export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -68,4 +69,11 @@ export default class GlobalOutfitAggregateEntity {
         default: 0,
     })
     headshots: number;
+
+    @ApiProperty({example: 10, description: 'Number of facility captures made by this outfit'})
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    captures: number;
 }

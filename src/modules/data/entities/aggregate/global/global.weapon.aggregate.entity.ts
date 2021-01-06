@@ -9,8 +9,9 @@ import {Bracket, bracketArray} from '../../../constants/bracket.consts';
 @Entity({
     name: 'aggregate_global_weapons',
 })
-@Index(['world', 'bracket', 'weapon.id'], {unique: true})
+@Index(['world', 'weapon.id', 'bracket'], {unique: true})
 @Index(['weapon.id'])
+@Index(['bracket'])
 export default class GlobalWeaponAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

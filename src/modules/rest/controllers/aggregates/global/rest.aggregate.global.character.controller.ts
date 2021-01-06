@@ -7,6 +7,7 @@ import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {World} from '../../../../data/constants/world.consts';
 import Pagination from '../../../../../services/mongo/pagination';
+import {Bracket} from '../../../../data/constants/bracket.consts';
 
 @ApiTags('Global Character Aggregates')
 @Controller('aggregates')
@@ -30,8 +31,9 @@ export default class RestGlobalCharacterAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalCharacterAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/character/:character')
@@ -41,7 +43,10 @@ export default class RestGlobalCharacterAggregateController {
         description: 'The GlobalCharacterAggregateEntity aggregate',
         type: GlobalCharacterAggregateEntity,
     })
-    async findOne(@Param('character') character: string): Promise<GlobalCharacterAggregateEntity> {
-        return await this.mongoOperationsService.findOne(GlobalCharacterAggregateEntity, {'character.id': character});
+    async findOne(
+        @Param('character') character: string,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+    ): Promise<GlobalCharacterAggregateEntity> {
+        return await this.mongoOperationsService.findOne(GlobalCharacterAggregateEntity, {'character.id': character, bracket});
     }
 }

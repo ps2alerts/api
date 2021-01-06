@@ -8,6 +8,7 @@ import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
+import {Bracket} from '../../../../data/constants/bracket.consts';
 
 @ApiTags('Global Vehicle Aggregates')
 @Controller('aggregates')
@@ -31,8 +32,9 @@ export default class RestGlobalVehicleAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world}, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/vehicle/:vehicle')
@@ -50,9 +52,10 @@ export default class RestGlobalVehicleAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleAggregateEntity | GlobalVehicleAggregateEntity[]> {
         return world
-            ? await this.mongoOperationsService.findOne(GlobalVehicleAggregateEntity, {vehicle, world})
+            ? await this.mongoOperationsService.findOne(GlobalVehicleAggregateEntity, {vehicle, world, bracket})
             : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {vehicle}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 }

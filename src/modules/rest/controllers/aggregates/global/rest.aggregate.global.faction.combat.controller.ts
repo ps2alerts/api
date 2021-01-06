@@ -9,6 +9,7 @@ import {World} from '../../../../data/constants/world.consts';
 import Pagination from '../../../../../services/mongo/pagination';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
+import {Bracket} from '../../../../data/constants/bracket.consts';
 
 @ApiTags('Global Faction Combat Aggregates')
 @Controller('aggregates')
@@ -31,8 +32,9 @@ export default class RestGlobalFactionCombatAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalFactionCombatAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity, undefined, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity, {bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/faction/:world')
@@ -43,7 +45,10 @@ export default class RestGlobalFactionCombatAggregateController {
         description: 'The GlobalFactionCombatAggregateEntity aggregate',
         type: GlobalFactionCombatAggregateEntity,
     })
-    async findOne(@Param('world', OptionalIntPipe) world: World): Promise<GlobalFactionCombatAggregateEntity> {
-        return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world});
+    async findOne(
+        @Param('world', OptionalIntPipe) world: World,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+    ): Promise<GlobalFactionCombatAggregateEntity> {
+        return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world, bracket});
     }
 }
