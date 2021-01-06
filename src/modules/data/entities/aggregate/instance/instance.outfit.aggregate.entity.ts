@@ -65,4 +65,11 @@ export default class InstanceOutfitAggregateEntity {
         default: 0,
     })
     participants: number;
+
+    @ApiProperty({example: 10, description: 'Number of facility captures made by this outfit'})
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    captures: number;
 }

@@ -69,4 +69,11 @@ export default class GlobalOutfitAggregateEntity {
         default: 0,
     })
     headshots: number;
+
+    @ApiProperty({example: 10, description: 'Number of facility captures made by this outfit'})
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    captures: number;
 }
