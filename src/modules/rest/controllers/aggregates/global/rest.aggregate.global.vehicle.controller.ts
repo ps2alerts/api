@@ -27,11 +27,11 @@ export default class RestGlobalVehicleAggregateController {
         isArray: true,
     })
     async findAll(
-        @Query('world', OptionalIntPipe) world?: World,
-            @Query('sortBy') sortBy?: string,
+        @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('world', OptionalIntPipe) world?: World,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleAggregateEntity[]> {
         return await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
