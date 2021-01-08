@@ -56,6 +56,13 @@ export default class GlobalOutfitAggregateEntity {
     })
     teamKills: number;
 
+    @ApiProperty({example: 5, description: 'Total number of times teamkilled'})
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    teamKilled: number;
+
     @ApiProperty({example: 2, description: 'Total number of suicides'})
     @Column({
         type: 'number',
