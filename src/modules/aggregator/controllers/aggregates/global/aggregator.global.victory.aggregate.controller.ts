@@ -11,6 +11,8 @@ export default class AggregatorGlobalVictoryAggregateController {
 
     @EventPattern(MQAcceptedPatterns.GLOBAL_VICTORY_AGGREGATE)
     public async process(@Payload() data: GlobalAggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
+        // Convert to proper dates
+
         await this.aggregatorDataHandler.upsertGlobal(
             await this.aggregatorDataHandler.transformGlobal(data),
             context,

@@ -91,6 +91,10 @@ export default class AggregatorDataHandler {
         // If bracket has been supplied intentionally (such as the "Total" bracket (0)) then add it in now
         if (data.bracket === Bracket.TOTAL) {
             data.conditionals.forEach((conditional) => {
+                // Format for any dates
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                conditional = this.transformDateConditional(conditional);
+
                 newConditionals.push(Object.assign(conditional, {
                     bracket: Bracket.TOTAL,
                 }));
@@ -105,6 +109,9 @@ export default class AggregatorDataHandler {
                 // Pull out conditionals and apply bracket to them
                 if (instance.state === Ps2alertsEventState.ENDED) {
                     data.conditionals.forEach((conditional) => {
+                        // Format for any dates
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        conditional = this.transformDateConditional(conditional);
                         newConditionals.push(Object.assign(conditional, {
                             bracket: instance.bracket,
                         }));
@@ -114,7 +121,6 @@ export default class AggregatorDataHandler {
                     // eslint-disable-next-line no-console
                     console.log(data);
                 }
-
             } catch (error) {
                 this.logger.error(`Unable to get instance ${data.instance} from the database and unable to transform`);
                 return data;
@@ -124,5 +130,19 @@ export default class AggregatorDataHandler {
         data.conditionals = newConditionals;
 
         return data;
+    }
+
+    private transformDateConditional(conditional: any): any {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if (conditional.date) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return Object.assign(conditional, {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                date: new Date(conditional.date),
+            });
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return conditional;
     }
 }

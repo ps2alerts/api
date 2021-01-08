@@ -10,6 +10,9 @@ import {Bracket} from '../../../../data/constants/bracket.consts';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
 import {ZONE_IMPLICIT_QUERY} from '../../common/rest.zone.query';
 import {BRACKET_IMPLICIT_QUERY} from '../../common/rest.bracket.query';
+import {OptionalDatePipe} from '../../../pipes/OptionalDatePipe';
+import Range from '../../../../../services/mongo/range';
+import {DATE_IMPLICIT_QUERIES} from '../../common/rest.date.query';
 
 @ApiTags('Global Victory Aggregates')
 @Controller('aggregates')
@@ -20,7 +23,12 @@ export default class RestGlobalVictoryAggregateController {
 
     @Get('global/victories')
     @ApiOperation({summary: 'Return a filtered list of GlobalVictoryAggregate aggregates'})
-    @ApiImplicitQueries([WORLD_IMPLICIT_QUERY, ZONE_IMPLICIT_QUERY, BRACKET_IMPLICIT_QUERY])
+    @ApiImplicitQueries([
+        WORLD_IMPLICIT_QUERY,
+        ZONE_IMPLICIT_QUERY,
+        BRACKET_IMPLICIT_QUERY,
+        ...DATE_IMPLICIT_QUERIES,
+    ])
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalVictoryAggregate aggregates',
@@ -31,7 +39,16 @@ export default class RestGlobalVictoryAggregateController {
         @Query('world', OptionalIntPipe) world?: World,
             @Query('zone', OptionalIntPipe) zone?: Zone,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('dateFrom', OptionalDatePipe) dateFrom?: Date,
+            @Query('dateTo', OptionalDatePipe) dateTo?: Date,
     ): Promise<GlobalVictoryAggregate[]> {
-        return await this.mongoOperationsService.findMany(GlobalVictoryAggregate, {world, zone, bracket});
+        const filter = {
+            world,
+            zone,
+            bracket,
+            date: new Range('date', dateFrom, dateTo).build(),
+        };
+
+        return await this.mongoOperationsService.findMany(GlobalVictoryAggregate, filter);
     }
 }

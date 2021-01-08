@@ -38,7 +38,7 @@ export default class GlobalVictoryAggregateEntity {
     })
     bracket: Bracket;
 
-    @ApiProperty({example: '2020-01-01', description: 'Date of the aggregate in UTC'})
+    @ApiProperty({example: new Date(), description: 'Time the metagame instance ended in UTC'})
     @Column({
         type: 'date',
     })
