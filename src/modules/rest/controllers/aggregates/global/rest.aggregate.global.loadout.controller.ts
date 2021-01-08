@@ -30,7 +30,7 @@ export default class RestGlobalLoadoutAggregateController {
         @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
-            @Query('pageSize', OptionalIntPipe) pageSize?: numberA,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
             @Query('world', OptionalIntPipe) world?: World,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalLoadoutAggregateEntity[]> {
