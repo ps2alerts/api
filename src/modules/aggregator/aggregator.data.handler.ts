@@ -58,9 +58,9 @@ export default class AggregatorDataHandler {
     public async upsertGlobal(data: GlobalAggregatorMessageInterface, context: RmqContext, entity: any): Promise<void> {
         // If there is no bracket available now, reject the message as it shouldn't be possible.
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (data.conditionals[0].bracket === undefined) {
+        if (data.conditionals[0] && data.conditionals[0].bracket === undefined) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            await context.getChannelRef().ack(context.getMessage());
+            await context.getChannelRef().reject(context.getMessage());
 
             this.logger.error(`Attempted to add GlobalAggregator without a bracket for instance ${data.instance}`);
             return;
@@ -78,11 +78,13 @@ export default class AggregatorDataHandler {
 
             if (!error.message.includes('E11000')) {
                 this.logger.error(`Unable to upsert data for Global Aggregation! E: ${error.message}`);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                await context.getChannelRef().reject(context.getMessage());
             }
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-        context.getChannelRef().ack(context.getMessage());
+        await context.getChannelRef().ack(context.getMessage());
     }
 
     public async transformGlobal(data: GlobalAggregatorMessageInterface): Promise<GlobalAggregatorMessageInterface> {
@@ -118,8 +120,6 @@ export default class AggregatorDataHandler {
                     });
                 } else {
                     this.logger.error(`Received Global Aggregate message for unfinished instance ${data.instance}`);
-                    // eslint-disable-next-line no-console
-                    console.log(data);
                 }
             } catch (error) {
                 this.logger.error(`Unable to get instance ${data.instance} from the database and unable to transform`);
