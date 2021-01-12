@@ -77,9 +77,7 @@ export default class AggregatorDataHandler {
             const error: Error = err;
 
             if (!error.message.includes('E11000')) {
-                this.logger.error(`Unable to upsert data for Global Aggregation! E: ${error.message}`);
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                await context.getChannelRef().reject(context.getMessage());
+                throw new Error(`Unable to upsert data for Global Aggregation! E: ${error.message}`);
             }
         }
 
@@ -102,28 +100,30 @@ export default class AggregatorDataHandler {
                 }));
             });
         } else {
+            let instance: InstanceMetagameTerritoryEntity;
+
             try {
-                const instance: InstanceMetagameTerritoryEntity = await this.mongoOperationsService.findOne(
+                // If none is found an exception will throw (fineOneOrFail)
+                instance = await this.mongoOperationsService.findOne(
                     InstanceMetagameTerritoryEntity,
                     {instanceId: data.instance},
                 );
+            } catch (e) {
+                throw new Error(`Instance ${data.instance} does not exist.`);
+            }
 
-                // Pull out conditionals and apply bracket to them
-                if (instance.state === Ps2alertsEventState.ENDED) {
-                    data.conditionals.forEach((conditional) => {
-                        // Format for any dates
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        conditional = this.transformDateConditional(conditional);
-                        newConditionals.push(Object.assign(conditional, {
-                            bracket: instance.bracket,
-                        }));
-                    });
-                } else {
-                    this.logger.error(`Received Global Aggregate message for unfinished instance ${data.instance}`);
-                }
-            } catch (error) {
-                this.logger.error(`Unable to get instance ${data.instance} from the database and unable to transform`);
-                return data;
+            // Pull out conditionals and apply bracket to them
+            if (instance.state === Ps2alertsEventState.ENDED) {
+                data.conditionals.forEach((conditional) => {
+                    // Format for any dates
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    conditional = this.transformDateConditional(conditional);
+                    newConditionals.push(Object.assign(conditional, {
+                        bracket: instance.bracket,
+                    }));
+                });
+            } else {
+                this.logger.error(`Received Global Aggregate message for unfinished instance ${data.instance}`);
             }
         }
 

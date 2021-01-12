@@ -1,4 +1,4 @@
-import {Controller} from '@nestjs/common';
+import {Controller, Logger} from '@nestjs/common';
 import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
 import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
 import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.character.aggregate.entity';
@@ -7,14 +7,24 @@ import GlobalAggregatorMessageInterface from '../../../interfaces/global.aggrega
 
 @Controller()
 export default class AggregatorGlobalCharacterAggregateController {
+    private readonly logger = new Logger(AggregatorGlobalCharacterAggregateController.name);
+
     constructor(private readonly aggregatorDataHandler: AggregatorDataHandler) {}
 
     @EventPattern(MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE)
     public async process(@Payload() data: GlobalAggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
-        await this.aggregatorDataHandler.upsertGlobal(
-            await this.aggregatorDataHandler.transformGlobal(data),
-            context,
-            GlobalCharacterAggregateEntity,
-        );
+        try {
+            await this.aggregatorDataHandler.upsertGlobal(
+                await this.aggregatorDataHandler.transformGlobal(data),
+                context,
+                GlobalCharacterAggregateEntity,
+            );
+        } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            this.logger.error(`Unable to process ${MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            await context.getChannelRef().reject(context.getMessage());
+        }
     }
 }
