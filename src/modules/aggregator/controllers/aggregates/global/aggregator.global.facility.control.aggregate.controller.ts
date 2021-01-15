@@ -24,7 +24,7 @@ export default class AggregatorGlobalFacilityControlAggregateController {
             this.logger.error(`Unable to process ${MQAcceptedPatterns.GLOBAL_FACILITY_CONTROL_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            await context.getChannelRef().reject(context.getMessage());
+            await context.getChannelRef().ack(context.getMessage());
         }
     }
 }
