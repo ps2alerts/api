@@ -202,11 +202,10 @@ resource datadog_monitor "api_rabbit_consumer_queue_high_messages" {
   tags = jsondecode(templatefile("${path.module}/../../dd-tags.tmpl", {environment: var.environment, application: "api"}))
 }
 
-
 resource datadog_monitor "api_rabbit_consumer_queue_redeliveries" {
   name = "PS2Alerts API Rabbit consumer queue redeliveries [${var.environment}]"
   type = "metric alert"
-  query = "avg(last_1m):avg:rabbitmq.queue.messages.redelivery.rate{rabbitmq_queue:api-queue-${var.environment}} > 5"
+  query = "avg(last_1m):avg:rabbitmq.queue.messages.redeliver.rate{rabbitmq_queue:api-queue-${var.environment}} > 5"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "queue redeliveries"})
 
   thresholds = {
