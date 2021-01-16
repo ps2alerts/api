@@ -184,3 +184,38 @@ resource datadog_monitor "api_rabbit_channel_closed" {
 
   tags = jsondecode(templatefile("${path.module}/../../dd-tags.tmpl", {environment: var.environment, application: "api"}))
 }
+
+resource datadog_monitor "api_rabbit_queue_high_messages" {
+  name = "PS2Alerts API rabbit queue high length [${var.environment}]"
+  type = "log alert"
+  query = "avg(last_1m):avg:rabbitmq.queue.messages{rabbitmq_queue:api-queue-${var.environment}} > 500"
+  message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "queue length high"})
+
+  thresholds = {
+    critical = 500
+  }
+
+  notify_no_data = true
+  require_full_window = false
+  no_data_timeframe = 10
+
+  tags = jsondecode(templatefile("${path.module}/../../dd-tags.tmpl", {environment: var.environment, application: "api"}))
+}
+
+
+resource datadog_monitor "api_rabbit_queue_redeliveries" {
+  name = "PS2Alerts API rabbit queue redeliveries [${var.environment}]"
+  type = "log alert"
+  query = "avg(last_1m):avg:rabbitmq.queue.messages.redelivery.rate{rabbitmq_queue:api-queue-${var.environment}} > 5"
+  message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "queue redeliveries"})
+
+  thresholds = {
+    critical = 5
+  }
+
+  notify_no_data = true
+  require_full_window = false
+  no_data_timeframe = 10
+
+  tags = jsondecode(templatefile("${path.module}/../../dd-tags.tmpl", {environment: var.environment, application: "api"}))
+}
