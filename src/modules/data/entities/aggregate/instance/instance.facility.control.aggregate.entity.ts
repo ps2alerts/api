@@ -3,12 +3,13 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import FacilityFactionControl from '../common/facility.faction.control.embed';
+import FacilityEmbed from '../common/facility.embed';
 
 @Entity({
     name: 'aggregate_instance_facility_controls',
 })
-@Index(['instance', 'facility'], {unique: true})
-@Index(['facility'])
+@Index(['instance', 'facility.id'], {unique: true})
+@Index(['facility.id'])
 export default class InstanceFacilityControlAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -20,11 +21,9 @@ export default class InstanceFacilityControlAggregateEntity {
     })
     instance: string;
 
-    @ApiProperty({example: 242, description: 'Facility ID'})
-    @Column({
-        type: 'number',
-    })
-    facility: number;
+    @ApiProperty({type: FacilityEmbed, description: 'Facility details'})
+    @Column(() => FacilityEmbed)
+    facility: FacilityEmbed;
 
     @ApiProperty({type: FacilityFactionControl, description: 'Facility Capture / Defenses for VS faction'})
     @Column(() => FacilityFactionControl)

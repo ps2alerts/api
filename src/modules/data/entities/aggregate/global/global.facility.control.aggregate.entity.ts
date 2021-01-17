@@ -5,11 +5,12 @@ import {Exclude} from 'class-transformer';
 import {World, worldArray} from '../../../constants/world.consts';
 import FacilityFactionControl from '../common/facility.faction.control.embed';
 import {Bracket, bracketArray} from '../../../constants/bracket.consts';
+import FacilityEmbed from '../common/facility.embed';
 
 @Entity({
     name: 'aggregate_global_facility_controls',
 })
-@Index(['world', 'facility', 'bracket'], {unique: true})
+@Index(['world', 'facility.id', 'bracket'], {unique: true})
 @Index(['bracket'])
 export default class GlobalFacilityControlAggregateEntity {
     @ObjectIdColumn()
@@ -30,11 +31,9 @@ export default class GlobalFacilityControlAggregateEntity {
     })
     bracket: Bracket;
 
-    @ApiProperty({example: 242, description: 'Facility ID'})
-    @Column({
-        type: 'number',
-    })
-    facility: number;
+    @ApiProperty({type: FacilityEmbed, description: 'Facility details'})
+    @Column(() => FacilityEmbed)
+    facility: FacilityEmbed;
 
     @ApiProperty({type: FacilityFactionControl, description: 'Facility Capture / Defenses for VS faction'})
     @Column(() => FacilityFactionControl)
