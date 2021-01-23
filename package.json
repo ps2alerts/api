@@ -36,7 +36,7 @@
     "@nestjs/platform-fastify": "^7.4.2",
     "@nestjs/platform-ws": "^7.4.2",
     "@nestjs/schedule": "^0.4.1",
-    "@nestjs/swagger": "^4.7.5",
+    "@nestjs/swagger": "^4.7.12",
     "@nestjs/typeorm": "^7.1.5",
     "@nestjs/websockets": "^7.6.1",
     "@types/cron": "^1.7.2",
