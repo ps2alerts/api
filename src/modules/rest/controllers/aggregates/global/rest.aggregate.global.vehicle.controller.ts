@@ -34,7 +34,7 @@ export default class RestGlobalVehicleAggregateController {
             @Query('world', OptionalIntPipe) world?: World,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('global/vehicle/:vehicle')
@@ -56,6 +56,6 @@ export default class RestGlobalVehicleAggregateController {
     ): Promise<GlobalVehicleAggregateEntity | GlobalVehicleAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalVehicleAggregateEntity, {vehicle, world, bracket})
-            : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {vehicle}, new Pagination({sortBy, order, page, pageSize}, true));
+            : await this.mongoOperationsService.findMany(GlobalVehicleAggregateEntity, {vehicle}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }
