@@ -12,6 +12,7 @@ import FacilityEmbed from '../common/facility.embed';
 })
 @Index(['world', 'facility.id', 'bracket'], {unique: true})
 @Index(['bracket'])
+@Index(['facility.zone'])
 export default class GlobalFacilityControlAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

@@ -8,6 +8,7 @@ import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {World} from '../../../../data/constants/world.consts';
 import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/constants/bracket.consts';
+import {Zone} from '../../../../data/constants/zone.consts';
 
 @ApiTags('Global Facility Control Aggregates')
 @Controller('aggregates')
@@ -27,13 +28,14 @@ export default class RestGlobalFacilityControlAggregateController {
     })
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
+            @Query('zone', OptionalIntPipe) zone?: Zone,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalFacilityControlAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalFacilityControlAggregateEntity, {world, 'facility.zone': zone, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/facility/:facility')
