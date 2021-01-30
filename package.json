@@ -38,7 +38,7 @@
     "@nestjs/schedule": "^0.4.1",
     "@nestjs/swagger": "^4.7.5",
     "@nestjs/typeorm": "^7.1.5",
-    "@nestjs/websockets": "^7.6.1",
+    "@nestjs/websockets": "^7.6.7",
     "@types/cron": "^1.7.2",
     "amqp-connection-manager": "^3.2.0",
     "amqplib": "^0.6.0",
