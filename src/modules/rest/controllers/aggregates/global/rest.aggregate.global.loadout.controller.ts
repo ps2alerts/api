@@ -34,7 +34,7 @@ export default class RestGlobalLoadoutAggregateController {
             @Query('world', OptionalIntPipe) world?: World,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalLoadoutAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
+        return await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('global/loadout/:loadout')
@@ -56,6 +56,6 @@ export default class RestGlobalLoadoutAggregateController {
     ): Promise<GlobalLoadoutAggregateEntity | GlobalLoadoutAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalLoadoutAggregateEntity, {loadout, world, bracket})
-            : await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {loadout, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
+            : await this.mongoOperationsService.findMany(GlobalLoadoutAggregateEntity, {loadout, bracket}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }
