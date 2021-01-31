@@ -3,6 +3,7 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import ItemEmbed from '../common/item.embed';
+import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 
 @Entity({
     name: 'aggregate_instance_weapons',
@@ -51,4 +52,8 @@ export default class InstanceWeaponAggregateEntity {
         default: 0,
     })
     headshots: number;
+
+    @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
+    @Column(() => FactionVersusFactionEmbed)
+    factionKills: FactionVersusFactionEmbed;
 }

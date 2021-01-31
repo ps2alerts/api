@@ -5,6 +5,7 @@ import {Column, ObjectIdColumn, Entity, ObjectID, Index} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
 import CombatStats from '../common/combat.stats.embed';
 import {Bracket, bracketArray} from '../../../constants/bracket.consts';
+import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 
 @Entity({
     name: 'aggregate_global_faction_combats',
@@ -56,4 +57,8 @@ export default class GlobalFactionCombatAggregateEntity {
     @ApiProperty({type: CombatStats, description: 'Combat Statistics for all factions'})
     @Column(() => CombatStats)
     totals: CombatStats;
+
+    @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
+    @Column(() => FactionVersusFactionEmbed)
+    factionKills: FactionVersusFactionEmbed;
 }

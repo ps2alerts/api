@@ -4,6 +4,7 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import FacilityFactionControl from '../common/facility.faction.control.embed';
 import FacilityEmbed from '../common/facility.embed';
+import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 
 @Entity({
     name: 'aggregate_instance_facility_controls',
@@ -42,4 +43,8 @@ export default class InstanceFacilityControlAggregateEntity {
     @ApiProperty({type: FacilityFactionControl, description: 'Facility Capture / Defenses for all factions'})
     @Column(() => FacilityFactionControl)
     totals: FacilityFactionControl;
+
+    @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
+    @Column(() => FactionVersusFactionEmbed)
+    factionKills: FactionVersusFactionEmbed;
 }

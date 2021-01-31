@@ -20,4 +20,10 @@ export default class FactionVersusFactionEmbed {
         type: 'number',
     })
     tr: number;
+
+    @ApiProperty({example: 123, description: 'Count for NSO'})
+    @Column({
+        type: 'number',
+    })
+    nso: number;
 }

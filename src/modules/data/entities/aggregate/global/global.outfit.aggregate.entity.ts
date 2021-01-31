@@ -5,6 +5,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../../constants/world.consts';
 import OutfitEmbed from '../common/outfit.embed';
 import {Bracket, bracketArray} from '../../../constants/bracket.consts';
+import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 
 @Entity({
     name: 'aggregate_global_outfits',
@@ -83,4 +84,8 @@ export default class GlobalOutfitAggregateEntity {
         default: 0,
     })
     captures: number;
+
+    @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
+    @Column(() => FactionVersusFactionEmbed)
+    factionKills: FactionVersusFactionEmbed;
 }
