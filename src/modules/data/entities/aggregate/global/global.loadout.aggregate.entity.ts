@@ -5,6 +5,7 @@ import {Exclude} from 'class-transformer';
 import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
 import {World, worldArray} from '../../../constants/world.consts';
 import {Bracket, bracketArray} from '../../../constants/bracket.consts';
+import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 
 @Entity({
     name: 'aggregate_global_loadouts',
@@ -79,4 +80,8 @@ export default class GlobalLoadoutAggregateEntity {
         default: 0,
     })
     headshots: number;
+
+    @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
+    @Column(() => FactionVersusFactionEmbed)
+    factionKills: FactionVersusFactionEmbed;
 }
