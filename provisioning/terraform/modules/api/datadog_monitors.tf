@@ -188,11 +188,11 @@ resource datadog_monitor "api_rabbit_channel_closed" {
 resource datadog_monitor "api_rabbit_consumer_queue_high_messages" {
   name = "PS2Alerts API Rabbit consumer queue high length [${var.environment}]"
   type = "metric alert"
-  query = "avg(last_1m):avg:rabbitmq.queue.messages{rabbitmq_queue:api-queue-${var.environment}} > 500"
+  query = "avg(last_5m):avg:rabbitmq.queue.messages{rabbitmq_queue:api-queue-${var.environment}} > 2500"
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API", description: "queue length high"})
 
   thresholds = {
-    critical = 500
+    critical = 2500
   }
 
   notify_no_data = true

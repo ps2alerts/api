@@ -21,7 +21,7 @@ module "api_staging" {
   cpu_limit_cron     = "50m"
   mem_limit          = "0.25Gi"
   mem_limit_cron     = "0.1Gi"
-  cpu_request        = "100m"
+  cpu_request        = "10m"
   cpu_request_cron   = "10m"
   mem_request        = "0.25Gi"
   mem_request_cron   = "0.1Gi"
