@@ -56,7 +56,7 @@ resource datadog_monitor "api_cron_high_mem" {
   message = templatefile("${path.module}/../../dd-monitor-message.tmpl", {environment: var.environment, application: "API Cron", description: "high memory"})
 
   thresholds = {
-    critical = 94371800 # 0.9Gi
+    critical = 94371800 # 0.09Gi
   }
 
   notify_no_data = true
