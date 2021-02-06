@@ -42,7 +42,7 @@
     "@types/cron": "^1.7.2",
     "amqp-connection-manager": "^3.2.1",
     "amqplib": "^0.6.0",
-    "class-transformer": "^0.3.1",
+    "class-transformer": "^0.3.2",
     "fastify-helmet": "^5.0.3",
     "fastify-rate-limit": "^4.0.2",
     "mongodb": "^3.6.4",
