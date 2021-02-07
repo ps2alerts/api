@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
-import FactionVersusFactionEmbed from './faction.versus.faction.embed';
+import FactionVSVersusFactionEmbed from './factionvsfaction/FactionVSVersusFactionEmbed';
 
 export default class FacilityFactionControlEmbed {
     @ApiProperty({example: 3, description: 'Number of Facility captures'})
@@ -19,16 +19,18 @@ export default class FacilityFactionControlEmbed {
     defences: number;
 
     @ApiProperty({
-        type: FactionVersusFactionEmbed,
+        type: FactionVSVersusFactionEmbed,
         description: 'Facilities taken from other factions',
+        example: {nc: 123, tr: 123},
     })
-    @Column(() => FactionVersusFactionEmbed)
-    takenFrom: FactionVersusFactionEmbed;
+    @Column(() => FactionVSVersusFactionEmbed)
+    takenFrom: FactionVSVersusFactionEmbed;
 
     @ApiProperty({
-        type: FactionVersusFactionEmbed,
+        type: FactionVSVersusFactionEmbed,
         description: 'Facilities lost to other factions',
+        example: {nc: 123, tr: 123},
     })
-    @Column(() => FactionVersusFactionEmbed)
-    lostTo: FactionVersusFactionEmbed;
+    @Column(() => FactionVSVersusFactionEmbed)
+    lostTo: FactionVSVersusFactionEmbed;
 }
