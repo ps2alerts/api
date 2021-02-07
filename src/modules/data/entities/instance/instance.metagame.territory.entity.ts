@@ -14,6 +14,7 @@ import {Bracket, bracketArray} from '../../constants/bracket.consts';
 })
 @Index(['world', 'censusInstanceId'], {unique: true})
 @Index(['zone'])
+@Index(['state'])
 export default class InstanceMetagameTerritoryEntity {
     @ObjectIdColumn()
     @Exclude()
