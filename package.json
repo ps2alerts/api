@@ -44,7 +44,7 @@
     "amqplib": "^0.6.0",
     "class-transformer": "^0.3.2",
     "fastify-helmet": "^5.0.3",
-    "fastify-rate-limit": "^4.0.2",
+    "fastify-rate-limit": "^5.0.1",
     "mongodb": "^3.6.3",
     "fastify-swagger": "^4.2.0",
     "nestjs-swagger-api-implicit-queries-decorator": "^1.0.0",
