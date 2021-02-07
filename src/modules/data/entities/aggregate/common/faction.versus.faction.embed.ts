@@ -1,29 +1,26 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
+import FactionVSVersusFactionEmbed from './factionvsfaction/FactionVSVersusFactionEmbed';
+import FactionNCVersusFactionEmbed from './factionvsfaction/FactionNCVersusFactionEmbed';
+import FactionTRVersusFactionEmbed from './factionvsfaction/FactionTRVersusFactionEmbed';
+import FactionNSOVersusFactionEmbed from './factionvsfaction/FacitonNSOVersionFactionEmbed';
 
 export default class FactionVersusFactionEmbed {
-    @ApiProperty({example: 123, description: 'Count for VS'})
-    @Column({
-        type: 'number',
-    })
-    vs: number;
+    // For some reason the examples aren't pulled out of embeds of embeds
+    @ApiProperty({type: FactionVSVersusFactionEmbed, example: {nc: 123, tr: 123, nso: 123}, description: 'Kills made by VS against other factions'})
+    @Column(() => FactionVSVersusFactionEmbed)
+    vs: FactionVSVersusFactionEmbed;
 
-    @ApiProperty({example: 123, description: 'Count for NC'})
-    @Column({
-        type: 'number',
-    })
-    nc: number;
+    @ApiProperty({type: FactionNCVersusFactionEmbed, example: {vs: 123, tr: 123, nso: 123}, description: 'Kills made by NC against other factions'})
+    @Column(() => FactionNCVersusFactionEmbed)
+    nc: FactionNCVersusFactionEmbed;
 
-    @ApiProperty({example: 123, description: 'Count for TR'})
-    @Column({
-        type: 'number',
-    })
-    tr: number;
+    @ApiProperty({type: FactionTRVersusFactionEmbed, example: {vs: 123, nc: 123, nso: 123}, description: 'Kills made by TR against other factions'})
+    @Column(() => FactionTRVersusFactionEmbed)
+    tr: FactionTRVersusFactionEmbed;
 
-    @ApiProperty({example: 123, description: 'Count for NSO'})
-    @Column({
-        type: 'number',
-    })
-    nso: number;
+    @ApiProperty({type: FactionNSOVersusFactionEmbed, example: {vs: 123, nc: 123, tr: 123}, description: 'Kills made by NSO against other factions'})
+    @Column(() => FactionNSOVersusFactionEmbed)
+    nso: FactionNSOVersusFactionEmbed;
 }

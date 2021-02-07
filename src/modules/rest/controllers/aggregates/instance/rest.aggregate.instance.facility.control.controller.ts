@@ -43,6 +43,6 @@ export default class RestInstanceFacilityControlAggregateController {
         @Param('instance') instance: string,
             @Param('facility', ParseIntPipe) facility: number,
     ): Promise<InstanceFacilityControlAggregateEntity> {
-        return await this.mongoOperationsService.findOne(InstanceFacilityControlAggregateEntity, {instance, facility});
+        return await this.mongoOperationsService.findOne(InstanceFacilityControlAggregateEntity, {instance, 'facility.id': facility});
     }
 }
