@@ -26,6 +26,10 @@ variable "rabbitmq_pass" {
 }
 variable "rabbitmq_vhost" {}
 variable "rabbitmq_queue" {}
+variable "redis_host" {}
+variable "redis_port" {}
+variable "redis_pass" {}
+variable "redis_db" {}
 variable "rabbitmq_prefetch" {}
 variable "cpu_limit" {}
 variable "cpu_limit_cron" {}

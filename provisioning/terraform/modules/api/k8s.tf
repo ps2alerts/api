@@ -151,6 +151,22 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
             value = var.rabbitmq_prefetch
           }
           env {
+            name = "REDIS_HOST"
+            value = var.redis_host
+          }
+          env {
+            name = "REDIS_PORT"
+            value = var.redis_port
+          }
+          env {
+            name = "REDIS_PASS"
+            value = var.redis_pass
+          }
+          env {
+            name = "REDIS_DB"
+            value = var.redis_db
+          }
+          env {
             name = "AGGREGATOR_ENABLED"
             value = true
           }
@@ -298,6 +314,22 @@ resource "kubernetes_deployment" "ps2alerts_api_cron_deployment" {
           env {
             name = "RABBITMQ_PREFETCH"
             value = var.rabbitmq_prefetch
+          }
+          env {
+            name = "REDIS_HOST"
+            value = var.redis_host
+          }
+          env {
+            name = "REDIS_PORT"
+            value = var.redis_port
+          }
+          env {
+            name = "REDIS_PASS"
+            value = var.redis_pass
+          }
+          env {
+            name = "REDIS_DB"
+            value = var.redis_db
           }
           env {
             name = "AGGREGATOR_ENABLED"

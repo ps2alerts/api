@@ -30,4 +30,11 @@ export const config = () => ({
         queue: process.env.RABBITMQ_QUEUE ?? 'api-queue',
         shortDelayQueue: process.env.RABBITMQ_SHORT_DELAY_QUEUE ?? 'api-queue-delay-5min',
     },
+
+    redis: {
+        host: process.env.REDIS_HOST ?? 'ps2alerts-redis',
+        port: process.env.REDIS_PORT ?? 6379,
+        password: process.env.REDIS_PASS ?? undefined,
+        db: process.env.REDIS_DB ?? 1,
+    },
 });

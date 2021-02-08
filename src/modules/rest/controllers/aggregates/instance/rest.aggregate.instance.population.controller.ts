@@ -6,12 +6,14 @@ import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 import Pagination from '../../../../../services/mongo/pagination';
+import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 
 @ApiTags('Instance Population Aggregates')
 @Controller('aggregates')
 export default class RestInstancePopulationAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
     @Get('instance/:instance/population')
@@ -30,6 +32,14 @@ export default class RestInstancePopulationAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstancePopulationAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstancePopulationAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
+        const pagination = new Pagination({sortBy, order, page, pageSize}, false);
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const key = `/instance/${instance}/population/?P:${pagination.getKey()}`;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.cacheService.get(key) ?? await this.cacheService.set(
+            key,
+            await this.mongoOperationsService.findMany(InstancePopulationAggregateEntity, {instance}, pagination),
+            60);
     }
 }
