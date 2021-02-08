@@ -17,7 +17,7 @@ module "api_staging" {
   rabbitmq_vhost     = "/ps2alerts"
   rabbitmq_queue     = "api-queue-staging"
   rabbitmq_prefetch  = 1000
-  redis_host         = 'ps2alerts-redis-master-0'
+  redis_host         = "ps2alerts-redis-master-0"
   redis_pass         = var.redis_pass
   redis_port         = 6379
   redis_db           = 11
