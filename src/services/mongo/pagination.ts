@@ -28,4 +28,9 @@ export default class Pagination {
             };
         }
     }
+
+    public getKey(): string {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        return `O:${JSON.stringify(this.order)}-T:${this.take}-S:${this.skip}`;
+    }
 }

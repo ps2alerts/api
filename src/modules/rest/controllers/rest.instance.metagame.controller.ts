@@ -24,6 +24,7 @@ import {Bracket} from '../../data/constants/bracket.consts';
 import {BRACKET_IMPLICIT_QUERY} from './common/rest.bracket.query';
 import {RESULT_VICTOR_QUERY} from './common/rest.result.victor.query';
 import {Faction} from '../../data/constants/faction.consts';
+import {RedisCacheService} from '../../../services/cache/redis.cache.service';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
@@ -45,6 +46,7 @@ interface TerritoryControlFilterInterface {
 export class RestInstanceMetagameController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
     @Get('/:instance')
@@ -76,18 +78,24 @@ export class RestInstanceMetagameController {
         @Query('world', OptionalIntPipe) world?: World,
             @Query('zone', OptionalIntPipe) zone?: Zone,
             @Query('sortBy') sortBy?: string,
-            @Query('order') order?: string,
-            @Query('page', OptionalIntPipe) page?: number,
-            @Query('pageSize', OptionalIntPipe) pageSize?: number,
-    ): Promise<InstanceMetagameTerritoryEntity[]> {
-        return await this.mongoOperationsService.findMany(
-            InstanceMetagameTerritoryEntity,
-            {
-                state: Ps2alertsEventState.STARTED,
-                world,
-                zone,
-            },
-            new Pagination({sortBy, order, page, pageSize}, false));
+    ): Promise<InstanceMetagameTerritoryEntity[] | null> {
+        const pagination = new Pagination({sortBy});
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const key = `/actives/W:${world}-Z:${zone}?P:${pagination.getKey()}`;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.cacheService.get(key) ?? await this.cacheService.set(
+            key,
+            await this.mongoOperationsService.findMany(
+                InstanceMetagameTerritoryEntity,
+                {
+                    state: Ps2alertsEventState.STARTED,
+                    world,
+                    zone,
+                },
+                pagination,
+            ),
+            10);
     }
 
     @Get('/territory-control')
@@ -119,6 +127,7 @@ export class RestInstanceMetagameController {
             'result.victor': victor ? victor : undefined,
         };
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }

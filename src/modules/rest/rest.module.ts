@@ -1,6 +1,6 @@
-
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {APP_INTERCEPTOR} from '@nestjs/core';
-import {ClassSerializerInterceptor, Module} from '@nestjs/common';
+import {CacheModule, ClassSerializerInterceptor, Module} from '@nestjs/common';
 import {RestInstanceMetagameController} from './controllers/rest.instance.metagame.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
 // Global Aggregate Entities
@@ -51,6 +51,10 @@ import RestInstanceWeaponAggregateController from './controllers/aggregates/inst
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import InstanceFacilityControlEntity from '../data/entities/instance/instance.facilitycontrol.entity';
 import RestInstanceFacilityControlController from './controllers/rest.instance.facility.control.controller';
+import ConfigModule from '../../config/config.module';
+import {ConfigService} from '@nestjs/config';
+import * as redisStore from 'cache-manager-ioredis';
+import {RedisCacheService} from '../../services/cache/redis.cache.service';
 
 /**
  * Handles incoming requests to the API via HTTP, CRUD environment.
@@ -83,6 +87,20 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
             InstanceFacilityControlEntity,
             InstanceMetagameTerritoryEntity,
         ]),
+        // This cannot be registered globally so we have to do it in submodules :( https://github.com/nestjs/nest/issues/1633#issuecomment-472605111
+        CacheModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => {
+                return {
+                    store: redisStore,
+                    host: config.get('redis.host'),
+                    port: config.get('redis.port'),
+                    db: config.get('redis.db'),
+                    password: config.get('redis.password'),
+                };
+            },
+        }),
     ],
     controllers: [
         // Global Aggregate Controllers
@@ -114,6 +132,7 @@ import RestInstanceFacilityControlController from './controllers/rest.instance.f
     providers: [
         {provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor},
         MongoOperationsService,
+        RedisCacheService,
     ],
 })
 export class RestModule {}

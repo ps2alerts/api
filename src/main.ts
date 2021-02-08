@@ -6,6 +6,7 @@ import {RmqOptions, Transport} from '@nestjs/microservices';
 import {ConfigService} from '@nestjs/config';
 import {AppModule} from './app.module';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
+import compression from 'fastify-compress';
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -60,6 +61,8 @@ async function bootstrap(): Promise<void> {
 
     // Connects to Rabbit etc
     await app.startAllMicroservicesAsync();
+
+    app.register(compression, {encodings: ['gzip', 'deflate']});
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const port = config.get('http.port') ?? 3000;

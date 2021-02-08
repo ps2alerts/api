@@ -76,6 +76,7 @@ jobs:
             -var='db_user=${{ secrets.DB_USER }}' \
             -var='db_pass=${{ secrets.DB_PASS }}' \
             -var='rabbitmq_pass=${{ secrets.RABBITMQ_PS2ALERTS_PASS }}' \
+            -var='redis_pass=${{ secrets.REDIS_PASS }}' \
             -var='dd_api_key=${{ secrets.DATADOG_API_KEY }}' \
             -var='dd_app_key=${{ secrets.DATADOG_APP_KEY }}' \
             -target=module.api_staging -out='.tfout'
