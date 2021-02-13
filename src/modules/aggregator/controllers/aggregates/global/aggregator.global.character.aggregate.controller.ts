@@ -20,8 +20,9 @@ export default class AggregatorGlobalCharacterAggregateController {
                 GlobalCharacterAggregateEntity,
             );
         } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-            this.logger.error(`Unable to process ${MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
+            if (e instanceof Error && !e.message.includes('does not exist')) {
+                this.logger.error(`Unable to process ${MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
+            }
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             await context.getChannelRef().ack(context.getMessage());
