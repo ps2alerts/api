@@ -78,11 +78,11 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
             timeout_seconds       = 10
           }
           resources {
-            limits {
+            limits = {
               cpu = var.cpu_limit
               memory = var.mem_limit
             }
-            requests {
+            requests = {
               cpu = var.cpu_request
               memory = var.mem_request
             }
@@ -243,11 +243,11 @@ resource "kubernetes_deployment" "ps2alerts_api_cron_deployment" {
             timeout_seconds       = 10
           }
           resources {
-            limits {
+            limits = {
               cpu = var.cpu_limit_cron
               memory = var.mem_limit_cron
             }
-            requests {
+            requests = {
               cpu = var.cpu_request_cron
               memory = var.mem_request_cron
             }

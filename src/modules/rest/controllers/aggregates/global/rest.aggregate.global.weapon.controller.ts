@@ -8,12 +8,14 @@ import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator'
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/constants/bracket.consts';
+import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 
 @ApiTags('Global Weapon Aggregates')
 @Controller('aggregates')
 export default class RestGlobalWeaponAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
     @Get('global/weapon')
@@ -27,13 +29,21 @@ export default class RestGlobalWeaponAggregateController {
     })
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalWeaponAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, false));
+        const pagination = new Pagination({sortBy, order, page, pageSize}, false);
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const key = `/global/weapon/W:${world}-B:${bracket}?P:${pagination.getKey()}`;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.cacheService.get(key) ?? await this.cacheService.set(
+            key,
+            await this.mongoOperationsService.findMany(GlobalWeaponAggregateEntity, {world, bracket}, pagination),
+            900);
     }
 
     @Get('global/weapon/:weapon')

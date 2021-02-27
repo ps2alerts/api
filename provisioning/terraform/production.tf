@@ -17,7 +17,7 @@ module "api_production" {
   rabbitmq_vhost     = "/ps2alerts"
   rabbitmq_queue     = "api-queue-production"
   rabbitmq_prefetch  = 1000
-  redis_host         = 'ps2alerts-redis-master-0'
+  redis_host         = "ps2alerts-redis-master"
   redis_pass         = var.redis_pass
   redis_port         = 6379
   redis_db           = 1

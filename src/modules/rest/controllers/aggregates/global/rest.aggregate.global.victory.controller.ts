@@ -13,12 +13,14 @@ import {BRACKET_IMPLICIT_QUERY} from '../../common/rest.bracket.query';
 import {OptionalDatePipe} from '../../../pipes/OptionalDatePipe';
 import Range from '../../../../../services/mongo/range';
 import {DATE_IMPLICIT_QUERIES} from '../../common/rest.date.query';
+import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 
 @ApiTags('Global Victory Aggregates')
 @Controller('aggregates')
 export default class RestGlobalVictoryAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
     @Get('global/victories')
@@ -49,6 +51,14 @@ export default class RestGlobalVictoryAggregateController {
             date: new Range('date', dateFrom, dateTo).build(),
         };
 
-        return await this.mongoOperationsService.findMany(GlobalVictoryAggregate, filter);
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const key = `/global/victories/W:${world}-Z:${zone}-B:${bracket}?DF:${dateFrom}-DT:${dateTo}`;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.cacheService.get(key) ?? await this.cacheService.set(
+            key,
+            await this.mongoOperationsService.findMany(GlobalVictoryAggregate, filter),
+            60,
+        );
     }
 }

@@ -8,12 +8,14 @@ import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator'
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/constants/bracket.consts';
+import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 
 @ApiTags('Global Outfit Aggregates')
 @Controller('aggregates')
 export default class RestGlobalOutfitAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
     @Get('global/outfit')
@@ -27,13 +29,21 @@ export default class RestGlobalOutfitAggregateController {
     })
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalOutfitAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
+        const pagination = new Pagination({sortBy, order, page, pageSize}, true);
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const key = `/global/outfit/W:${world}-B:${bracket}?P:${pagination.getKey()}`;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.cacheService.get(key) ?? await this.cacheService.set(
+            key,
+            await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {world, bracket}, pagination),
+            900);
     }
 
     @Get('global/outfit/:outfit')
@@ -47,11 +57,11 @@ export default class RestGlobalOutfitAggregateController {
     async findOne(
         @Param('outfit') outfit: string,
             @Query('world', OptionalIntPipe) world?: World,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
     ): Promise<GlobalOutfitAggregateEntity | GlobalOutfitAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {'outfit.id': outfit, world, bracket})
