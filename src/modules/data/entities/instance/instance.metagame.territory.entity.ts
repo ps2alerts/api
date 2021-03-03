@@ -13,6 +13,7 @@ import {Bracket, bracketArray} from '../../constants/bracket.consts';
     name: 'instance_metagame_territories',
 })
 @Index(['world', 'censusInstanceId'], {unique: true})
+@Index(['instanceId'])
 @Index(['zone'])
 @Index(['state'])
 export default class InstanceMetagameTerritoryEntity {
