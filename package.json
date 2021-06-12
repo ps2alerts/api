@@ -43,7 +43,7 @@
     "@types/cron": "^1.7.2",
     "amqp-connection-manager": "^3.2.2",
     "amqplib": "^0.6.0",
-    "cache-manager": "^3.4.0",
+    "cache-manager": "^3.4.4",
     "cache-manager-ioredis": "^2.1.0",
     "class-transformer": "^0.3.2",
     "fastify-compress": "^3.4.1",
