@@ -47,7 +47,7 @@
     "cache-manager-ioredis": "^2.1.0",
     "class-transformer": "^0.3.2",
     "fastify-compress": "^3.4.1",
-    "fastify-helmet": "^5.0.3",
+    "fastify-helmet": "^6.0.0",
     "fastify-rate-limit": "^5.4.1",
     "mongodb": "^3.6.3",
     "fastify-swagger": "^4.3.1",
