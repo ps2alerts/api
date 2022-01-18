@@ -2,7 +2,7 @@
 - hosts: localhost
   vars_files:
     - "{{ playbook_dir }}/../vars.yml"
-#    - "{{ playbook_dir }}/../vars_local.yml"
+  #    - "{{ playbook_dir }}/../vars_local.yml"
   tasks:
     - name: Delete dist folder
       file:
@@ -13,7 +13,7 @@
       docker_container:
         name: ps2alerts-api
         image: ps2alerts/api:dev
-        state: started
+        state: present
         restart: no
         recreate: yes
         restart_policy: "no"
