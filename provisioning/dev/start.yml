@@ -16,7 +16,7 @@
       docker_container:
         name: ps2alerts-api
         image: ps2alerts/api:dev
-        state: present
+        state: started
         restart: no
         recreate: yes
         restart_policy: "no"
