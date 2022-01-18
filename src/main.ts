@@ -19,7 +19,7 @@ async function bootstrap(): Promise<void> {
     const config = app.get(ConfigService);
 
     app.enableCors(config.get('config'));
-    app.register(fastifyHelmet, {
+    void app.register(fastifyHelmet, {
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ['\'self\''],
@@ -62,7 +62,7 @@ async function bootstrap(): Promise<void> {
     // Connects to Rabbit etc
     await app.startAllMicroservicesAsync();
 
-    app.register(compression, {encodings: ['gzip', 'deflate']});
+    void app.register(compression, {encodings: ['gzip', 'deflate']});
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const port = config.get('http.port') ?? 3000;
