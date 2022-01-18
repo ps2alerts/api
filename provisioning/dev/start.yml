@@ -4,6 +4,9 @@
     - "{{ playbook_dir }}/../vars.yml"
   #    - "{{ playbook_dir }}/../vars_local.yml"
   tasks:
+    - debug:
+        msg: "========= 🔗 Starting API Module 🔗 ========="
+
     - name: Delete dist folder
       file:
         path: "{{ root_dir }}/dist"
