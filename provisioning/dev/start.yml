@@ -24,7 +24,6 @@
           - "{{ root_dir | realpath }}:/app:rw"
         networks:
           - name: "ps2alerts"
-        networks_cli_compatible: no
         tty: true
         ports:
           - "3000"
