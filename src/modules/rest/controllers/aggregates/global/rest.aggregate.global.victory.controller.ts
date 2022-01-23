@@ -14,6 +14,7 @@ import {OptionalDatePipe} from '../../../pipes/OptionalDatePipe';
 import Range from '../../../../../services/mongo/range';
 import {DATE_IMPLICIT_QUERIES} from '../../common/rest.date.query';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import Pagination from '../../../../../services/mongo/pagination';
 
 @ApiTags('Global Victory Aggregates')
 @Controller('aggregates')
@@ -53,11 +54,12 @@ export default class RestGlobalVictoryAggregateController {
 
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const key = `/global/victories/W:${world}-Z:${zone}-B:${bracket}?DF:${dateFrom}-DT:${dateTo}`;
+        const pagination = new Pagination({sortBy: 'date', order: 'desc'});
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
-            await this.mongoOperationsService.findMany(GlobalVictoryAggregate, filter),
+            await this.mongoOperationsService.findMany(GlobalVictoryAggregate, filter, pagination),
             60,
         );
     }
