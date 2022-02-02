@@ -46,4 +46,12 @@ export default class MetagameTerritoryResultEmbed {
         type: 'boolean',
     })
     draw: boolean;
+
+    @ApiProperty({example: false, description: 'Per base capture worth in percentage'})
+    @Column({
+        type: 'decimal',
+        precision: 2,
+        scale: 2,
+    })
+    perBasePercentage: number;
 }

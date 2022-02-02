@@ -58,11 +58,17 @@ export default class InstanceFacilityControlEntity {
     })
     isDefence: boolean;
 
+    @ApiProperty({example: false, description: 'If this record is the part of the initial map state at the start of the alert.'})
+    @Column({
+        type: 'boolean',
+    })
+    isInitial: boolean;
+
     @ApiProperty({example: '37509488620604883', description: 'Outfit ID of the outfit that captured the facility'})
     @Column({
         type: 'string',
         nullable: true,
         default: null,
     })
-    outfitCaptured?: string;
+    outfitCaptured?: string | null;
 }
