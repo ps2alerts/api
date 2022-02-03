@@ -8,6 +8,7 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import MetagameTerritoryResultEmbed from '../aggregate/common/metagame.territory.result.embed';
 import {Bracket, bracketArray} from '../../constants/bracket.consts';
+import InstanceFeaturesEmbed from './instance.features.embed';
 
 @Entity({
     name: 'instance_metagame_territories',
@@ -91,4 +92,8 @@ export default class InstanceMetagameTerritoryEntity {
     @ApiProperty({description: 'Victory data for the instance'})
     @Column(() => MetagameTerritoryResultEmbed)
     result: MetagameTerritoryResultEmbed;
+
+    @ApiProperty({description: 'Enabled features / data for this instance'})
+    @Column(() => InstanceFeaturesEmbed)
+    features: InstanceFeaturesEmbed;
 }
