@@ -3,6 +3,7 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {Faction, factionArray} from '../../constants/faction.consts';
+import MapControlEmbed from './mapcontrol.embed.ts';
 
 @Entity({
     name: 'instance_facility_controls',
@@ -71,4 +72,8 @@ export default class InstanceFacilityControlEntity {
         default: null,
     })
     outfitCaptured?: string | null;
+
+    @ApiProperty({type: MapControlEmbed, description: 'Snapshot of the territory control at the point of capture'})
+    @Column(() => MapControlEmbed)
+    mapControl: MapControlEmbed;
 }
