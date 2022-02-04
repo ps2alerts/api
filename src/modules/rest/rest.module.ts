@@ -47,6 +47,8 @@ import RestInstancePopulationAggregateAveragesController from './controllers/agg
 import RestInstanceVehicleAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.vehicle.controller';
 import RestInstanceVehicleCharacterAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.vehicle.character.controller';
 import RestInstanceWeaponAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.weapon.controller';
+// Census
+import RestCensusOshurPolyfillController from './controllers/census/rest.census.oshur.polyfill.controller';
 // Others
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import InstanceFacilityControlEntity from '../data/entities/instance/instance.facilitycontrol.entity';
@@ -125,6 +127,8 @@ import {RedisCacheService} from '../../services/cache/redis.cache.service';
         RestInstanceVehicleAggregateController,
         RestInstanceVehicleCharacterAggregateController,
         RestInstanceWeaponAggregateController,
+        // Census polyfills
+        RestCensusOshurPolyfillController,
         // Instance Event Controllers
         RestInstanceFacilityControlController,
         RestInstanceMetagameController,

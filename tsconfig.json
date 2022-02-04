@@ -19,9 +19,11 @@
     "strict": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
-    "target": "ES6"
+    "target": "ES6",
+    "resolveJsonModule": true,
   },
   "include": [
-    "src/**/*"
+    "src/**/*.ts",
+    "src/**/*.json"
   ]
 }
