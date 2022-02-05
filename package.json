@@ -45,7 +45,7 @@
     "amqplib": "^0.6.0",
     "cache-manager": "^3.4.0",
     "cache-manager-ioredis": "^2.1.0",
-    "class-transformer": "^0.3.2",
+    "class-transformer": "^0.5.1",
     "fastify-compress": "^3.4.1",
     "fastify-helmet": "^5.0.3",
     "fastify-rate-limit": "^5.4.1",
