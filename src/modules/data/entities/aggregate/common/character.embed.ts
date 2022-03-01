@@ -41,7 +41,7 @@ export default class CharacterEmbed {
         type: 'number',
         default: 0,
     })
-    asp: number;
+    asp: number = 0;
 
     @ApiProperty({example: 210, description: 'Character Adjusted Battle Rank'})
     @Column({
