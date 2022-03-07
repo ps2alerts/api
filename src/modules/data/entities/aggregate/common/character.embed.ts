@@ -36,12 +36,18 @@ export default class CharacterEmbed {
     })
     battleRank: number;
 
-    @ApiProperty({example: true, description: 'Character is ASPed'})
+    @ApiProperty({example: 1, description: 'Character ASP Rank'})
     @Column({
-        type: 'boolean',
-        default: false,
+        type: 'number',
+        default: 0,
     })
-    asp: boolean;
+    asp = 0;
+
+    @ApiProperty({example: 210, description: 'Character Adjusted Battle Rank'})
+    @Column({
+        type: 'number',
+    })
+    adjustedBattleRank: number;
 
     @ApiProperty({type: OutfitEmbed, description: 'Character outfit information'})
     @Column(() => OutfitEmbed)
