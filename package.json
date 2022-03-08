@@ -1,12 +1,12 @@
 {
   "name": "ps2alerts-api",
-  "version": "0.1.2",
+  "version": "4.0.1",
   "description": "The API that powers PS2Alerts.com",
   "author": "",
   "private": true,
   "license": "GNU",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=16.0.0"
   },
   "bugs": {
     "url": "https://github.com/ps2alerts/api/issues"

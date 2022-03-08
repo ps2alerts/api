@@ -1,6 +1,6 @@
-FROM node:14
+FROM node:16
 USER root
-RUN npm i -g @nestjs/cli
+RUN yarn global add @nestjs/cli
 COPY ./files/entrypoint.sh /etc/service/entrypoint.sh
 
 USER node
