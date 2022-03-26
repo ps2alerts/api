@@ -37,4 +37,9 @@ export const config = () => ({
         password: process.env.REDIS_PASS ?? undefined,
         db: process.env.REDIS_DB ?? 1,
     },
+
+    internalApiAuth: {
+        username: 'ps2alerts',
+        password: process.env.INTERNAL_API_PASS ?? undefined,
+    },
 });

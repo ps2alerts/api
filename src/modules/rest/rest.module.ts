@@ -57,6 +57,7 @@ import ConfigModule from '../../config/config.module';
 import {ConfigService} from '@nestjs/config';
 import * as redisStore from 'cache-manager-ioredis';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
+import {AuthModule} from '../../auth/auth.module';
 
 /**
  * Handles incoming requests to the API via HTTP, CRUD environment.
@@ -103,6 +104,7 @@ import {RedisCacheService} from '../../services/cache/redis.cache.service';
                 };
             },
         }),
+        AuthModule,
     ],
     controllers: [
         // Global Aggregate Controllers

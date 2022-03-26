@@ -43,6 +43,7 @@
           RABBITMQ_HOST: "ps2alerts-mq"
           AGGREGATOR_ENABLED: "true"
           CRON_ENABLED: "true"
+          INTERNAL_API_PASS: "foobar"
         labels:
           traefik.enable: "true"
           traefik.http.routers.ps2alerts_api_http.rule: "Host(`dev.api.ps2alerts.com`)"
