@@ -1,13 +1,21 @@
 import {
+    Body,
     ClassSerializerInterceptor,
     Controller,
     Get,
     Inject,
-    Param,
-    Query,
+    Param, Patch,
+    Query, UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {
+    ApiAcceptedResponse,
+    ApiOperation,
+    ApiResponse,
+    ApiSecurity,
+    ApiTags,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import InstanceMetagameTerritoryEntity from '../../data/entities/instance/instance.metagame.territory.entity';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {Ps2alertsEventState} from '../../data/constants/eventstate.consts';
@@ -25,6 +33,8 @@ import {BRACKET_IMPLICIT_QUERY} from './common/rest.bracket.query';
 import {RESULT_VICTOR_QUERY} from './common/rest.result.victor.query';
 import {Faction} from '../../data/constants/faction.consts';
 import {RedisCacheService} from '../../../services/cache/redis.cache.service';
+import {AuthGuard} from '@nestjs/passport';
+import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
@@ -62,6 +72,19 @@ export class RestInstanceMetagameController {
             InstanceMetagameTerritoryEntity,
             {instanceId},
         );
+    }
+
+    @Patch('/:instance')
+    @ApiOperation({summary: 'INTERNAL: Update a single metagame instance.'})
+    @ApiAcceptedResponse({description: 'Record updated'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiSecurity('basic')
+    @UseGuards(AuthGuard('basic'))
+    async patchOne(
+        @Param('instance') instanceId: string,
+            @Body() entity: UpdateInstanceMetagameDto,
+    ): Promise<boolean> {
+        return await this.mongoOperationsService.upsert(InstanceMetagameTerritoryEntity, [{$set: entity}], [{instanceId}]);
     }
 
     @Get('/active')

@@ -99,12 +99,12 @@ export default class MongoOperationsService {
 
         try {
             const result = await this.em.bulkWrite(entity, operations, {ordered: true});
-            return result.upsertedCount ? result.upsertedCount > 0 : false;
+            return result.upsertedCount ? result.upsertedCount > 0 : result.modifiedCount ? result.modifiedCount > 0 : false;
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
-                throw new Error(`upsert failed! E: ${error.message}`);
+                throw new Error(`Upsert failed! E: ${error.message}`);
             }
 
             return true;
@@ -125,6 +125,7 @@ export default class MongoOperationsService {
         let findOptions: {[k: string]: any} = {};
 
         if (filter && filter !== {}) {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             Object.keys(filter).forEach((key) => (filter[key] === undefined ? delete filter[key] : {}));
             findOptions.where = filter;
         }
@@ -138,18 +139,45 @@ export default class MongoOperationsService {
 
     /* eslint-disable */
     private transform(docs: any): any {
-        // Date handling
         if (docs.constructor === Array) {
             docs.map((doc: any) => {
-                if (doc.hasOwnProperty('timestamp')) {
-                    doc.timestamp = new Date(doc.timestamp);
-                }
+                this.performTransform(doc)
             });
-        } else if (docs.hasOwnProperty('timestamp')) {
-            docs.timestamp = new Date(docs.timestamp);
+        } else {
+            this.performTransform(docs)
         }
 
         return docs;
+    }
+
+    private performTransform(doc: any): void {
+        // Loop through special mongo keys and check for existence, if exists, run transform
+        ['$set', '$setOnInsert'].forEach((operator) => {
+            if(doc[operator]) {
+                this.transformDoc(doc[operator])
+            }
+        })
+
+        // Also check it on the root level
+        this.transformDoc(doc)
+    }
+
+    private transformDoc(doc: any): void {
+        if (doc.hasOwnProperty('date')) {
+            doc.date = new Date(doc.date);
+        }
+
+        if (doc.hasOwnProperty('timestamp')) {
+            doc.timestamp = new Date(doc.timestamp);
+        }
+
+        if (doc.hasOwnProperty('timeStarted')) {
+            doc.timeStarted = new Date(doc.timeStarted);
+        }
+
+        if (doc.hasOwnProperty('timeEnded')) {
+            doc.timeEnded = new Date(doc.timeEnded);
+        }
     }
     /* eslint-enable */
 }
