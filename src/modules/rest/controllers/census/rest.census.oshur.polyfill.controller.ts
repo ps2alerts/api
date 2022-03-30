@@ -34,7 +34,7 @@ export default class RestCensusOshurPolyfillController {
         status: 200,
         description: 'Data used for mapping the Oshur hex overlay',
     })
-    async serve_hex(): Promise<string> {
+    async serveHex(): Promise<string> {
         const key = '/census/oshur-hex-data';
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
