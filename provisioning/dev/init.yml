@@ -44,14 +44,14 @@
           pull: no
           path: "{{ root_dir | realpath }}/provisioning/dev"
 
-    # Issues with MacOSX due to docker root directory permission errors which can't be solved. Run npm install manually if you're on OSX.
+    # Issues with MacOSX due to docker root directory permission errors which can't be solved. Run yarn install manually if you're on OSX.
     - name: Run npm install for API deps
       docker_container:
-        name: ps2alerts-api-npm
-        image: node:12
+        name: ps2alerts-api-yarn
+        image: node:16
         volumes:
           - "{{ root_dir | realpath }}:/app:rw"
         user: "{{ id.stdout }}:{{ id.stdout }}"
-        command: "npm install --prefix /app"
+        command: "cd /app && yarn install"
         labels:
           traefik.enable: "false"
