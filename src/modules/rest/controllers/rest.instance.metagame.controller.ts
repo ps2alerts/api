@@ -1,15 +1,15 @@
 import {
     Body,
     ClassSerializerInterceptor,
-    Controller,
+    Controller, Delete,
     Get,
     Inject,
-    Param, Patch,
+    Param, Patch, Post,
     Query, UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
-    ApiAcceptedResponse,
+    ApiAcceptedResponse, ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse,
     ApiOperation,
     ApiResponse,
     ApiSecurity,
@@ -35,6 +35,8 @@ import {Faction} from '../../data/constants/faction.consts';
 import {RedisCacheService} from '../../../services/cache/redis.cache.service';
 import {AuthGuard} from '@nestjs/passport';
 import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
+import {CreateInstanceMetagameDto} from '../Dto/CreateInstanceMetagameDto';
+import {ObjectID} from 'typeorm';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
@@ -74,9 +76,23 @@ export class RestInstanceMetagameController {
         );
     }
 
+    @Post('')
+    @ApiOperation({summary: 'INTERNAL: Create a metagame instance'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
+    @ApiCreatedResponse({description: 'Record created'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiSecurity('basic')
+    @UseGuards(AuthGuard('basic'))
+    async createOne(
+        @Body() entity: CreateInstanceMetagameDto,
+    ): Promise<ObjectID> {
+        return await this.mongoOperationsService.insertOne(InstanceMetagameTerritoryEntity, entity);
+    }
+
     @Patch('/:instance')
-    @ApiOperation({summary: 'INTERNAL: Update a single metagame instance.'})
+    @ApiOperation({summary: 'INTERNAL: Update a single metagame instance'})
     @ApiAcceptedResponse({description: 'Record updated'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
@@ -85,6 +101,18 @@ export class RestInstanceMetagameController {
             @Body() entity: UpdateInstanceMetagameDto,
     ): Promise<boolean> {
         return await this.mongoOperationsService.upsert(InstanceMetagameTerritoryEntity, [{$set: entity}], [{instanceId}]);
+    }
+
+    @Delete('/:instance')
+    @ApiOperation({summary: 'INTERNAL: Delete a single metagame instance'})
+    @ApiOkResponse({description: 'Record deleted'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiSecurity('basic')
+    @UseGuards(AuthGuard('basic'))
+    async deleteOne(
+        @Param('instance') instanceId: string,
+    ): Promise<boolean> {
+        return await this.mongoOperationsService.deleteOne(InstanceMetagameTerritoryEntity, {instanceId});
     }
 
     @Get('/active')
@@ -147,8 +175,10 @@ export class RestInstanceMetagameController {
             zone,
             bracket,
             timeStarted: new Range('timeStarted', timeStartedFrom, timeStartedTo).build(),
-            'result.victor': victor ? victor : undefined,
+            'result.victor': victor ?? undefined,
         };
+
+        console.info('filter', filter);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));

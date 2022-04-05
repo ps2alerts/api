@@ -111,6 +111,17 @@ export default class MongoOperationsService {
         }
     }
 
+    public async deleteOne(entity: any, conditional: any): Promise<boolean> {
+        try {
+            const result = await this.em.deleteOne(entity, conditional);
+
+            return !!result.result.ok;
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+            throw new Error(`Delete failed! E:${error.message}`);
+        }
+    }
+
     public aggregate <T>(entity: any, pipeline: any, options?: CollectionAggregationOptions): Promise<T[]> {
         try {
             return this.em.aggregate(entity, pipeline, options).toArray();
