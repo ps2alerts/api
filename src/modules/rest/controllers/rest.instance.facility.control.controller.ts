@@ -6,7 +6,7 @@ import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
 import Pagination from '../../../services/mongo/pagination';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {PAGINATION_IMPLICIT_QUERIES} from './common/rest.pagination.queries';
-import { OptionalBoolPipe } from '../pipes/OptionalBoolPipe';
+import {OptionalBoolPipe} from '../pipes/OptionalBoolPipe';
 
 @ApiTags('Instance Facility Control Entries')
 @Controller('instance-entries')
@@ -41,6 +41,7 @@ export default class RestInstanceFacilityControlController {
         if (noDefences) {
             filter.isDefence = false;
         }
+
         return await this.mongoOperationsService.findMany(InstanceFacilityControlEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
