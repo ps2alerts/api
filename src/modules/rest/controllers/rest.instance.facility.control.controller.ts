@@ -6,6 +6,7 @@ import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
 import Pagination from '../../../services/mongo/pagination';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {PAGINATION_IMPLICIT_QUERIES} from './common/rest.pagination.queries';
+import {OptionalBoolPipe} from '../pipes/OptionalBoolPipe';
 
 @ApiTags('Instance Facility Control Entries')
 @Controller('instance-entries')
@@ -16,7 +17,11 @@ export default class RestInstanceFacilityControlController {
 
     @Get(':instance/facility')
     @ApiOperation({summary: 'Returns a list of InstanceFacilityControlEntity for an instance'})
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
+    @ApiImplicitQueries([...PAGINATION_IMPLICIT_QUERIES, {
+        name: 'noDefences',
+        required: false,
+        type: Boolean,
+    }])
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceFacilityControlEntity for an instance',
@@ -29,8 +34,15 @@ export default class RestInstanceFacilityControlController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('noDefences', OptionalBoolPipe) noDefences?: boolean,
     ): Promise<InstanceFacilityControlEntity[]> {
-        return await this.mongoOperationsService.findMany(InstanceFacilityControlEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
+        const filter = {instance} as {instance: string, isDefence?: boolean};
+
+        if (noDefences) {
+            filter.isDefence = false;
+        }
+
+        return await this.mongoOperationsService.findMany(InstanceFacilityControlEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get(':instance/facility/:facility')
