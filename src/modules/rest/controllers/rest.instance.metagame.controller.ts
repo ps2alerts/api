@@ -161,8 +161,8 @@ export class RestInstanceMetagameController {
     async findAllTerritoryControl(
         @Query('world', OptionalIntPipe) world?: World,
             @Query('zone', OptionalIntPipe) zone?: Zone,
-            @Query('timeStartedFrom', OptionalDatePipe) timeStartedFrom?: Date,
-            @Query('timeStartedTo', OptionalDatePipe) timeStartedTo?: Date,
+            @Query('timeStartedFrom', OptionalDatePipe) timeStartedFrom?: Date | undefined,
+            @Query('timeStartedTo', OptionalDatePipe) timeStartedTo?: Date | undefined,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
             @Query('victor', OptionalIntPipe) victor?: Faction,
             @Query('sortBy') sortBy?: string,
@@ -170,15 +170,14 @@ export class RestInstanceMetagameController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceMetagameTerritoryEntity[]> {
+        const range = (timeStartedFrom && timeStartedTo) ? new Range('timeStarted', timeStartedFrom, timeStartedTo).build() : undefined;
         const filter: TerritoryControlFilterInterface = {
             world,
             zone,
             bracket,
-            timeStarted: new Range('timeStarted', timeStartedFrom, timeStartedTo).build(),
+            timeStarted: range,
             'result.victor': victor ?? undefined,
         };
-
-        console.info('filter', filter);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));

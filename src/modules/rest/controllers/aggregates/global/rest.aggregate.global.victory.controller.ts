@@ -42,8 +42,8 @@ export default class RestGlobalVictoryAggregateController {
         @Query('world', OptionalIntPipe) world?: World,
             @Query('zone', OptionalIntPipe) zone?: Zone,
             @Query('bracket', OptionalIntPipe) bracket?: Bracket,
-            @Query('dateFrom', OptionalDatePipe) dateFrom?: Date,
-            @Query('dateTo', OptionalDatePipe) dateTo?: Date,
+            @Query('dateFrom', OptionalDatePipe) dateFrom?: Date | undefined,
+            @Query('dateTo', OptionalDatePipe) dateTo?: Date | undefined,
     ): Promise<GlobalVictoryAggregate[]> {
         const filter = {
             world,
