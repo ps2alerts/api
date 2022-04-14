@@ -44,7 +44,7 @@ export default class RestInstanceFacilityControlController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('noDefences', OptionalBoolPipe) noDefences?: boolean,
+            @Query('noDefences', OptionalBoolPipe) noDefences?: boolean | undefined,
     ): Promise<InstanceFacilityControlEntity[]> {
         const filter = {instance} as {instance: string, isDefence?: boolean};
 
@@ -52,6 +52,7 @@ export default class RestInstanceFacilityControlController {
             filter.isDefence = false;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(InstanceFacilityControlEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
