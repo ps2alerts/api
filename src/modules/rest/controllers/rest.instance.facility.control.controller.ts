@@ -57,7 +57,7 @@ export default class RestInstanceFacilityControlController {
     }
 
     @Get(':instance/facility/:facility')
-    @ApiOperation({summary: 'Return a single InstanceFacilityControlEntity of an instance'})
+    @ApiOperation({summary: 'Returns the latest InstanceFacilityControlEntity of an instance'})
     @ApiResponse({
         status: 200,
         description: 'The InstanceFacilityControlEntity instance',
@@ -67,7 +67,8 @@ export default class RestInstanceFacilityControlController {
         @Param('instance') instance: string,
             @Param('facility', ParseIntPipe) facility: number,
     ): Promise<InstanceFacilityControlEntity> {
-        return await this.mongoOperationsService.findOne(InstanceFacilityControlEntity, {instance, facility});
+        const pagination = new Pagination({sortBy: 'timestamp', order: 'desc'}, true);
+        return await this.mongoOperationsService.findOne(InstanceFacilityControlEntity, {instance, facility}, pagination);
     }
 
     @Post('facility')
