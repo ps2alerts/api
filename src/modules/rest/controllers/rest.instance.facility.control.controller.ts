@@ -12,6 +12,7 @@ import {
     HttpCode,
 } from '@nestjs/common';
 import {
+    ApiBadRequestResponse,
     ApiBody,
     ApiCreatedResponse, ApiNoContentResponse,
     ApiOperation,
@@ -73,6 +74,7 @@ export default class RestInstanceFacilityControlController {
     @ApiOperation({summary: 'INTERNAL: Store a InstanceFacilityControlEntity for an instance'})
     @ApiCreatedResponse({description: 'Record created'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
     async createOne(
@@ -102,6 +104,7 @@ export default class RestInstanceFacilityControlController {
     @ApiOperation({summary: 'INTERNAL: Update a InstanceFacilityControlEntity for an instance, by latest record'})
     @ApiNoContentResponse({description: 'Record updated'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
     async patchOne(
@@ -122,6 +125,7 @@ export default class RestInstanceFacilityControlController {
     @ApiOperation({summary: 'INTERNAL: Store many InstanceFacilityControlEntities for an instance'})
     @ApiCreatedResponse({description: 'Records created'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
     @ApiBody({type: [CreateFacilityControlDto]})
