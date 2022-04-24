@@ -12,11 +12,12 @@ export class CreateFacilityControlDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 100000})
+    @ApiModelProperty({example: 222280})
     facility: number;
 
     @IsDateString()
     @IsNotEmpty()
+    @ApiModelProperty({example: '2022-03-27T01:00:10.463Z'})
     timestamp: Date;
 
     @IsNumber()
@@ -36,12 +37,12 @@ export class CreateFacilityControlDto {
 
     @IsBoolean()
     @IsNotEmpty()
-    @ApiModelProperty({example: true})
+    @ApiModelProperty({example: false})
     isInitial: boolean;
 
     @IsString()
     @IsOptional()
-    @ApiModelProperty({example: '100000000'})
+    @ApiModelProperty({example: '37509488620604880'})
     outfitCaptured?: string | null;
 
     @IsObject()
