@@ -42,7 +42,9 @@ variable "mem_request_cron" {}
 variable "logger_transports" {
   default = "console"
 }
-variable "dd_api_key" {}
-variable "dd_app_key" {}
 variable "multi_urls" {}
 variable "urls" {}
+variable "internal_api_user" {}
+variable "internal_api_pass" {}
+#variable "dd_api_key" {}
+#variable "dd_app_key" {}

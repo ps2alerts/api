@@ -30,8 +30,10 @@ module "api_production" {
   mem_request        = "0.25Gi"
   mem_request_cron   = "0.1Gi"
   logger_transports  = "console"
-  dd_api_key         = var.dd_api_key
-  dd_app_key         = var.dd_app_key
   multi_urls         = false
   urls               = ["api.ps2alerts.com"]
+  internal_api_user  = var.internal_api_user
+  internal_api_pass  = var.internal_api_pass
+  #  dd_api_key         = var.dd_api_key
+  #  dd_app_key         = var.dd_app_key
 }

@@ -182,6 +182,14 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
             name = "LOGGER_TRANSPORTS"
             value = var.logger_transports
           }
+          env {
+            name = "INTERNAL_API_USER"
+            value = var.internal_api_user
+          }
+          env {
+            name = "INTERNAL_API_PASS"
+            value = var.internal_api_pass
+          }
         }
       }
     }

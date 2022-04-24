@@ -39,7 +39,7 @@ export const config = () => ({
     },
 
     internalApiAuth: {
-        username: process.env.INTERNAL_API_PASS ?? undefined,
+        username: process.env.INTERNAL_API_USER ?? undefined,
         password: process.env.INTERNAL_API_PASS ?? undefined,
     },
 });

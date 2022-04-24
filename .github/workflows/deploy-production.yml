@@ -77,8 +77,8 @@ jobs:
             -var='db_pass=${{ secrets.DB_PASS }}' \
             -var='rabbitmq_pass=${{ secrets.RABBITMQ_PS2ALERTS_PASS }}' \
             -var='redis_pass=${{ secrets.REDIS_PASS }}' \
-            -var='dd_api_key=${{ secrets.DATADOG_API_KEY }}' \
-            -var='dd_app_key=${{ secrets.DATADOG_APP_KEY }}' \
+            -var='internal_api_user=${{ secrets.INTERNAL_API_USER }} \
+            -var='internal_api_pass=${{ secrets.INTERNAL_API_PASS }} \
             -target=module.api_production -out='.tfout'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
