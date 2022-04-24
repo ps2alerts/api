@@ -13,6 +13,7 @@ import {MetagameEventType} from '../../data/constants/metagameevent.consts';
 import {Ps2alertsEventState} from '../../data/constants/eventstate.consts';
 import {Ps2AlertsFeaturesInterface} from '../../../interfaces/Ps2AlertsFeaturesInterface';
 import {Bracket} from '../../data/constants/bracket.consts';
+import Ps2AlertsInstanceResultInterface from '../../../interfaces/Ps2AlertsInstanceResultInterface';
 
 export class CreateInstanceMetagameDto {
     @IsString()
@@ -27,16 +28,30 @@ export class CreateInstanceMetagameDto {
 
     @IsDateString()
     @IsNotEmpty()
-    @ApiModelProperty({example: ''})
+    @ApiModelProperty({example: '2022-04-24T19:03:12.367Z'})
     timeStarted: string;
 
+    @IsDateString()
     @IsOptional()
     @ApiModelProperty({example: null, default: null})
-    timeEnded: string; // Can't use null for some reason
+    timeEnded: string | null; // Can't use null for some reason
 
+    @IsObject()
+    @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: null, default: null})
-    result: string; // Can't use null for some reason
+    @ApiModelProperty({
+        example: {
+            vs: 30,
+            nc: 27,
+            tr: 40,
+            cutoff: 1,
+            outOfPlay: 0,
+            victor: null,
+            draw: false,
+            perBasePercentage: 1.1627906976744187,
+        },
+    })
+    result: Ps2AlertsInstanceResultInterface;
 
     @IsNumber()
     @IsNotEmpty()

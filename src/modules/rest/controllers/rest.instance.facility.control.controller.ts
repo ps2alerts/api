@@ -12,9 +12,10 @@ import {
     HttpCode,
 } from '@nestjs/common';
 import {
+    ApiAcceptedResponse,
     ApiBadRequestResponse,
     ApiBody,
-    ApiCreatedResponse, ApiNoContentResponse,
+    ApiCreatedResponse,
     ApiOperation,
     ApiResponse,
     ApiSecurity,
@@ -30,6 +31,7 @@ import {OptionalBoolPipe} from '../pipes/OptionalBoolPipe';
 import {CreateFacilityControlDto} from '../Dto/CreateFacilityControlDto';
 import {AuthGuard} from '@nestjs/passport';
 import {ObjectID} from 'typeorm';
+import {UpdateFacilityControlDto} from '../Dto/UpdateFacilityControlDto';
 
 @ApiTags('Instance Facility Control Entries')
 @Controller('instance-entries')
@@ -100,9 +102,9 @@ export default class RestInstanceFacilityControlController {
     }
 
     @Patch(':instance/facility/:facility')
-    @HttpCode(204)
+    @HttpCode(202) // Can't use 204 as Axios doesn't like it
     @ApiOperation({summary: 'INTERNAL: Update a InstanceFacilityControlEntity for an instance, by latest record'})
-    @ApiNoContentResponse({description: 'Record updated'})
+    @ApiAcceptedResponse({description: 'Record updated'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiSecurity('basic')
@@ -110,7 +112,7 @@ export default class RestInstanceFacilityControlController {
     async patchOne(
         @Param('instance') instance: string,
             @Param('facility', ParseIntPipe) facility: number,
-            @Body() entity: CreateFacilityControlDto,
+            @Body() entity: UpdateFacilityControlDto,
     ): Promise<void> {
         const record: InstanceFacilityControlEntity = await this.findOne(instance, facility);
 

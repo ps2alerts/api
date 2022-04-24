@@ -1,4 +1,4 @@
 #!/bin/sh
 
 echo "=============== STARTING API (DEV) ==================="
-cd /app && npm run start
+cd /app && yarn run start:dev

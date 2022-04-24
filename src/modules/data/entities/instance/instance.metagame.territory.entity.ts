@@ -75,7 +75,7 @@ export default class InstanceMetagameTerritoryEntity {
     })
     duration: number;
 
-    @ApiProperty({example: Ps2alertsEventState.ENDED, enum: ps2alertsEventStateArray, description: 'The internal event state. 0 = scheduled, 1 = in progress, 2 = finished'})
+    @ApiProperty({example: Ps2alertsEventState.ENDED, enum: ps2alertsEventStateArray, description: 'The internal event state. 0 = starting, 1 = in progress, 2 = finished'})
     @Column({
         type: 'enum',
         enum: ps2alertsEventStateArray,

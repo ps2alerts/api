@@ -182,11 +182,12 @@ export default class MongoOperationsService {
             doc.timestamp = new Date(doc.timestamp);
         }
 
-        if (doc.hasOwnProperty('timeStarted')) {
+        // If property exists and isn't null (e.g. null dates)
+        if (doc.hasOwnProperty('timeStarted') && doc.timeStarted) {
             doc.timeStarted = new Date(doc.timeStarted);
         }
 
-        if (doc.hasOwnProperty('timeEnded')) {
+        if (doc.hasOwnProperty('timeEnded') && doc.timeEnded) {
             doc.timeEnded = new Date(doc.timeEnded);
         }
     }

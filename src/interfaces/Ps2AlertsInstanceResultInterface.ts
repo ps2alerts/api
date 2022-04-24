@@ -8,4 +8,5 @@ export default interface Ps2AlertsInstanceResultInterface {
     outOfPlay: number;
     victor: Faction | null;
     draw: boolean;
+    perBasePercentage: number;
 }

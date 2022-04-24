@@ -9,7 +9,8 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import {
-    ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse,
+    ApiAcceptedResponse,
+    ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse,
     ApiOperation,
     ApiResponse,
     ApiSecurity,
@@ -91,9 +92,9 @@ export class RestInstanceMetagameController {
     }
 
     @Patch('/:instance')
-    @HttpCode(204)
+    @HttpCode(202) // Can't use 204 as Axios doesn't like it
     @ApiOperation({summary: 'INTERNAL: Update a single metagame instance'})
-    @ApiNoContentResponse({description: 'Record updated'})
+    @ApiAcceptedResponse({description: 'Record updated'})
     @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')
@@ -108,7 +109,7 @@ export class RestInstanceMetagameController {
     @Delete('/:instance')
     @ApiOperation({summary: 'INTERNAL: Delete a single metagame instance'})
     @ApiOkResponse({description: 'Record deleted'})
-    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiUnauthorizedResponse({description: 'TFhis is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
     async deleteOne(

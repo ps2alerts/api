@@ -1,37 +1,25 @@
 // @See modules/data/entities/instance/instance.facilitycontrol.entity.ts
 import {Faction} from '../../data/constants/faction.consts';
 import MapControlEmbed from '../../data/entities/instance/mapcontrol.embed.ts';
-import {IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
+import {IsBoolean, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
-export class CreateFacilityControlDto {
-    @IsString()
-    @IsNotEmpty()
-    @ApiModelProperty({example: '10-12345'})
-    instance: string;
-
+export class UpdateFacilityControlDto {
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 222280})
-    facility: number;
-
-    @IsDateString()
-    @IsNotEmpty()
-    @ApiModelProperty({example: '2022-03-27T01:00:10.463Z'})
-    timestamp: Date;
-
-    @IsNumber()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiModelProperty({example: Faction.NEW_CONGLOMERATE})
     oldFaction: Faction;
 
     @IsNumber()
     @IsNotEmpty()
+    @IsOptional()
     @ApiModelProperty({example: Faction.VANU_SOVEREIGNTY})
     newFaction: Faction;
 
     @IsNumber()
     @IsNotEmpty()
+    @IsOptional()
     @ApiModelProperty({example: 1234})
     durationHeld: number;
 
@@ -43,6 +31,7 @@ export class CreateFacilityControlDto {
 
     @IsBoolean()
     @IsNotEmpty()
+    @IsOptional()
     @ApiModelProperty({example: false})
     isDefence: boolean;
 

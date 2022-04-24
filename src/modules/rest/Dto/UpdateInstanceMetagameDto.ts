@@ -42,6 +42,7 @@ export class UpdateInstanceMetagameDto {
             outOfPlay: 0,
             victor: Faction.TERRAN_REPUBLIC,
             draw: true,
+            perBasePercentage: 1.1627906976744187,
         },
     })
     result: Ps2AlertsInstanceResultInterface;
