@@ -7,7 +7,6 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {MongoConfig} from './services/databases/mongo.config';
 import {ScheduleModule} from '@nestjs/schedule';
 import {CronModule} from './modules/cron/CronModule';
-import {AuthModule} from './auth/auth.module';
 
 const metadata = {
     imports: [

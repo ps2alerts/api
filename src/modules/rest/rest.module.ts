@@ -90,7 +90,7 @@ import {AuthModule} from '../../auth/auth.module';
             InstanceFacilityControlEntity,
             InstanceMetagameTerritoryEntity,
         ]),
-        // This cannot be registered globally so we have to do it in submodules :( https://github.com/nestjs/nest/issues/1633#issuecomment-472605111
+        // This cannot be registered globally, so we have to do it in submodules :( https://github.com/nestjs/nest/issues/1633#issuecomment-472605111
         CacheModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

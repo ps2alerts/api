@@ -43,7 +43,7 @@
           RABBITMQ_HOST: "ps2alerts-mq"
           AGGREGATOR_ENABLED: "true"
           CRON_ENABLED: "true"
-          INTERNAL_API_USER: 'ps2alerts'
+          INTERNAL_API_USER: "ps2alerts"
           INTERNAL_API_PASS: "foobar"
         labels:
           traefik.enable: "true"
