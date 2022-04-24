@@ -39,7 +39,7 @@ export const config = () => ({
     },
 
     internalApiAuth: {
-        username: 'ps2alerts',
+        username: process.env.INTERNAL_API_PASS ?? undefined,
         password: process.env.INTERNAL_API_PASS ?? undefined,
     },
 });
