@@ -2,14 +2,14 @@ import {
     Body,
     ClassSerializerInterceptor,
     Controller, Delete,
-    Get,
+    Get, HttpCode,
     Inject,
     Param, Patch, Post,
     Query, UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
-    ApiAcceptedResponse, ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse,
+    ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse,
     ApiOperation,
     ApiResponse,
     ApiSecurity,
@@ -77,9 +77,10 @@ export class RestInstanceMetagameController {
     }
 
     @Post('')
+    @HttpCode(201)
     @ApiOperation({summary: 'INTERNAL: Create a metagame instance'})
-    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiCreatedResponse({description: 'Record created'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
@@ -90,8 +91,9 @@ export class RestInstanceMetagameController {
     }
 
     @Patch('/:instance')
+    @HttpCode(204)
     @ApiOperation({summary: 'INTERNAL: Update a single metagame instance'})
-    @ApiAcceptedResponse({description: 'Record updated'})
+    @ApiNoContentResponse({description: 'Record updated'})
     @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')

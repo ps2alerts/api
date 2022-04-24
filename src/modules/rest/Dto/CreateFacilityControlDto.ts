@@ -32,13 +32,18 @@ export class CreateFacilityControlDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 12345})
+    @ApiModelProperty({example: 1234})
     durationHeld: number;
 
     @IsBoolean()
     @IsNotEmpty()
     @ApiModelProperty({example: false})
     isInitial: boolean;
+
+    @IsBoolean()
+    @IsNotEmpty()
+    @ApiModelProperty({example: false})
+    isDefence: boolean;
 
     @IsString()
     @IsOptional()

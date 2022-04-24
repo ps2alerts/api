@@ -1,7 +1,19 @@
-import {Controller, Get, Inject, Param, Query, ParseIntPipe, Post, UseGuards, Body} from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Inject,
+    Param,
+    Query,
+    ParseIntPipe,
+    Post,
+    UseGuards,
+    Body,
+    Patch,
+    HttpCode,
+} from '@nestjs/common';
 import {
     ApiBody,
-    ApiCreatedResponse,
+    ApiCreatedResponse, ApiNoContentResponse,
     ApiOperation,
     ApiResponse,
     ApiSecurity,
@@ -56,6 +68,20 @@ export default class RestInstanceFacilityControlController {
         return await this.mongoOperationsService.findMany(InstanceFacilityControlEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
+    @Post(':instance/facility')
+    @HttpCode(201)
+    @ApiOperation({summary: 'INTERNAL: Store a InstanceFacilityControlEntity for an instance'})
+    @ApiCreatedResponse({description: 'Record created'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiSecurity('basic')
+    @UseGuards(AuthGuard('basic'))
+    async createOne(
+        @Param('instance') instance: string,
+            @Body() entity: CreateFacilityControlDto,
+    ): Promise<void> {
+        await this.mongoOperationsService.insertOne(InstanceFacilityControlEntity, entity);
+    }
+
     @Get(':instance/facility/:facility')
     @ApiOperation({summary: 'Returns the latest InstanceFacilityControlEntity of an instance'})
     @ApiResponse({
@@ -71,20 +97,28 @@ export default class RestInstanceFacilityControlController {
         return await this.mongoOperationsService.findOne(InstanceFacilityControlEntity, {instance, facility}, pagination);
     }
 
-    @Post('facility')
-    @ApiOperation({summary: 'INTERNAL: Store a InstanceFacilityControlEntity for an instance'})
-    @ApiCreatedResponse({description: 'Record created'})
+    @Patch(':instance/facility/:facility')
+    @HttpCode(204)
+    @ApiOperation({summary: 'INTERNAL: Update a InstanceFacilityControlEntity for an instance, by latest record'})
+    @ApiNoContentResponse({description: 'Record updated'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
-    async createOne(
-        @Body() entity: CreateFacilityControlDto,
-    ): Promise<string> {
-        const id = await this.mongoOperationsService.insertOne(InstanceFacilityControlEntity, entity);
-        return id.toString();
+    async patchOne(
+        @Param('instance') instance: string,
+            @Param('facility', ParseIntPipe) facility: number,
+            @Body() entity: CreateFacilityControlDto,
+    ): Promise<void> {
+        const record: InstanceFacilityControlEntity = await this.findOne(instance, facility);
+
+        const updatedRecord = Object.assign(record, entity);
+
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        await this.mongoOperationsService.upsert(InstanceFacilityControlEntity, [{$set: updatedRecord}], [{_id: updatedRecord._id}]);
     }
 
     @Post('facility/batch')
+    @HttpCode(202)
     @ApiOperation({summary: 'INTERNAL: Store many InstanceFacilityControlEntities for an instance'})
     @ApiCreatedResponse({description: 'Records created'})
     @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
@@ -96,17 +130,4 @@ export default class RestInstanceFacilityControlController {
     ): Promise<ObjectID[]> {
         return await this.mongoOperationsService.insertMany(InstanceFacilityControlEntity, entities);
     }
-
-    // @Patch('facility/:instance/:facility')
-    // @ApiOperation({summary: 'INTERNAL: Store a InstanceFacilityControlEntity for an instance'})
-    // @ApiAcceptedResponse({description: 'Record updated'})
-    // @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
-    // @ApiSecurity('basic')
-    // @UseGuards(AuthGuard('basic'))
-    // async patchOne(
-    //     @Body() entity: CreateFacilityControlDto,
-    // ): Promise<string> {
-    //     const id = await this.mongoOperationsService.upsert(InstanceFacilityControlEntity, entity);
-    //     return id.toString();
-    // }
 }
