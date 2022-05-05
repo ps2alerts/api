@@ -24,6 +24,8 @@ jobs:
         run: terraform fmt -check
 
   build-docker-images:
+    needs:
+      - sanity-checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
