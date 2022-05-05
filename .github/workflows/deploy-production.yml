@@ -4,6 +4,16 @@ on:
   push:
     branches: [master]
 jobs:
+  sanity-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: terraform fmt check
+        run: terraform fmt -check
+
   build-docker-images:
     runs-on: ubuntu-latest
     steps:
@@ -63,10 +73,6 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      # Checks that all Terraform configuration files adhere to a canonical format
-      - name: Terraform Format
-        run: terraform fmt -check
 
       # Generates an execution plan for Terraform, with the injected SHA
       - name: Terraform Plan
