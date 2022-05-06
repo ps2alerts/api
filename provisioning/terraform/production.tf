@@ -24,11 +24,11 @@ module "api_production" {
   cpu_limit          = "500m"
   cpu_limit_cron     = "50m"
   mem_limit          = "0.25Gi"
-  mem_limit_cron     = "0.1Gi"
+  mem_limit_cron     = "0.2Gi"
   cpu_request        = "250m"
   cpu_request_cron   = "10m"
   mem_request        = "0.25Gi"
-  mem_request_cron   = "0.1Gi"
+  mem_request_cron   = "0.2Gi"
   logger_transports  = "console"
   multi_urls         = false
   urls               = ["api.ps2alerts.com"]
