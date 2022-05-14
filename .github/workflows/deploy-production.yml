@@ -82,7 +82,7 @@ jobs:
           -e 's|{{ redis_db }}|1|' \
           -e 's|{{ internal_api_user }}|${{ secrets.INTERNAL_API_USER }}|' \
           -e 's|{{ internal_api_pass }}|${{ secrets.INTERNAL_API_PASS }}|' \
-          -e 's|{{ min_replicas }}|1|' \
+          -e 's|{{ min_replicas }}|2|' \
           -e 's|{{ max_replicas }}|5|' \
           provisioning/k8s/application.yml
 
@@ -102,7 +102,6 @@ jobs:
           -e 's|{{ version }}|2c03825a56468eac9c539a6083a35ee319b0377e|' \
           -e 's|{{ hostname }}|api.ps2alerts.com|' \
           -e 's|{{ port }}|3000|' \
-          -e 's|{{ version }}|${{ github.sha }}|' \
           -e 's|{{ db_user }}|${{ secrets.DB_USER }}|' \
           -e 's|{{ db_pass }}|${{ secrets.DB_PASS_NEW }}|' \
           -e 's|{{ db_name }}|ps2alerts|' \
