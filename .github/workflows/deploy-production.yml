@@ -17,7 +17,7 @@ jobs:
       # Install the latest version of Terraform CLI and configure the Terraform
       # CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1.3.2
+        uses: hashicorp/setup-terraform@v2.0.0
 
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: terraform fmt check
@@ -73,7 +73,7 @@ jobs:
       # Install the latest version of Terraform CLI and configure the Terraform
       # CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1.3.2
+        uses: hashicorp/setup-terraform@v2.0.0
         with:
           cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
 
