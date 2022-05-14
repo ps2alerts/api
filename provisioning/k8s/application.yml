@@ -78,7 +78,7 @@ spec:
             - name: DB_PASS
               value: "{{ db_pass }}"
             - name: DB_HOST
-              value: "ps2alerts-db-mongo"
+              value: "ps2alerts-db"
             - name: DB_PORT
               value: "27017"
             - name: DB_NAME
