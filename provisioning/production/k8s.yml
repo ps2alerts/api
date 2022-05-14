@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,31 +28,6 @@ spec:
             limits:
               cpu: "50m"
               memory: "0.2Gi"
-          startupProbe:
-            httpGet:
-              path: /static/index.html
-              port: {{ port }}
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 6 # 60 seconds, takes normally about 20s
-            timeoutSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /static/index.html
-              port: {{ port }}
-            periodSeconds: 15
-            successThreshold: 1
-            failureThreshold: 4 # If dead for 1m
-            timeoutSeconds: 5
-          livenessProbe:
-            httpGet:
-              path: /static/index.html
-              port: {{ port }}
-            periodSeconds: 15
-            successThreshold: 1
-            failureThreshold: 4 #If dead for 1m
-            timeoutSeconds: 5
-            terminationGracePeriodSeconds: 15
           env:
             - name: NODE_ENV
               value: "{{ environment }}"
