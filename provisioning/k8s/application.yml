@@ -56,25 +56,23 @@ spec:
               port: {{ port }}
             periodSeconds: 10
             successThreshold: 1
-            failureThreshold: 4
+            failureThreshold: 6 # 60 seconds
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /static/index.html
               port: {{ port }}
-            initialDelaySeconds: 30
-            periodSeconds: 30
+            periodSeconds: 15
             successThreshold: 1
-            failureThreshold: 4
+            failureThreshold: 4 # If dead for 1m
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /static/index.html
               port: {{ port }}
-            initialDelaySeconds: 120
-            periodSeconds: 30
+            periodSeconds: 15
             successThreshold: 1
-            failureThreshold: 4
+            failureThreshold: 4 #If dead for 1m
             timeoutSeconds: 5
           env:
             - name: NODE_ENV
