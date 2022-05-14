@@ -16,6 +16,12 @@ spec:
       labels:
         app: {{ application }}-{{ environment }}
         version: {{ version }}
+        somelabel: true
+        somelabel2: true
+        somelabel3: true
+        somelabel4: true
+        somelabel5: true
+        somelabel6: true
     spec:
       containers:
         - name: application
@@ -81,10 +87,6 @@ kind: Ingress
 metadata:
   name: {{ application }}-{{ environment }}
   namespace: ps2alerts
-  annotations:
-    nginx.ingress.kubernetes.io/server-snippet: |
-      expires 1d;
-      add_header Cache-Control "public, must-revalidate";
 spec:
   ingressClassName: nginx
   tls:
