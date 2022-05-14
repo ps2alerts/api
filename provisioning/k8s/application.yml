@@ -82,7 +82,6 @@ spec:
               value: "{{ version }}"
             - name: DB_USER
               value: "{{ db_user }}"
-            # DB_PASS *must* be single quote
             - name: DB_PASS
               value: "{{ db_pass }}"
             - name: DB_HOST

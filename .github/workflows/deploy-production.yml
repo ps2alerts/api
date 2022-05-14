@@ -1,130 +1,155 @@
 ---
-name: Build & Deploy Production
+name: Build & Deploy Staging
 on:
   push:
-    branches: [master]
+    branches: [staging]
 jobs:
-  sanity-checks:
+  #  build-docker-images:
+  #    runs-on: ${{ matrix.os }}
+  #
+  #    strategy:
+  #      matrix:
+  #        os: [ubuntu-latest]
+  #        node: [20]
+  #
+  #    steps:
+  #      - name: Checkout
+  #        uses: actions/checkout@v3
+  #        with:
+  #          fetch-depth: 0
+  #
+  #      - name: Set current date as env variable
+  #        run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+  #
+  #      - name: Set Short SHA variable
+  #        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+  #
+  #      - name: Get Latest tag
+  #        id: latesttag
+  #        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+  #        with:
+  #          fallback: 'UNKNOWN' # Optional fallback tag to use when no tag can be found
+  #
+  #      - name: Set up QEMU
+  #        uses: docker/setup-qemu-action@v1
+  #
+  #      - name: Set up Docker Buildx
+  #        uses: docker/setup-buildx-action@v1
+  #        with:
+  #          version: latest
+  #
+  #      - name: Login to DockerHub
+  #        uses: docker/login-action@v1
+  #        with:
+  #          username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #
+  #      - name: Build and push staging image
+  #        uses: docker/build-push-action@v2
+  #        with:
+  #          file: provisioning/staging/Dockerfile
+  #          platforms: linux/amd64
+  #          push: true
+  #          tags: maelstromeous/applications:ps2alerts-api-staging-${{ github.sha }}
+  #          build-args: |
+  #            BUILD_SHA=${{ env.SHORT_SHA }}
+  #            BUILT=${{ env.NOW }}
+  #            VERSION=${{ steps.latesttag.outputs.tag }}
+
+  deploy-to-k8s:
+    #    needs: build-docker-images
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: provisioning/terraform
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Install the latest version of Terraform CLI and configure the Terraform
-      # CLI configuration file with a Terraform Cloud user API token
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1.3.2
+      ### APPLICATION
+      # Inject the templates with the correct variables. {{ version }} refers to the Git SHA and is what changes the container version.
+      - name: Update the K8s application resource file - REST & Queues
+        run: |
+          sed -is -e 's|{{ application }}|ps2alerts-api|' \
+          -e 's|{{ environment }}|production|' \
+          -e 's|{{ version }}|dc4754f6be0787eabfb154c2522eed287315cf9b|' \
+          -e 's|{{ port }}|3000|' \
+          -e 's|{{ db_user }}|${{ secrets.DB_USER }}|' \
+          -e 's|{{ db_pass }}|${{ secrets.DB_PASS_NEW }}|' \
+          -e 's|{{ db_name }}|ps2alerts|' \
+          -e 's|{{ db_pool_size }}|100|' \
+          -e 's|{{ rabbitmq_pass }}|${{ secrets.RABBITMQ_PS2ALERTS_PASS }}|' \
+          -e 's|{{ rabbitmq_queue }}|api-queue-production|' \
+          -e 's|{{ rabbitmq_prefetch }}|1000|' \
+          -e 's|{{ redis_host }}|ps2alerts-redis-master|' \
+          -e 's|{{ redis_pass }}|${{ secrets.REDIS_PASS }}|' \
+          -e 's|{{ redis_db }}|1|' \
+          -e 's|{{ aggregator_enabled }}|true|' \
+          -e 's|{{ cron_enabled }}|false|' \
+          -e 's|{{ internal_api_user }}|${{ secrets.INTERNAL_API_USER }}|' \
+          -e 's|{{ internal_api_pass }}|${{ secrets.INTERNAL_API_PASS }}|' \
+          -e 's|{{ min_replicas }}|1|' \
+          -e 's|{{ max_replicas }}|5|' \
+          provisioning/k8s/application.yml
 
-      # Checks that all Terraform configuration files adhere to a canonical format
-      - name: terraform fmt check
-        run: terraform fmt -check
-
-  build-docker-images:
-    needs:
-      - sanity-checks
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Get short SHA
-        id: sha
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-
-#      - name: Build base image
-#        uses: docker/build-push-action@v1
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#          path: provisioning/base
-#          repository: maelstromeous/applications
-#          tags: ps2alerts-api-base
-
-      - name: Build production image
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: maelstromeous/applications
-          dockerfile: provisioning/production/Dockerfile
-          always_pull: true
-          tags: ps2alerts-api-production-${{ steps.sha.outputs.sha_short }}
-
-  deploy-terraform:
-    needs:
-      - build-docker-images
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: provisioning/terraform
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Get short SHA
-        id: sha
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-
-      # Install the latest version of Terraform CLI and configure the Terraform
-      # CLI configuration file with a Terraform Cloud user API token
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1.3.2
-        with:
-          cli_config_credentials_token: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
-
-      # Initialize a new or existing Terraform working directory by creating initial
-      # files, loading any remote state, downloading modules, etc.
-      - name: Terraform Init
-        run: terraform init
+      # Apply the common resources, telling k8s to change the container version to the new one.
+      - uses: actions-hub/kubectl@master
+        name: Apply application resources - REST & QUEUES
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      # Generates an execution plan for Terraform, with the injected SHA
-      - name: Terraform Plan
-        run: >
-          terraform plan \
-            -var='checksum_version=${{ steps.sha.outputs.sha_short }}' \
-            -var='db_user=${{ secrets.DB_USER }}' \
-            -var='db_pass=${{ secrets.DB_PASS }}' \
-            -var='rabbitmq_pass=${{ secrets.RABBITMQ_PS2ALERTS_PASS }}' \
-            -var='redis_pass=${{ secrets.REDIS_PASS }}' \
-            -var='internal_api_user=${{ secrets.INTERNAL_API_USER }}' \
-            -var='internal_api_pass=${{ secrets.INTERNAL_API_PASS }}' \
-            -target=module.api_production -out='.tfout'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-
-      # Apply the terraform plan and inject the SHA
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: terraform apply -auto-approve .tfout
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-  deploy-cert-manager:
-    needs:
-      - deploy-terraform
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
-          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          args: apply -f provisioning/k8s/application.yml
 
-      - name: Save DO kubeconfig
-        run: doctl kubernetes cluster kubeconfig save my-cluster
+      ### CRON
+      - name: Update the K8s application resource file - CRON
+        run: |
+          sed -is -e 's|{{ application }}|ps2alerts-api-cron|' \
+          -e 's|{{ environment }}|production|' \
+          -e 's|{{ version }}|dc4754f6be0787eabfb154c2522eed287315cf9b|' \
+          -e 's|{{ port }}|3000|' \
+          -e 's|{{ db_user }}|${{ secrets.DB_USER }}|' \
+          -e 's|{{ db_pass }}|${{ secrets.DB_PASS_NEW }}|' \
+          -e 's|{{ db_name }}|ps2alerts|' \
+          -e 's|{{ db_pool_size }}|100|' \
+          -e 's|{{ rabbitmq_pass }}|${{ secrets.RABBITMQ_PS2ALERTS_PASS }}|' \
+          -e 's|{{ rabbitmq_queue }}|api-queue-production|' \
+          -e 's|{{ rabbitmq_prefetch }}|1000|' \
+          -e 's|{{ redis_host }}|ps2alerts-redis-master|' \
+          -e 's|{{ redis_pass }}|${{ secrets.REDIS_PASS }}|' \
+          -e 's|{{ redis_db }}|1|' \
+          -e 's|{{ aggregator_enabled }}|false|' \
+          -e 's|{{ cron_enabled }}|true|' \
+          -e 's|{{ internal_api_user }}|${{ secrets.INTERNAL_API_USER }}|' \
+          -e 's|{{ internal_api_pass }}|${{ secrets.INTERNAL_API_PASS }}|' \
+          -e 's|{{ min_replicas }}|1|' \
+          -e 's|{{ max_replicas }}|1|' \
+          provisioning/k8s/application.yml
 
-      - name: Apply Lets Encrypt cluster issuer manifest
-        run: kubectl apply -f provisioning/production/k8s/manifests/cluster-issuer.yml
+      - uses: actions-hub/kubectl@master
+        name: Apply application resources - CRON
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: apply -f provisioning/k8s/application.yml
+
+      # Inject the application template with variables
+      - name: Update the K8s environment resource file
+        run: |
+          sed -is -e 's|{{ application }}|ps2alerts-api|' \
+          -e 's|{{ environment }}|production|' \
+          -e 's|{{ port }}|3000|' \
+          -e 's|{{ hostname }}|api.ps2alerts.com|' \
+          provisioning/production/k8s.yml
+
+      # Apply application specific resources
+      - uses: actions-hub/kubectl@master
+        name: Apply environment specific resources
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: apply -f provisioning/production/k8s.yml
+
+      # Outputs the rollout status and returns a 0 signal (thus completing the workflow) once it's rolled out.
+      - uses: actions-hub/kubectl@master
+        name: Wait for deployment to finish
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: rollout status deployment/ps2alerts-api-production -n ps2alerts
