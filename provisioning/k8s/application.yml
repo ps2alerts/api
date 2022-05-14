@@ -51,9 +51,10 @@ spec:
               cpu: "400m"
               memory: "256Mi"
           startupProbe:
-            httpGet:
-              path: /static/index.html
-              port: {{ port }}
+            exec:
+              command:
+                - cat
+                - /app/main.ts
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 6 # 60 seconds
@@ -74,6 +75,7 @@ spec:
             successThreshold: 1
             failureThreshold: 4 #If dead for 1m
             timeoutSeconds: 5
+            terminationGracePeriodSeconds: 15
           env:
             - name: NODE_ENV
               value: "{{ environment }}"
