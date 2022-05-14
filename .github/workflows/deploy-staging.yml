@@ -71,7 +71,7 @@ jobs:
           -e 's|{{ version }}|dc4754f6be0787eabfb154c2522eed287315cf9b|' \
           -e 's|{{ port }}|3000|' \
           -e 's|{{ db_user }}|${{ secrets.DB_USER }}|' \
-          -e 's|{{ db_pass }}|${{ secrets.DB_PASS }}|' \
+          -e 's|{{ db_pass }}|${{ secrets.DB_PASS_NEW }}|' \
           -e 's|{{ db_name }}|ps2alerts|' \
           -e 's|{{ db_pool_size }}|100|' \
           -e 's|{{ rabbitmq_pass }}|${{ secrets.RABBITMQ_PS2ALERTS_PASS }}|' \
