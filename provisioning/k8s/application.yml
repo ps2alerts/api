@@ -50,6 +50,14 @@ spec:
             limits:
               cpu: "400m"
               memory: "256Mi"
+          startupProbe:
+            httpGet:
+              path: /static/index.html
+              port: {{ port }}
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 4
+            timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /static/index.html
