@@ -175,10 +175,6 @@ resource "kubernetes_deployment" "ps2alerts_api_deployment" {
             value = false
           }
           env {
-            name = "RABBITMQ_PREFETCH"
-            value = var.rabbitmq_prefetch
-          }
-          env {
             name = "LOGGER_TRANSPORTS"
             value = var.logger_transports
           }
