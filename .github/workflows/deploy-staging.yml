@@ -79,6 +79,7 @@ jobs:
           -e 's|{{ rabbitmq_host }}|ps2alerts-rabbitmq|' \
           -e 's|{{ rabbitmq_user }}|ps2alerts|' \
           -e 's|{{ rabbitmq_pass }}|${{ secrets.RABBITMQ_PS2ALERTS_PASS }}|' \
+          -e 's|{{ rabbitmq_vhost }}|/ps2alerts|' \
           -e 's|{{ rabbitmq_queue }}|api-queue-staging|' \
           -e 's|{{ rabbitmq_prefetch }}|1000|' \
           -e 's|{{ redis_host }}|ps2alerts-redis-master|' \
