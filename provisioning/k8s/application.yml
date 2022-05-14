@@ -56,7 +56,7 @@ spec:
               port: {{ port }}
             periodSeconds: 10
             successThreshold: 1
-            failureThreshold: 6 # 60 seconds
+            failureThreshold: 6 # 60 seconds, takes normally about 20s
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
