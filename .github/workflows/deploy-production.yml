@@ -81,8 +81,6 @@ jobs:
           -e 's|{{ redis_host }}|ps2alerts-redis-master|' \
           -e 's|{{ redis_pass }}|${{ secrets.REDIS_PASS }}|' \
           -e 's|{{ redis_db }}|1|' \
-          -e 's|{{ aggregator_enabled }}|true|' \
-          -e 's|{{ cron_enabled }}|false|' \
           -e 's|{{ internal_api_user }}|${{ secrets.INTERNAL_API_USER }}|' \
           -e 's|{{ internal_api_pass }}|${{ secrets.INTERNAL_API_PASS }}|' \
           -e 's|{{ min_replicas }}|1|' \
@@ -97,13 +95,14 @@ jobs:
         with:
           args: apply -f provisioning/k8s/application.yml
 
-      ### CRON
-      - name: Update the K8s application resource file - CRON
+      # Inject the application template with variables
+      - name: Update the K8s environment resource file
         run: |
           sed -is -e 's|{{ application }}|ps2alerts-api-cron|' \
           -e 's|{{ environment }}|production|' \
-          -e 's|{{ version }}|${{ github.sha }}|' \
+          -e 's|{{ hostname }}|api.ps2alerts.com|' \
           -e 's|{{ port }}|3000|' \
+          -e 's|{{ version }}|${{ github.sha }}|' \
           -e 's|{{ db_user }}|${{ secrets.DB_USER }}|' \
           -e 's|{{ db_pass }}|${{ secrets.DB_PASS_NEW }}|' \
           -e 's|{{ db_name }}|ps2alerts|' \
@@ -114,28 +113,8 @@ jobs:
           -e 's|{{ redis_host }}|ps2alerts-redis-master|' \
           -e 's|{{ redis_pass }}|${{ secrets.REDIS_PASS }}|' \
           -e 's|{{ redis_db }}|1|' \
-          -e 's|{{ aggregator_enabled }}|false|' \
-          -e 's|{{ cron_enabled }}|true|' \
           -e 's|{{ internal_api_user }}|${{ secrets.INTERNAL_API_USER }}|' \
           -e 's|{{ internal_api_pass }}|${{ secrets.INTERNAL_API_PASS }}|' \
-          -e 's|{{ min_replicas }}|1|' \
-          -e 's|{{ max_replicas }}|1|' \
-          provisioning/k8s/application.yml
-
-      - uses: actions-hub/kubectl@master
-        name: Apply application resources - CRON
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: apply -f provisioning/k8s/application.yml
-
-      # Inject the application template with variables
-      - name: Update the K8s environment resource file
-        run: |
-          sed -is -e 's|{{ application }}|ps2alerts-api|' \
-          -e 's|{{ environment }}|production|' \
-          -e 's|{{ port }}|3000|' \
-          -e 's|{{ hostname }}|api.ps2alerts.com|' \
           provisioning/production/k8s.yml
 
       # Apply application specific resources

@@ -46,10 +46,10 @@ spec:
           resources:
             requests:
               cpu: "200m"
-              memory: "256Mi"
+              memory: "0.25Gi"
             limits:
-              cpu: "400m"
-              memory: "256Mi"
+              cpu: "300m"
+              memory: "0.25Gi"
           startupProbe:
             httpGet:
               path: /static/index.html
@@ -113,9 +113,9 @@ spec:
             - name: REDIS_DB
               value: "{{ redis_db }}"
             - name: AGGREGATOR_ENABLED
-              value: "{{ aggregator_enabled }}"
+              value: "true"
             - name: CRON_ENABLED
-              value: "{{ cron_enabled }}"
+              value: "false"
             - name: LOGGER_TRANSPORTS
               value: "console"
             - name: INTERNAL_API_USER
@@ -123,6 +123,7 @@ spec:
             - name: INTERNAL_API_PASS
               value: "{{ internal_api_pass }}"
 ---
+
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
