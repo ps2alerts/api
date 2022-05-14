@@ -76,7 +76,7 @@ spec:
             - name: DB_USER
               value: "{{ db_user }}"
             - name: DB_PASS
-              value: "{{ db_pass }}"
+              value: '{{ db_pass }}'
             - name: DB_HOST
               value: "ps2alerts-db"
             - name: DB_PORT
