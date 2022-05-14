@@ -1,8 +1,8 @@
 ---
-name: Build & Deploy Staging
+name: Build & Deploy Production
 on:
   push:
-    branches: [staging]
+    branches: [master]
 jobs:
   #  build-docker-images:
   #    runs-on: ${{ matrix.os }}
