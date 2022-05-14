@@ -68,7 +68,6 @@ jobs:
         run: |
           sed -is -e 's|{{ application }}|ps2alerts-api|' \
           -e 's|{{ environment }}|production|' \
-#          -e 's|{{ version }}|${{ github.sha }}|' \
           -e 's|{{ version }}|2c03825a56468eac9c539a6083a35ee319b0377e|' \
           -e 's|{{ port }}|3000|' \
           -e 's|{{ db_user }}|${{ secrets.DB_USER }}|' \
