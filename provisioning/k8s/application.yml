@@ -78,23 +78,23 @@ spec:
             - name: DB_PASS
               value: "{{ db_pass }}"
             - name: DB_HOST
-              value: "{{ db_host }}"
+              value: "ps2alerts-db-mongo"
             - name: DB_PORT
-              value: "{{ db_port }}"
+              value: "27017"
             - name: DB_NAME
               value: "{{ db_name }}"
             - name: DB_DEBUG
-              value: false
+              value: "false"
             - name: DB_POOL_SIZE
               value: "{{ db_pool_size }}"
             - name: RABBITMQ_HOST
-              value: "{{ rabbitmq_host }}"
+              value: "ps2alerts-rabbitmq"
             - name: RABBITMQ_USER
-              value: "{{ rabbitmq_user }}"
+              value: "ps2alerts"
             - name: RABBITMQ_PASS
               value: "{{ rabbitmq_pass }}"
             - name: RABBITMQ_VHOST
-              value: "{{ rabbitmq_vhost }}"
+              value: "/ps2alerts"
             - name: RABBITMQ_QUEUE
               value: "{{ rabbitmq_queue }}"
             - name: RABBITMQ_PREFETCH
