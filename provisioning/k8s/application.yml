@@ -77,7 +77,7 @@ spec:
               value: "{{ db_user }}"
             # DB_PASS *must* be single quote
             - name: DB_PASS
-              value: '{{ db_pass }}'
+              value: "{{ db_pass }}"
             - name: DB_HOST
               value: "ps2alerts-db"
             - name: DB_PORT
