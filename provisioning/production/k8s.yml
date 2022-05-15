@@ -21,16 +21,6 @@ spec:
                 name: {{ application }}-{{ environment }}
                 port:
                   number: {{ port }}
-    - host: "www.{{ hostname }}"
-      http:
-        paths:
-          - pathType: Prefix
-            path: "/"
-            backend:
-              service:
-                name: {{ application }}-{{ environment }}
-                port:
-                  number: {{ port }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -46,4 +36,3 @@ spec:
   commonName: {{ hostname }}
   dnsNames:
     - {{ hostname }}
-    - www.{{ hostname }}
