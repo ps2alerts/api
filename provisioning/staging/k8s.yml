@@ -71,6 +71,6 @@ spec:
   http:
     - route:
       - destination:
-        host: {{ application }}-{{ environment }}
-        port:
-          number: 3000
+          host: {{ application }}-{{ environment }}
+          port:
+            number: 3000
