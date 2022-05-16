@@ -39,3 +39,38 @@ spec:
   commonName: {{ hostname }}
   dnsNames:
     - {{ hostname }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ application }}-{{ environment }}
+spec:
+  selector:
+    istio: ingress
+  servers:
+    - hosts:
+      - {{ hostname }}
+      port:
+        name: https
+        number: 443
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        privateKey: /etc/istio/ingressgateway-certs/tls.key
+        serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ application }}-{{ environment }}
+spec:
+  hosts:
+    - {{ hostname }}
+  gateways:
+    - {{ application }}-{{ environment }}
+  https:
+    - route:
+      - destination:
+        host: {{ application }}-{{ environment }}
+        port:
+          number: 3000
