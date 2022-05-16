@@ -68,7 +68,7 @@ spec:
     - {{ hostname }}
   gateways:
     - {{ application }}-{{ environment }}
-  https:
+  http:
     - route:
       - destination:
         host: {{ application }}-{{ environment }}
