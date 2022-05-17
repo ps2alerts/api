@@ -8,7 +8,7 @@ spec:
   secretName: {{ application }}-{{ environment }}-cert
   commonName: {{ hostname }}
   dnsNames:
-    - {{ hostname}}
+    - {{ hostname }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
