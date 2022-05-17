@@ -3,7 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ application }}-{{ environment }}-cert
-  namespace: ps2alerts
+  namespace: istio-ingress
 spec:
   secretName: {{ application }}-{{ environment }}-cert
   commonName: {{ hostname }}
@@ -16,7 +16,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ application }}-{{ environment }}-istio
+  name: {{ application }}-{{ environment }}-test
   namespace: ps2alerts
 spec:
   ingressClassName: istio
