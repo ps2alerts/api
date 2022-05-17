@@ -1,3 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ application }}-{{ environment }}-cert
+  namespace: ps2alerts
+spec:
+  secretName: {{ application }}-{{ environment }}-cert
+  commonName: {{ hostname }}
+  dnsNames:
+    - {{ hostname}}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -8,11 +20,11 @@ metadata:
       expires 1d;
       add_header Cache-Control "public, must-revalidate";
 spec:
-  ingressClassName: nginx
+  ingressClassName: istio
   tls:
     - hosts:
         - "{{ hostname }}"
-      secretName: {{ application }}-{{ environment }}-tls
+      secretName: {{ application }}-{{ environment }}-cert
   rules:
       - host: "{{ hostname }}"
         http:
@@ -24,21 +36,6 @@ spec:
                   name: {{ application }}-{{ environment }}
                   port:
                     number: {{ port }}
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: {{ application }}-{{ environment }}
-  namespace: ps2alerts
-spec:
-  secretName: {{ application }}-{{ environment }}-tls
-  issuerRef:
-    name: letsencrypt
-    kind: ClusterIssuer
-    group: cert-manager.io
-  commonName: {{ hostname }}
-  dnsNames:
-    - {{ hostname }}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
@@ -57,8 +54,7 @@ spec:
         protocol: HTTPS
       tls:
         mode: SIMPLE
-        privateKey: /etc/istio/ingressgateway-certs/tls.key
-        serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+        credentialName: {{ application }}-{{ environment }}-cert
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
