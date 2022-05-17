@@ -18,8 +18,6 @@ kind: Ingress
 metadata:
   name: {{ application }}-{{ environment }}-istio
   namespace: ps2alerts
-  annotations:
-    kubernetes.io/ingress.class: istio
 spec:
   ingressClassName: istio
   tls:
