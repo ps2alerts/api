@@ -39,25 +39,6 @@ spec:
                   number: {{ port }}
 ---
 apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: {{ application }}-{{ environment }}
-  namespace: ps2alerts
-spec:
-  selector:
-    istio: ingress
-  servers:
-    - hosts:
-      - {{ hostname }}
-      port:
-        name: https
-        number: 443
-        protocol: HTTPS
-      tls:
-        mode: SIMPLE
-        credentialName: {{ application }}-{{ environment }}-cert
----
-apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: {{ application }}-{{ environment }}
