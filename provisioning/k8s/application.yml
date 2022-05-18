@@ -131,12 +131,4 @@ spec:
     name: {{ application }}-{{ environment }}
   minReplicas: {{ min_replicas }}
   maxReplicas: {{ max_replicas }}
-  metrics:
-    - type: ContainerResource
-      containerResource:
-        name: cpu
-        container: application
-        target:
-          type: Utilization
-          averageUtilization: 75
-
+  targetCPUUtilizationPercentage: 50
