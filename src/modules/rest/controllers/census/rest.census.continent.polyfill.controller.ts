@@ -51,8 +51,8 @@ export default class RestCensusContinentPolyfillController {
         status: 200,
         description: 'Data used for mapping a continent\'s hex overlay',
     })
-    async serveRegions(@Param('zone', ParseIntPipe) zone: number) {
-        const key = `/census/regions/${zone}`
+    async serveRegions(@Param('zone', ParseIntPipe) zone: number): Promise<string> {
+        const key = `/census/regions/${zone}`;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.cacheService.get(key) ?? await this.cacheService.set(
