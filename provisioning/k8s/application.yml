@@ -131,4 +131,4 @@ spec:
     name: {{ application }}-{{ environment }}
   minReplicas: {{ min_replicas }}
   maxReplicas: {{ max_replicas }}
-  targetCPUUtilizationPercentage: 50
+  targetCPUUtilizationPercentage: 65
