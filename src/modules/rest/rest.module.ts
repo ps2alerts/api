@@ -48,7 +48,7 @@ import RestInstanceVehicleAggregateController from './controllers/aggregates/ins
 import RestInstanceVehicleCharacterAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.vehicle.character.controller';
 import RestInstanceWeaponAggregateController from './controllers/aggregates/instance/rest.aggregate.instance.weapon.controller';
 // Census
-import RestCensusOshurPolyfillController from './controllers/census/rest.census.oshur.polyfill.controller';
+import RestCensusContinentPolyfillController from './controllers/census/rest.census.continent.polyfill.controller';
 // Others
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import InstanceFacilityControlEntity from '../data/entities/instance/instance.facilitycontrol.entity';
@@ -130,7 +130,7 @@ import {AuthModule} from '../../auth/auth.module';
         RestInstanceVehicleCharacterAggregateController,
         RestInstanceWeaponAggregateController,
         // Census polyfills
-        RestCensusOshurPolyfillController,
+        RestCensusContinentPolyfillController,
         // Instance Event Controllers
         RestInstanceFacilityControlController,
         RestInstanceMetagameController,
