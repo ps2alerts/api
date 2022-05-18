@@ -4064,6 +4064,14 @@
                     "x": "-5",
                     "y": "8"
                 }
+            ],
+            "facility_links": [
+                {
+                    "facility_id_b": "302010",
+                    "map_region": {
+                        "map_region_id": "4171"
+                    }
+                }
             ]
         },
         {
@@ -4093,14 +4101,6 @@
                 {
                     "x": "-2",
                     "y": "4"
-                }
-            ],
-            "facility_links": [
-                {
-                    "facility_id_b": "302010",
-                    "map_region": {
-                        "map_region_id": "4171"
-                    }
                 }
             ]
         },
