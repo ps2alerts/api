@@ -4,7 +4,7 @@ import {RedisCacheService} from '../../../../services/cache/redis.cache.service'
 import * as fs from 'fs';
 import path from 'path';
 
-@ApiTags('Census Oshur Provider')
+@ApiTags('Census Map Data Provider')
 @Controller('census')
 export default class RestCensusContinentPolyfillController {
     constructor(
