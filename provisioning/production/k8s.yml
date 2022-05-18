@@ -50,4 +50,3 @@ spec:
   commonName: {{ hostname }}
   dnsNames:
     - {{ hostname }}
-    - www.{{ hostname }}
