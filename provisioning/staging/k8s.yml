@@ -1,29 +1,14 @@
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: {{ application }}-{{ environment }}-cert
-  namespace: istio-ingress
-spec:
-  secretName: {{ application }}-{{ environment }}-cert
-  commonName: {{ hostname }}
-  dnsNames:
-    - {{ hostname }}
-  issuerRef:
-    kind: ClusterIssuer
-    name: letsencrypt
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ application }}-{{ environment }}-test
+  name: {{ application }}-{{ environment }}
   namespace: ps2alerts
 spec:
-  ingressClassName: istio
+  ingressClassName: nginx
   tls:
     - hosts:
         - "{{ hostname }}"
-      secretName: {{ application }}-{{ environment }}-cert
+      secretName: {{ application }}-{{ environment }}-tls
   rules:
     - host: "{{ hostname }}"
       http:
@@ -35,20 +20,59 @@ spec:
                 name: {{ application }}-{{ environment }}
                 port:
                   number: {{ port }}
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: {{ application }}-{{ environment }}
-  namespace: ps2alerts
-spec:
-  hosts:
-    - {{ hostname }}
-  gateways:
-    - {{ application }}-{{ environment }}
-  http:
-    - route:
-      - destination:
-          host: {{ application }}-{{ environment }}
-          port:
-            number: {{ port }}
+
+# Istio experiment:
+#---
+#apiVersion: cert-manager.io/v1
+#kind: Certificate
+#metadata:
+#  name: {{ application }}-{{ environment }}-cert
+#  namespace: istio-ingress
+#spec:
+#  secretName: {{ application }}-{{ environment }}-cert
+#  commonName: {{ hostname }}
+#  dnsNames:
+#    - {{ hostname }}
+#  issuerRef:
+#    kind: ClusterIssuer
+#    name: letsencrypt
+#---
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  name: {{ application }}-{{ environment }}-test
+#  namespace: ps2alerts
+#spec:
+#  ingressClassName: istio
+#  tls:
+#    - hosts:
+#        - "{{ hostname }}"
+#      secretName: {{ application }}-{{ environment }}-cert
+#  rules:
+#    - host: "{{ hostname }}"
+#      http:
+#        paths:
+#          - pathType: Prefix
+#            path: "/"
+#            backend:
+#              service:
+#                name: {{ application }}-{{ environment }}
+#                port:
+#                  number: {{ port }}
+#---
+#apiVersion: networking.istio.io/v1alpha3
+#kind: VirtualService
+#metadata:
+#  name: {{ application }}-{{ environment }}
+#  namespace: ps2alerts
+#spec:
+#  hosts:
+#    - {{ hostname }}
+#  gateways:
+#    - {{ application }}-{{ environment }}
+#  http:
+#    - route:
+#      - destination:
+#          host: {{ application }}-{{ environment }}
+#          port:
+#            number: {{ port }}
