@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: install node v12
-        uses: actions/setup-node@v2.1.5
+      - name: install node v20
+        uses: actions/setup-node@v3
         with:
-          node-version: 12
-      - name: npm install
-        run: npm install
-      - name: npm run build
-        run: npm run build
+          node-version: 20
+      - name: yarn install
+        run: yarn install
+      - name: yarn run build
+        run: yarn run build
