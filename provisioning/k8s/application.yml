@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: {{ application }}-{{ environment }}
   namespace: ps2alerts
+  labels:
+    app: {{ application }}-{{ environment }}
 spec:
   selector:
     app: {{ application }}-{{ environment }}
@@ -132,3 +134,16 @@ spec:
   minReplicas: {{ min_replicas }}
   maxReplicas: {{ max_replicas }}
   targetCPUUtilizationPercentage: 65
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ application }}-{{ environment }}
+  labels:
+    app: {{ application }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ application }}-{{ environment }}
+  endpoints:
+    - port: {{ port }}
