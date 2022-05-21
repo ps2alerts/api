@@ -13,6 +13,12 @@ import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 @Index(['world', 'character.id', 'bracket'], {unique: true})
 @Index(['character.id'])
 @Index(['bracket'])
+@Index(['kills'])
+@Index(['deaths'])
+@Index(['teamKills'])
+@Index(['teamKilled'])
+@Index(['suicides'])
+@Index(['headshots'])
 export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
