@@ -85,7 +85,7 @@ jobs:
           -e 's|{{ internal_api_user }}|${{ secrets.INTERNAL_API_USER }}|' \
           -e 's|{{ internal_api_pass }}|${{ secrets.INTERNAL_API_PASS }}|' \
           -e 's|{{ min_replicas }}|1|' \
-          -e 's|{{ max_replicas }}|1|' \
+          -e 's|{{ max_replicas }}|2|' \
           provisioning/k8s/application.yml
 
       # Apply the common resources, telling k8s to change the container version to the new one.
