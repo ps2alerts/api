@@ -13,6 +13,13 @@ import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 @Index(['world', 'outfit.id', 'bracket'], {unique: true})
 @Index(['outfit.id'])
 @Index(['bracket'])
+@Index(['kills'])
+@Index(['deaths'])
+@Index(['teamKills'])
+@Index(['teamKilled'])
+@Index(['suicides'])
+@Index(['headshots'])
+@Index(['captures'])
 export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()

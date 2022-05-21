@@ -13,6 +13,10 @@ import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 @Index(['world', 'weapon.id', 'bracket'], {unique: true})
 @Index(['weapon.id'])
 @Index(['bracket'])
+@Index(['kills'])
+@Index(['teamKills'])
+@Index(['suicides'])
+@Index(['headshots'])
 export default class GlobalWeaponAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
