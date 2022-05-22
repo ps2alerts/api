@@ -137,9 +137,12 @@ export class BracketCron {
             } catch (e) {
                 // Ignore error if there isn't any
             }
-
-            const key = '/crons/bracket';
-            await this.cacheService.set(key, new Date().getUTCSeconds());
         }
+
+        // @See CronHealthIndicator
+        // This sets the fact that the cron has run, so if it hasn't been run it will be terminated.
+        const key = '/crons/brackets';
+        await this.cacheService.set(key, Date.now(), 65); // 65 seconds = deadline for this cron
+        this.logger.debug('Set cron run time');
     }
 }

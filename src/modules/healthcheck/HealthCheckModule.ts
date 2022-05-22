@@ -12,6 +12,7 @@ import HealthcheckController from './controllers/healthcheck.controller';
 import {TerminusModule} from '@nestjs/terminus';
 import {DatabaseHealthIndicator} from './indicators/DatabaseHealthIndicator';
 import {RedisHealthIndicator} from './indicators/RedisHealthIndicator';
+import {CronHealthIndicator} from './indicators/CronHealthIndicator';
 
 @Module({
     controllers: [
@@ -43,6 +44,7 @@ import {RedisHealthIndicator} from './indicators/RedisHealthIndicator';
         RedisCacheService,
         DatabaseHealthIndicator,
         RedisHealthIndicator,
+        CronHealthIndicator,
     ],
 })
 export class HealthCheckModule {}

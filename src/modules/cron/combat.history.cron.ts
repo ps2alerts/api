@@ -7,12 +7,14 @@ import InstanceFactionCombatAggregateEntity
     from '../data/entities/aggregate/instance/instance.faction.combat.aggregate.entity';
 import InstanceCombatHistoryAggregateEntity
     from '../data/entities/aggregate/instance/instance.combat.history.aggregate.entity';
+import {RedisCacheService} from '../../services/cache/redis.cache.service';
 
 @Injectable()
 export class CombatHistoryCron {
     private readonly logger = new Logger(CombatHistoryCron.name);
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
     @Cron(CronExpression.EVERY_MINUTE)
@@ -59,5 +61,11 @@ export class CombatHistoryCron {
                 documents,
             );
         }
+
+        // @See CronHealthIndicator
+        // This sets the fact that the cron has run, so if it hasn't been run it will be terminated.
+        const key = '/crons/combatHistory';
+        await this.cacheService.set(key, Date.now(), 65); // 65 seconds = deadline for this cron
+        this.logger.debug('Set cron run time');
     }
 }

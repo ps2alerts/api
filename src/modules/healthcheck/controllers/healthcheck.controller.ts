@@ -10,6 +10,7 @@ import {DatabaseHealthIndicator} from '../indicators/DatabaseHealthIndicator';
 import {RedisHealthIndicator} from '../indicators/RedisHealthIndicator';
 import {Transport} from '@nestjs/microservices';
 import {ConfigService} from '@nestjs/config';
+import {CronHealthIndicator} from '../indicators/CronHealthIndicator';
 
 @ApiTags('Healthcheck')
 @Controller('healthcheck')
@@ -22,6 +23,7 @@ export default class HealthcheckController {
         private readonly dbHealth: DatabaseHealthIndicator,
         private readonly redisHealth: RedisHealthIndicator,
         private readonly microserviceHealth: MicroserviceHealthIndicator,
+        private readonly cronHealth: CronHealthIndicator,
     ) {}
 
     @Get('')
@@ -54,7 +56,11 @@ export default class HealthcheckController {
             );
         }
 
-        // Check if API is accessible via http
+        if (process.env.CRON_ENABLED === 'true') {
+            indicators.push(async () => this.cronHealth.isHealthy('brackets', 65));
+            indicators.push(async () => this.cronHealth.isHealthy('combatHistory', 65));
+        }
+
         return this.health.check(indicators);
     }
 }

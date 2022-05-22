@@ -24,9 +24,9 @@ export class DatabaseHealthIndicator extends HealthIndicator {
         );
 
         if (!character || !character.character || character.character.name !== 'Maelstrome26') {
-            throw new HealthCheckError('Character data did not match name correctly, or character did not return. Something is wrong!', character);
+            throw new HealthCheckError('database', this.getStatus('database', false, ['Character data did not match name correctly, or character did not return. Something is wrong!', character]));
         }
 
-        return this.getStatus('database', true, character);
+        return this.getStatus('database', true, character.character);
     }
 }

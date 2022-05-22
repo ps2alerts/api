@@ -50,27 +50,27 @@ spec:
               memory: "256Mi"
           startupProbe:
             httpGet:
-              path: /instances/active
+              path: /healthcheck
               port: {{ port }}
             periodSeconds: 10
             successThreshold: 1
-            failureThreshold: 6 # 60 seconds, takes normally about 20s
+            failureThreshold: 9 # 90 seconds, takes normally about 20s
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
-              path: /instances/active
+              path: /healthcheck
               port: {{ port }}
-            periodSeconds: 15
-            successThreshold: 1
-            failureThreshold: 4 # If dead for 1m
+            periodSeconds: 5
+            successThreshold: 2 # Requires 2 confirms
+            failureThreshold: 6 # If unready for 30s after startup
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
-              path: /instances/active
+              path: /healthcheck
               port: {{ port }}
-            periodSeconds: 15
+            periodSeconds: 10
             successThreshold: 1
-            failureThreshold: 4 #If dead for 1m
+            failureThreshold: 2 # If dead for 20s
             timeoutSeconds: 5
             terminationGracePeriodSeconds: 15
           env:
