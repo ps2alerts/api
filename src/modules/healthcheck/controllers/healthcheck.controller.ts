@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-unsafe-assignment */
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {Controller, Get, Inject, Logger} from '@nestjs/common';
-import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {
     HealthCheck, HealthCheckResult,
     HealthCheckService,
@@ -18,7 +17,6 @@ export default class HealthcheckController {
     private readonly logger = new Logger(HealthcheckController.name);
 
     constructor(
-        @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
         @Inject(ConfigService) private readonly config: ConfigService,
         private readonly health: HealthCheckService,
         private readonly dbHealth: DatabaseHealthIndicator,
@@ -44,12 +42,14 @@ export default class HealthcheckController {
         if (process.env.AGGREGATOR_ENABLED === 'true') {
             indicators.push(
                 async () => this.microserviceHealth.pingCheck('rabbit', {
-                    transport: Transport.TCP,
+                    transport: Transport.RMQ,
                     options: {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        host: this.config.get('rabbitmq.url'),
+                        urls: this.config.get('rabbitmq.url'),
+                        queue: this.config.get('rabbitmq.queue'),
+                        queueOptions: this.config.get('rabbitmq.queueOptions'),
+                        noAck: this.config.get('rabbitmq.noAck'),
+                        prefetchCount: this.config.get('rabbitmq.prefetchCount'),
                     },
-
                 }),
             );
         }

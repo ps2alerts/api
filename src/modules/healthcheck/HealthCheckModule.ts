@@ -9,8 +9,7 @@ import {ConfigService} from '@nestjs/config';
 import * as redisStore from 'cache-manager-ioredis';
 import GlobalCharacterAggregateEntity from '../data/entities/aggregate/global/global.character.aggregate.entity';
 import HealthcheckController from './controllers/healthcheck.controller';
-import {HttpHealthIndicator, TerminusModule} from '@nestjs/terminus';
-import {HttpModule} from '@nestjs/axios';
+import {TerminusModule} from '@nestjs/terminus';
 import {DatabaseHealthIndicator} from './indicators/DatabaseHealthIndicator';
 import {RedisHealthIndicator} from './indicators/RedisHealthIndicator';
 
@@ -21,7 +20,6 @@ import {RedisHealthIndicator} from './indicators/RedisHealthIndicator';
     imports: [
         ConfigService,
         TerminusModule,
-        HttpModule,
         TypeOrmModule.forFeature([
             GlobalCharacterAggregateEntity,
             InstanceMetagameTerritoryEntity,
@@ -43,7 +41,6 @@ import {RedisHealthIndicator} from './indicators/RedisHealthIndicator';
     providers: [
         MongoOperationsService,
         RedisCacheService,
-        HttpHealthIndicator,
         DatabaseHealthIndicator,
         RedisHealthIndicator,
     ],

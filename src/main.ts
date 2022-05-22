@@ -36,15 +36,10 @@ async function bootstrap(): Promise<void> {
             options: {
                 urls: config.get('rabbitmq.url'),
                 queue: config.get('rabbitmq.queue'),
-                queueOptions: {
-                    durable: true,
-                    messageTtl: 10800000, // 3 hours
-                    arguments: {
-                        'x-queue-mode': 'lazy',
-                    },
-                },
-                noAck: false,
-                prefetchCount: process.env.RABBITMQ_PREFETCH ? parseInt(process.env.RABBITMQ_PREFETCH, 10) : 2000,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                queueOptions: config.get('rabbitmq.queueOptions'),
+                noAck: config.get('rabbitmq.noAck'),
+                prefetchCount: config.get('rabbitmq.prefetchCount'),
             },
         });
     }
