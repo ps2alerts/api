@@ -27,7 +27,7 @@ export class BracketCron {
 
     @Cron(CronExpression.EVERY_MINUTE)
     async handleCron(): Promise<void> {
-        // this.logger.debug('Running Alert Bracket job');
+        this.logger.log('Running Alert Bracket job');
 
         const primeMin = 192; // 4+ platoons
         const highMin = 144; // 3-4 platoons
@@ -125,6 +125,7 @@ export class BracketCron {
                                 total: parseInt(String(total), 10),
                             },
                         );
+                        this.logger.log(`Updated brackets for instance ${result._id}`);
                     } catch (e) {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
                         this.logger.error(`Unable to update bracket for instance ${result._id} - E: ${e.message}`);

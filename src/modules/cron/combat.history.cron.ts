@@ -17,7 +17,7 @@ export class CombatHistoryCron {
 
     @Cron(CronExpression.EVERY_MINUTE)
     async handleCron(): Promise<void> {
-        // this.logger.debug('Running Combat History job');
+        this.logger.log('Running Combat History job');
 
         const documents = [];
 
@@ -46,6 +46,8 @@ export class CombatHistoryCron {
                         timestamp: new Date(),
                     },
                 ));
+
+                this.logger.log(`Updated combat history for instance ${row.instanceId}`);
             } catch (e) {
                 // Ignore error if there isn't any
             }
