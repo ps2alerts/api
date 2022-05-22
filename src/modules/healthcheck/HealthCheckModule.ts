@@ -1,24 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {CacheModule, Module} from '@nestjs/common';
-import {CombatHistoryCron} from './combat.history.cron';
-import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
-import InstanceFactionCombatAggregateEntity
-    from '../data/entities/aggregate/instance/instance.faction.combat.aggregate.entity';
-import InstanceCombatHistoryAggregateEntity
-    from '../data/entities/aggregate/instance/instance.combat.history.aggregate.entity';
-import {BracketCron} from './bracket.cron';
+import MongoOperationsService from '../../services/mongo/mongo.operations.service';
+import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import ConfigModule from '../../config/config.module';
 import {ConfigService} from '@nestjs/config';
 import * as redisStore from 'cache-manager-ioredis';
-import {RedisCacheService} from '../../services/cache/redis.cache.service';
+import GlobalCharacterAggregateEntity from '../data/entities/aggregate/global/global.character.aggregate.entity';
+import HealthcheckController from './controllers/healthcheck.controller';
+import {HttpHealthIndicator, TerminusModule} from '@nestjs/terminus';
+import {HttpModule} from '@nestjs/axios';
+import {DatabaseHealthIndicator} from './indicators/DatabaseHealthIndicator';
+import {RedisHealthIndicator} from './indicators/RedisHealthIndicator';
 
 @Module({
+    controllers: [
+        HealthcheckController,
+    ],
     imports: [
+        ConfigService,
+        TerminusModule,
+        HttpModule,
         TypeOrmModule.forFeature([
-            InstanceCombatHistoryAggregateEntity,
-            InstanceFactionCombatAggregateEntity,
+            GlobalCharacterAggregateEntity,
             InstanceMetagameTerritoryEntity,
         ]),
         CacheModule.registerAsync({
@@ -38,8 +43,9 @@ import {RedisCacheService} from '../../services/cache/redis.cache.service';
     providers: [
         MongoOperationsService,
         RedisCacheService,
-        CombatHistoryCron,
-        BracketCron,
+        HttpHealthIndicator,
+        DatabaseHealthIndicator,
+        RedisHealthIndicator,
     ],
 })
-export class CronModule {}
+export class HealthCheckModule {}
