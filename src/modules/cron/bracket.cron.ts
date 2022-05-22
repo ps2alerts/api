@@ -9,6 +9,7 @@ import InstancePopulationAggregateEntity
 import {Bracket} from '../data/constants/bracket.consts';
 import InstancePopulationAveragesAggregateEntity from '../data/entities/aggregate/instance/instance.population.averages.aggregate.entity';
 import {World} from '../data/constants/world.consts';
+import {RedisCacheService} from '../../services/cache/redis.cache.service';
 
 interface PipelineResult {
     _id: string;
@@ -23,6 +24,7 @@ export class BracketCron {
     private readonly logger = new Logger(BracketCron.name);
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
     @Cron(CronExpression.EVERY_MINUTE)
@@ -35,6 +37,7 @@ export class BracketCron {
         const lowMin = 48; // 1-2 platoons
 
         // Grab the current actives
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED});
 
         for await (const row of actives) {
@@ -135,5 +138,11 @@ export class BracketCron {
                 // Ignore error if there isn't any
             }
         }
+
+        // @See CronHealthIndicator
+        // This sets the fact that the cron has run, so if it hasn't been run it will be terminated.
+        const key = '/crons/brackets';
+        await this.cacheService.set(key, Date.now(), 65); // 65 seconds = deadline for this cron
+        this.logger.debug('Set cron run time');
     }
 }

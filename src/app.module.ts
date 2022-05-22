@@ -7,6 +7,7 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {MongoConfig} from './services/databases/mongo.config';
 import {ScheduleModule} from '@nestjs/schedule';
 import {CronModule} from './modules/cron/CronModule';
+import {HealthCheckModule} from './modules/healthcheck/HealthCheckModule';
 
 const metadata = {
     imports: [
@@ -16,6 +17,7 @@ const metadata = {
             useClass: MongoConfig,
         }),
         RestModule, // For some strange reason you need a module defined, so we're going to have REST here but not in the load balancer.
+        HealthCheckModule,
     ],
     controllers: [DefaultController],
     providers: [],

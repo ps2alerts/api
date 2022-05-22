@@ -28,7 +28,15 @@ export const config = () => ({
     rabbitmq: {
         url: [process.env.RABBITMQ_URL ?? `amqp://${process.env.RABBITMQ_USER ?? 'guest'}:${process.env.RABBITMQ_PASS ?? 'guest'}@${process.env.RABBITMQ_HOST ?? 'localhost'}:5672${process.env.RABBITMQ_VHOST ?? ''}?heartbeat=10&connection_timeout=10000`],
         queue: process.env.RABBITMQ_QUEUE ?? 'api-queue',
-        shortDelayQueue: process.env.RABBITMQ_SHORT_DELAY_QUEUE ?? 'api-queue-delay-5min',
+        queueOptions: {
+            durable: true,
+            messageTtl: 10800000, // 3 hours
+            arguments: {
+                'x-queue-mode': 'lazy',
+            },
+        },
+        noAck: false,
+        prefetchCount: process.env.RABBITMQ_PREFETCH ? parseInt(process.env.RABBITMQ_PREFETCH, 10) : 2000,
     },
 
     redis: {
