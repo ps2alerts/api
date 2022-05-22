@@ -14,6 +14,9 @@ async function bootstrap(): Promise<void> {
         new FastifyAdapter({
             logger: process.env.NODE_ENV === 'development',
         }),
+        {
+            logger: process.env.NODE_ENV === 'development' ? ['debug'] : ['warn'],
+        },
     );
 
     const config = app.get(ConfigService);
