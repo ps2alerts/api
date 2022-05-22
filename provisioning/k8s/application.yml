@@ -146,4 +146,4 @@ spec:
     matchLabels:
       app: {{ application }}-{{ environment }}
   endpoints:
-    - port: {{ port }}
+    - port: "{{ port }}"
