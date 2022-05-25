@@ -43,10 +43,10 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              cpu: "250m"
+              cpu: "300m"
               memory: "256Mi"
             limits:
-              cpu: "500m"
+              cpu: "600m"
               memory: "256Mi"
           startupProbe:
             httpGet:
@@ -133,7 +133,7 @@ spec:
     name: {{ application }}-{{ environment }}
   minReplicas: {{ min_replicas }}
   maxReplicas: {{ max_replicas }}
-  targetCPUUtilizationPercentage: 65
+  targetCPUUtilizationPercentage: 50
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
