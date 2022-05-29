@@ -133,7 +133,7 @@ spec:
     name: {{ application }}-{{ environment }}
   minReplicas: {{ min_replicas }}
   maxReplicas: {{ max_replicas }}
-  targetCPUUtilizationPercentage: 50
+  targetCPUUtilizationPercentage: 70
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
