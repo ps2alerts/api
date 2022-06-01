@@ -38,7 +38,6 @@ import {AuthGuard} from '@nestjs/passport';
 import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
 import {CreateInstanceMetagameDto} from '../Dto/CreateInstanceMetagameDto';
 import {ObjectID} from 'typeorm';
-import {MandatoryIntPipe} from '../pipes/MandatoryIntPipe';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
@@ -167,7 +166,7 @@ export class RestInstanceMetagameController {
             @Query('zone', OptionalIntPipe) zone?: Zone,
             @Query('timeStartedFrom', OptionalDatePipe) timeStartedFrom?: Date | undefined,
             @Query('timeStartedTo', OptionalDatePipe) timeStartedTo?: Date | undefined,
-            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
+            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
             @Query('victor', OptionalIntPipe) victor?: Faction,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
