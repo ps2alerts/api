@@ -4,6 +4,7 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import CharacterEmbed from '../common/character.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
+import InstanceCharacterXPerMinuteEmbed from './embeds/instance.character.xperminute.embed';
 
 @Entity({
     name: 'aggregate_instance_characters',
@@ -70,4 +71,22 @@ export default class InstanceCharacterAggregateEntity {
     @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
     @Column(() => FactionVersusFactionEmbed)
     factionKills: FactionVersusFactionEmbed;
+
+    @ApiProperty({example: 1654033928, description: 'Second that the character was first seen relative to alert start'})
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    durationFirstSeen: number;
+
+    @ApiProperty({example: 1654033928, description: 'Length character was seen in alert as of the first death / kill'})
+    @Column({
+        type: 'number',
+        default: 0,
+    })
+    durationInAlert: number;
+
+    @ApiProperty({type: InstanceCharacterXPerMinuteEmbed, description: 'Statistics per minute for character relative to duration in alert'})
+    @Column(() => InstanceCharacterXPerMinuteEmbed)
+    xPerMinutes: InstanceCharacterXPerMinuteEmbed;
 }

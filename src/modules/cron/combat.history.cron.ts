@@ -30,7 +30,7 @@ export class CombatHistoryCron {
         for await (const row of actives) {
             // If instance is overdue, don't process
             if (Date.now() > (row.timeStarted.getTime() + row.duration)) {
-                this.logger.error(`Instance [${row.instanceId}] is overdue, skipping combat history job`);
+                this.logger.warn(`Instance [${row.instanceId}] is overdue, skipping combat history job`);
                 continue;
             }
 
@@ -66,6 +66,6 @@ export class CombatHistoryCron {
         // This sets the fact that the cron has run, so if it hasn't been run it will be terminated.
         const key = '/crons/combatHistory';
         await this.cacheService.set(key, Date.now(), 65); // 65 seconds = deadline for this cron
-        this.logger.debug('Set cron run time');
+        this.logger.debug('Set combat cron run time');
     }
 }
