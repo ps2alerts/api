@@ -105,8 +105,7 @@ export class XpmCron {
             const xPerMinutes = {
                 killsPerMinute: outfit.kills && outfit.kills > 0 ? parseFloat((outfit.kills / durationInMinutes).toFixed(2)) : 0,
                 deathsPerMinute: outfit.deaths && outfit.deaths > 0 ? parseFloat((outfit.deaths / durationInMinutes).toFixed(2)) : 0,
-                teamKillsPerMinute: outfit.teamKills && outfit.teamKills > 0 ? parseFloat((outfit.teamKills / durationInMinutes).toFixed
-                (2)) : 0,
+                teamKillsPerMinute: outfit.teamKills && outfit.teamKills > 0 ? parseFloat((outfit.teamKills / durationInMinutes).toFixed(2)) : 0,
                 suicidesPerMinute: outfit.suicides && outfit.suicides > 0 ? parseFloat((outfit.suicides / durationInMinutes).toFixed(2)) : 0,
                 headshotsPerMinute: outfit.headshots && outfit.headshots > 0 ? parseFloat((outfit.headshots / durationInMinutes).toFixed(2)) : 0,
             };
