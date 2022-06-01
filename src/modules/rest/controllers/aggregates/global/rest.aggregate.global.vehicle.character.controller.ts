@@ -9,6 +9,7 @@ import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator'
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/constants/bracket.consts';
+import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 
 @ApiTags('Global Vehicle Character Aggregates')
 @Controller('aggregates')
@@ -32,8 +33,9 @@ export default class RestGlobalVehicleCharacterController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
@@ -53,8 +55,9 @@ export default class RestGlobalVehicleCharacterController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, character, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
@@ -75,7 +78,7 @@ export default class RestGlobalVehicleCharacterController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity | GlobalVehicleCharacterAggregateEntity[]> {
         return world
             ? await this.mongoOperationsService.findOne(GlobalVehicleCharacterAggregateEntity, {world, character, vehicle, bracket})

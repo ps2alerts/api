@@ -10,6 +10,7 @@ import {World} from '../../../../data/constants/world.consts';
 import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/constants/bracket.consts';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 
 @ApiTags('Global Loadout Aggregates')
 @Controller('aggregates')
@@ -30,7 +31,7 @@ export default class RestGlobalLoadoutAggregateController {
     })
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
@@ -58,7 +59,7 @@ export default class RestGlobalLoadoutAggregateController {
     async findOne(
         @Param('loadout', ParseIntPipe) loadout: Loadout,
             @Query('world', OptionalIntPipe) world?: World,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,

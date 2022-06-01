@@ -9,6 +9,7 @@ import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/constants/bracket.consts';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 
 @ApiTags('Global Outfit Aggregates')
 @Controller('aggregates')
@@ -29,7 +30,7 @@ export default class RestGlobalOutfitAggregateController {
     })
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
@@ -57,7 +58,7 @@ export default class RestGlobalOutfitAggregateController {
     async findOne(
         @Param('outfit') outfit: string,
             @Query('world', OptionalIntPipe) world?: World,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
