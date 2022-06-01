@@ -9,6 +9,7 @@ import {World} from '../../../../data/constants/world.consts';
 import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/constants/bracket.consts';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 
 @ApiTags('Global Character Aggregates')
 @Controller('aggregates')
@@ -33,7 +34,7 @@ export default class RestGlobalCharacterAggregateController {
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalCharacterAggregateEntity[]> {
         const pagination = new Pagination({sortBy, order, page, pageSize}, true);
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -55,7 +56,7 @@ export default class RestGlobalCharacterAggregateController {
     })
     async findOne(
         @Param('character') character: string,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalCharacterAggregateEntity> {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const key = `/global/character/${character}/B:${bracket}`;

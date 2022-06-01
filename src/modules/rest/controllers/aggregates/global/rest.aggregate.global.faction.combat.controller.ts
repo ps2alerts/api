@@ -11,6 +11,7 @@ import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator'
 import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 import {Bracket} from '../../../../data/constants/bracket.consts';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 
 @ApiTags('Global Faction Combat Aggregates')
 @Controller('aggregates')
@@ -31,7 +32,7 @@ export default class RestGlobalFactionCombatAggregateController {
     })
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
@@ -58,7 +59,7 @@ export default class RestGlobalFactionCombatAggregateController {
     })
     async findOne(
         @Param('world', OptionalIntPipe) world: World,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalFactionCombatAggregateEntity> {
         return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world, bracket});
     }

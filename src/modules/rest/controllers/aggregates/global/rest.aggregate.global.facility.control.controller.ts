@@ -10,6 +10,7 @@ import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/constants/bracket.consts';
 import {Zone} from '../../../../data/constants/zone.consts';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 
 @ApiTags('Global Facility Control Aggregates')
 @Controller('aggregates')
@@ -31,7 +32,7 @@ export default class RestGlobalFacilityControlAggregateController {
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
             @Query('zone', OptionalIntPipe) zone?: Zone,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
@@ -59,7 +60,7 @@ export default class RestGlobalFacilityControlAggregateController {
     async findOne(
         @Param('facility', ParseIntPipe) facility: number,
             @Query('world', OptionalIntPipe) world?: World,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,

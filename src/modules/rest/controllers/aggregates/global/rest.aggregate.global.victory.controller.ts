@@ -15,6 +15,7 @@ import Range from '../../../../../services/mongo/range';
 import {DATE_IMPLICIT_QUERIES} from '../../common/rest.date.query';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 import Pagination from '../../../../../services/mongo/pagination';
+import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 
 @ApiTags('Global Victory Aggregates')
 @Controller('aggregates')
@@ -41,7 +42,7 @@ export default class RestGlobalVictoryAggregateController {
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
             @Query('zone', OptionalIntPipe) zone?: Zone,
-            @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
             @Query('dateFrom', OptionalDatePipe) dateFrom?: Date | undefined,
             @Query('dateTo', OptionalDatePipe) dateTo?: Date | undefined,
     ): Promise<GlobalVictoryAggregate[]> {
