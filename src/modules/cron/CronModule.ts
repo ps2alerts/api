@@ -13,7 +13,7 @@ import ConfigModule from '../../config/config.module';
 import {ConfigService} from '@nestjs/config';
 import * as redisStore from 'cache-manager-ioredis';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
-import {KpmCron} from './kpm.cron';
+import {XpmCron} from './xpm.cron';
 
 @Module({
     imports: [
@@ -41,7 +41,7 @@ import {KpmCron} from './kpm.cron';
         RedisCacheService,
         CombatHistoryCron,
         BracketCron,
-        KpmCron,
+        XpmCron,
     ],
 })
 export class CronModule {}

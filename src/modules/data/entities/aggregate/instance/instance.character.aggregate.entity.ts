@@ -4,7 +4,7 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import CharacterEmbed from '../common/character.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
-import InstanceCharacterXPerMinuteEmbed from './embeds/instance.character.xperminute.embed';
+import XperminuteEmbed from '../common/xperminute.embed';
 
 @Entity({
     name: 'aggregate_instance_characters',
@@ -86,7 +86,7 @@ export default class InstanceCharacterAggregateEntity {
     })
     durationInAlert: number;
 
-    @ApiProperty({type: InstanceCharacterXPerMinuteEmbed, description: 'Statistics per minute for character relative to duration in alert'})
-    @Column(() => InstanceCharacterXPerMinuteEmbed)
-    xPerMinutes: InstanceCharacterXPerMinuteEmbed;
+    @ApiProperty({type: XperminuteEmbed, description: 'Statistics per minute for character relative to duration in alert'})
+    @Column(() => XperminuteEmbed)
+    xPerMinutes: XperminuteEmbed;
 }
