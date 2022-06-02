@@ -9,10 +9,10 @@ export default class InstanceFeaturesEmbed {
     })
     captureHistory: boolean;
 
-    @ApiProperty({example: true, description: 'Whether KPM metrics was captured on this instance'})
+    @ApiProperty({example: true, description: 'Whether XPM metrics was collected on this instance'})
     @Column({
         type: 'boolean',
         default: false,
     })
-    kpm: boolean;
+    xpm: boolean;
 }

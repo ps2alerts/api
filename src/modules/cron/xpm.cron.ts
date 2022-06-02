@@ -23,7 +23,7 @@ export class XpmCron {
 
         // Grab the current actives
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED, 'features.kpm': true});
+        const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED, 'features.xpm': true});
 
         for await (const instance of actives) {
             if (Date.now() > (instance.timeStarted.getTime() + instance.duration)) {
