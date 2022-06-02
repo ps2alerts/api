@@ -16,11 +16,6 @@ spec:
       labels:
         app: {{ application }}-{{ environment }}
         version: {{ version }}
-        somelabel: "true"
-        somelabel2: "true"
-        somelabel3: "true"
-        somelabel4: "true"
-        somelabel5: "true"
     spec:
       containers:
         - name: application
@@ -28,10 +23,10 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              cpu: "25m"
+              cpu: "100m"
               memory: "128Mi"
             limits:
-              cpu: "50m"
+              cpu: "300m"
               memory: "128Mi"
           env:
             - name: NODE_ENV
