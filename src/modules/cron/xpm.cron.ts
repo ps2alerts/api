@@ -18,7 +18,7 @@ export class XpmCron {
 
     @Cron('*/15 * * * * *') // Every 15 seconds
     async handleCron(): Promise<void> {
-        this.logger.log('Running KPM cron job');
+        this.logger.log('Running XPM cron job');
         const now = new Date();
 
         // Grab the current actives
@@ -27,7 +27,7 @@ export class XpmCron {
 
         for await (const instance of actives) {
             if (Date.now() > (instance.timeStarted.getTime() + instance.duration)) {
-                this.logger.warn(`Instance [${instance.instanceId}] is overdue, skipping KPM job`);
+                this.logger.warn(`Instance [${instance.instanceId}] is overdue, skipping XPM job`);
                 continue;
             }
 
@@ -37,9 +37,9 @@ export class XpmCron {
 
         // @See CronHealthIndicator
         // This sets the fact that the cron has run, so if it hasn't been run it will be terminated.
-        const key = '/crons/kpm';
+        const key = '/crons/xpm';
         await this.cacheService.set(key, Date.now(), 65); // 65 seconds = deadline for this cron
-        this.logger.debug('Set kpm cron run time');
+        this.logger.debug('Set xpm cron run time');
     }
 
     async characterMetrics(instance: InstanceMetagameTerritoryEntity, now: Date): Promise<void> {

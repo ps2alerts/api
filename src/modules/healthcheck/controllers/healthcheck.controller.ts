@@ -59,6 +59,7 @@ export default class HealthcheckController {
         if (process.env.CRON_ENABLED === 'true') {
             indicators.push(async () => this.cronHealth.isHealthy('brackets', 65));
             indicators.push(async () => this.cronHealth.isHealthy('combatHistory', 65));
+            indicators.push(async () => this.cronHealth.isHealthy('xpm', 35));
         }
 
         return this.health.check(indicators);
