@@ -7,12 +7,19 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: true
+
       - name: install node v16
         uses: actions/setup-node@v3
         with:
           node-version: 16
+
       - name: yarn install
         run: yarn install
+
       - name: yarn run lint
         run: yarn run lint

@@ -2,7 +2,7 @@ import {Controller, Get, Inject, Param, ParseIntPipe, Query} from '@nestjs/commo
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import InstanceLoadoutAggregateEntity from '../../../../data/entities/aggregate/instance/instance.loadout.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
-import {Loadout} from '../../../../data/constants/loadout.consts';
+import {Loadout} from '../../../../data/ps2alerts-constants/loadout';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';

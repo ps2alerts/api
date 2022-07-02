@@ -2,9 +2,9 @@
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {World, worldArray} from '../../../constants/world.consts';
-import {Zone, zoneArray} from '../../../constants/zone.consts';
-import {Bracket, bracketArray} from '../../../constants/bracket.consts';
+import {World, worldArray} from '../../../ps2alerts-constants/world';
+import {Zone, zoneArray} from '../../../ps2alerts-constants/zone';
+import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
 
 @Entity({
     name: 'aggregate_global_victories',
@@ -31,10 +31,10 @@ export default class GlobalVictoryAggregateEntity {
     })
     zone: Zone;
 
-    @ApiProperty({enum: bracketArray, description: 'Bracket'})
+    @ApiProperty({enum: ps2alertsBracketArray, description: 'Bracket'})
     @Column({
         type: 'enum',
-        enum: bracketArray,
+        enum: ps2alertsBracketArray,
     })
     bracket: Bracket;
 

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {World, worldArray} from '../../constants/world.consts';
-import {Zone, zoneArray} from '../../constants/zone.consts';
-import {MetagameEventType, metagameEventTypeArray} from '../../constants/metagameevent.consts';
-import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../constants/eventstate.consts';
+import {World, worldArray} from '../../ps2alerts-constants/world';
+import {Zone, zoneArray} from '../../ps2alerts-constants/zone';
+import {MetagameEventType, metagameEventTypeArray} from '../../ps2alerts-constants/metagameEventType';
+import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../ps2alerts-constants/ps2alertsEventState';
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import MetagameTerritoryResultEmbed from '../aggregate/common/metagame.territory.result.embed';
-import {Bracket, bracketArray} from '../../constants/bracket.consts';
+import {Bracket, ps2alertsBracketArray} from '../../ps2alerts-constants/bracket';
 import InstanceFeaturesEmbed from './instance.features.embed';
 
 @Entity({
@@ -82,10 +82,10 @@ export default class InstanceMetagameTerritoryEntity {
     })
     state: Ps2alertsEventState;
 
-    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the instance'})
+    @ApiProperty({example: Bracket.PRIME, enum: ps2alertsBracketArray, description: 'Activity bracket level of the instance'})
     @Column({
         type: 'enum',
-        enum: bracketArray,
+        enum: ps2alertsBracketArray,
     })
     bracket: Bracket;
 

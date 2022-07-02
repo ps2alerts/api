@@ -7,12 +7,12 @@ import {
     IsString,
 } from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import {World} from '../../data/constants/world.consts';
-import {Zone} from '../../data/constants/zone.consts';
-import {MetagameEventType} from '../../data/constants/metagameevent.consts';
-import {Ps2alertsEventState} from '../../data/constants/eventstate.consts';
+import {World} from '../../data/ps2alerts-constants/world';
+import {Zone} from '../../data/ps2alerts-constants/zone';
+import {MetagameEventType} from '../../data/ps2alerts-constants/metagameEventType';
+import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
 import {Ps2AlertsFeaturesInterface} from '../../../interfaces/Ps2AlertsFeaturesInterface';
-import {Bracket} from '../../data/constants/bracket.consts';
+import {Bracket} from '../../data/ps2alerts-constants/bracket';
 import Ps2AlertsInstanceResultInterface from '../../../interfaces/Ps2AlertsInstanceResultInterface';
 
 export class CreateInstanceMetagameDto {

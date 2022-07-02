@@ -5,8 +5,8 @@ import {Inject, Injectable, Logger} from '@nestjs/common';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import GlobalAggregatorMessageInterface from './interfaces/global.aggregator.message.interface';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
-import {Ps2alertsEventState} from '../data/constants/eventstate.consts';
-import {Bracket} from '../data/constants/bracket.consts';
+import {Ps2alertsEventState} from '../data/ps2alerts-constants/ps2alertsEventState';
+import {Bracket} from '../data/ps2alerts-constants/bracket';
 
 @Injectable()
 export default class AggregatorDataHandler {

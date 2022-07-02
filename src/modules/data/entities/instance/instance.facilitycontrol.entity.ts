@@ -2,7 +2,7 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {Faction, factionArray} from '../../constants/faction.consts';
+import {Faction, factionArray} from '../../ps2alerts-constants/faction';
 import MapControlEmbed from './mapcontrol.embed.ts';
 
 @Entity({

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
-import {Zone} from '../../../constants/zone.consts';
+import {Zone} from '../../../ps2alerts-constants/zone';
 
 export default class FacilityEmbed {
     @ApiProperty({example: '6200', description: 'Facility ID'})

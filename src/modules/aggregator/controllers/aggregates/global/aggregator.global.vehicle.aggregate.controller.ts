@@ -1,6 +1,6 @@
 import {Controller, Logger} from '@nestjs/common';
 import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
-import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
+import {MqAcceptedPatterns} from '../../../../data/ps2alerts-constants/mqAcceptedPatterns';
 import AggregatorDataHandler from '../../../aggregator.data.handler';
 import GlobalVehicleAggregateEntity from '../../../../data/entities/aggregate/global/global.vehicle.aggregate.entity';
 import GlobalAggregatorMessageInterface from '../../../interfaces/global.aggregator.message.interface';
@@ -11,7 +11,7 @@ export default class AggregatorGlobalVehicleAggregateController {
 
     constructor(private readonly aggregatorDataHandler: AggregatorDataHandler) {}
 
-    @EventPattern(MQAcceptedPatterns.GLOBAL_VEHICLE_AGGREGATE)
+    @EventPattern(MqAcceptedPatterns.GLOBAL_VEHICLE_AGGREGATE)
     public async process(@Payload() data: GlobalAggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
         try {
             await this.aggregatorDataHandler.upsertGlobal(
@@ -21,7 +21,7 @@ export default class AggregatorGlobalVehicleAggregateController {
             );
         } catch (e) {
             if (e instanceof Error && !e.message.includes('does not exist')) {
-                this.logger.error(`Unable to process ${MQAcceptedPatterns.GLOBAL_VEHICLE_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
+                this.logger.error(`Unable to process ${MqAcceptedPatterns.GLOBAL_VEHICLE_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
             }
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access

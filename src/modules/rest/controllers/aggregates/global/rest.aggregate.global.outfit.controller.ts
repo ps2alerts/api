@@ -3,11 +3,11 @@ import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalOutfitAggregateEntity from '../../../../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
-import {World} from '../../../../data/constants/world.consts';
+import {World} from '../../../../data/ps2alerts-constants/world';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
-import {Bracket} from '../../../../data/constants/bracket.consts';
+import {Bracket} from '../../../../data/ps2alerts-constants/bracket';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 

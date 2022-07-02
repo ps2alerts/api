@@ -1,7 +1,7 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
-import {Ps2alertsEventState} from '../data/constants/eventstate.consts';
+import {Ps2alertsEventState} from '../data/ps2alerts-constants/ps2alertsEventState';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 import InstanceFactionCombatAggregateEntity
     from '../data/entities/aggregate/instance/instance.faction.combat.aggregate.entity';
