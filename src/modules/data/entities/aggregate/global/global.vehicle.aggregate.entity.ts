@@ -3,9 +3,9 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import VehicleStatsEmbed from '../common/vehicle.vs.vehicle.embed';
-import {World, worldArray} from '../../../constants/world.consts';
-import {Vehicle, vehicleArray} from '../../../constants/vehicle.consts';
-import {Bracket, bracketArray} from '../../../constants/bracket.consts';
+import {World, worldArray} from '../../../ps2alerts-constants/world';
+import {Vehicle, vehicleArray} from '../../../ps2alerts-constants/vehicle';
+import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
 
 @Entity({
     name: 'aggregate_global_vehicles',
@@ -23,10 +23,10 @@ export default class GlobalVehicleAggregateEntity {
     })
     vehicle: Vehicle;
 
-    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @ApiProperty({example: Bracket.PRIME, enum: ps2alertsBracketArray, description: 'Activity bracket level of the Aggregate'})
     @Column({
         type: 'enum',
-        enum: bracketArray,
+        enum: ps2alertsBracketArray,
     })
     bracket: Bracket;
 

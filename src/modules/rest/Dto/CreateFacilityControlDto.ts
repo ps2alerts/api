@@ -1,5 +1,5 @@
 // @See modules/data/entities/instance/instance.facilitycontrol.entity.ts
-import {Faction} from '../../data/constants/faction.consts';
+import {Faction} from '../../data/ps2alerts-constants/faction';
 import MapControlEmbed from '../../data/entities/instance/mapcontrol.embed.ts';
 import {IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';

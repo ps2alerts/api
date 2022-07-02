@@ -2,13 +2,13 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
-import {Ps2alertsEventState} from '../data/constants/eventstate.consts';
+import {Ps2alertsEventState} from '../data/ps2alerts-constants/ps2alertsEventState';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 import InstancePopulationAggregateEntity
     from '../data/entities/aggregate/instance/instance.population.aggregate.entity';
-import {Bracket} from '../data/constants/bracket.consts';
+import {Bracket} from '../data/ps2alerts-constants/bracket';
 import InstancePopulationAveragesAggregateEntity from '../data/entities/aggregate/instance/instance.population.averages.aggregate.entity';
-import {World} from '../data/constants/world.consts';
+import {World} from '../data/ps2alerts-constants/world';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 
 interface PipelineResult {

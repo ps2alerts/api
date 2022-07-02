@@ -1,4 +1,4 @@
-import {Faction} from '../modules/data/constants/faction.consts';
+import {Faction} from '../modules/data/ps2alerts-constants/faction';
 
 export default interface Ps2AlertsInstanceResultInterface {
     vs: number;

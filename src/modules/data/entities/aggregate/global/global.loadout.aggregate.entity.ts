@@ -2,9 +2,9 @@
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
-import {World, worldArray} from '../../../constants/world.consts';
-import {Bracket, bracketArray} from '../../../constants/bracket.consts';
+import {Loadout, loadoutArray} from '../../../ps2alerts-constants/loadout';
+import {World, worldArray} from '../../../ps2alerts-constants/world';
+import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 
 @Entity({
@@ -25,10 +25,10 @@ export default class GlobalLoadoutAggregateEntity {
     })
     world: World;
 
-    @ApiProperty({example: Bracket.PRIME, enum: bracketArray, description: 'Activity bracket level of the Aggregate'})
+    @ApiProperty({example: Bracket.PRIME, enum: ps2alertsBracketArray, description: 'Activity bracket level of the Aggregate'})
     @Column({
         type: 'enum',
-        enum: bracketArray,
+        enum: ps2alertsBracketArray,
     })
     bracket: Bracket;
 

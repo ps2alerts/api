@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@nestjs/common';
 import {HealthCheckError, HealthIndicator, HealthIndicatorResult} from '@nestjs/terminus';
 import GlobalCharacterAggregateEntity from '../../data/entities/aggregate/global/global.character.aggregate.entity';
-import {Bracket} from '../../data/constants/bracket.consts';
+import {Bracket} from '../../data/ps2alerts-constants/bracket';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 
 @Injectable()

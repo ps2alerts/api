@@ -38,7 +38,7 @@ export default class MongoOperationsService {
      * @param pagination object provided for sorting and pagination
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    public async findMany(entity: any, filter?: object, pagination?: Pagination): Promise<any[]> {
+    public async findMany<T>(entity: any, filter?: object, pagination?: Pagination): Promise<T[]> {
         return await this.em.find(entity, MongoOperationsService.createFindOptions(filter, pagination));
     }
 

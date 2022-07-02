@@ -1,6 +1,6 @@
 import {Controller, Logger} from '@nestjs/common';
 import {Ctx, EventPattern, Payload, RmqContext} from '@nestjs/microservices';
-import {MQAcceptedPatterns} from '../../../../data/constants/MQAcceptedPatterns';
+import {MqAcceptedPatterns} from '../../../../data/ps2alerts-constants/mqAcceptedPatterns';
 import GlobalCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.character.aggregate.entity';
 import AggregatorDataHandler from '../../../aggregator.data.handler';
 import GlobalAggregatorMessageInterface from '../../../interfaces/global.aggregator.message.interface';
@@ -11,7 +11,7 @@ export default class AggregatorGlobalCharacterAggregateController {
 
     constructor(private readonly aggregatorDataHandler: AggregatorDataHandler) {}
 
-    @EventPattern(MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE)
+    @EventPattern(MqAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE)
     public async process(@Payload() data: GlobalAggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
         try {
             await this.aggregatorDataHandler.upsertGlobal(
@@ -21,7 +21,7 @@ export default class AggregatorGlobalCharacterAggregateController {
             );
         } catch (e) {
             if (e instanceof Error && !e.message.includes('does not exist')) {
-                this.logger.error(`Unable to process ${MQAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
+                this.logger.error(`Unable to process ${MqAcceptedPatterns.GLOBAL_CHARACTER_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
             }
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access

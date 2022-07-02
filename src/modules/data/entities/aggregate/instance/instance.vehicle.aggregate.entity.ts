@@ -3,7 +3,7 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import VehicleStatsEmbed from '../common/vehicle.vs.vehicle.embed';
-import {Vehicle} from '../../../constants/vehicle.consts';
+import {Vehicle} from '../../../ps2alerts-constants/vehicle';
 
 @Entity({
     name: 'aggregate_instance_vehicles',

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column} from 'typeorm';
-import {Faction, factionArray} from '../../../constants/faction.consts';
+import {Faction, factionArray} from '../../../ps2alerts-constants/faction';
 import {ApiProperty} from '@nestjs/swagger';
 
 export default class MetagameTerritoryResultEmbed {

@@ -1,9 +1,9 @@
 import {IsDateString, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import {Ps2alertsEventState} from '../../data/constants/eventstate.consts';
+import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
 import Ps2AlertsInstanceResultInterface from '../../../interfaces/Ps2AlertsInstanceResultInterface';
-import {Faction} from '../../data/constants/faction.consts';
-import {Bracket} from '../../data/constants/bracket.consts';
+import {Faction} from '../../data/ps2alerts-constants/faction';
+import {Bracket} from '../../data/ps2alerts-constants/bracket';
 
 export class UpdateInstanceMetagameDto {
     @IsString()

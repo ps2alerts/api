@@ -2,7 +2,7 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {Loadout, loadoutArray} from '../../../constants/loadout.consts';
+import {Loadout, loadoutArray} from '../../../ps2alerts-constants/loadout';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 
 @Entity({

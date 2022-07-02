@@ -2,7 +2,7 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {Loadout, loadoutArray} from '../../constants/loadout.consts';
+import {Loadout, loadoutArray} from '../../ps2alerts-constants/loadout';
 import CharacterEmbed from '../aggregate/common/character.embed';
 
 @Entity({

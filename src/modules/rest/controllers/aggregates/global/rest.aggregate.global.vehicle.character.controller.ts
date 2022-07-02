@@ -2,13 +2,13 @@ import {Controller, Get, Inject, Param, ParseIntPipe, Query} from '@nestjs/commo
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalVehicleCharacterAggregateEntity from '../../../../data/entities/aggregate/global/global.vehicle.character.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
-import {Vehicle} from '../../../../data/constants/vehicle.consts';
-import {World} from '../../../../data/constants/world.consts';
+import {Vehicle} from '../../../../data/ps2alerts-constants/vehicle';
+import {World} from '../../../../data/ps2alerts-constants/world';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
-import {Bracket} from '../../../../data/constants/bracket.consts';
+import {Bracket} from '../../../../data/ps2alerts-constants/bracket';
 import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 
 @ApiTags('Global Vehicle Character Aggregates')
@@ -35,7 +35,6 @@ export default class RestGlobalVehicleCharacterController {
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
             @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
@@ -57,7 +56,6 @@ export default class RestGlobalVehicleCharacterController {
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
             @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, character, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 

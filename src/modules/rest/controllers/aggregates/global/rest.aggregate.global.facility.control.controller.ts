@@ -5,10 +5,10 @@ import MongoOperationsService from '../../../../../services/mongo/mongo.operatio
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
 import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
-import {World} from '../../../../data/constants/world.consts';
+import {World} from '../../../../data/ps2alerts-constants/world';
 import Pagination from '../../../../../services/mongo/pagination';
-import {Bracket} from '../../../../data/constants/bracket.consts';
-import {Zone} from '../../../../data/constants/zone.consts';
+import {Bracket} from '../../../../data/ps2alerts-constants/bracket';
+import {Zone} from '../../../../data/ps2alerts-constants/zone';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
 

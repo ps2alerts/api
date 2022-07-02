@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
-import {Faction} from '../../../constants/faction.consts';
-import {World} from '../../../constants/world.consts';
+import {Faction} from '../../../ps2alerts-constants/faction';
+import {World} from '../../../ps2alerts-constants/world';
 import OutfitEmbed from './outfit.embed';
 
 export default class CharacterEmbed {

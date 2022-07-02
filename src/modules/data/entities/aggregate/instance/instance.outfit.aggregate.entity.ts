@@ -4,7 +4,6 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import OutfitEmbed from '../common/outfit.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
-import XperminuteEmbed from '../common/xperminute.embed';
 import XperminuteOutfitEmbed from '../common/xperminute.outfit.embed';
 
 @Entity({
