@@ -2,6 +2,16 @@
 
 This project is currently under development. If you wish to contribute, please join our Discord located at: https://discord.gg/7xF65ap and check out the channel _#if-you-wish-to-contribute_.
 
+# Repo submodules
+
+NOTE: After you have cloned this repository, you also need to install the git submodule which contain various constants used across the PS2Alerts repositories. Simply execute
+
+```
+git submodule update --init --recursive
+```
+
+If in the future your application is performing weird saying it can't find references to things, pull the latest modules in via running `./module-update.sh`.
+
 # Starting the module
 
 To start the environment for the first time, execute `ps2alerts-api-init`. If you don't have this command available, pull in the [Stack](https://github.com/ps2alerts/stack) and follow the instructions there to get set up properly.
