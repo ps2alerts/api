@@ -30,7 +30,6 @@ export default class RestInstanceCharacterAggregateController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceCharacterAggregateEntity[]> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 

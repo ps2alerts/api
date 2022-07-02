@@ -35,7 +35,6 @@ export default class RestGlobalVehicleCharacterController {
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
             @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
@@ -57,7 +56,6 @@ export default class RestGlobalVehicleCharacterController {
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
             @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, character, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
