@@ -37,9 +37,12 @@ export default class HealthcheckController {
         this.logger.debug('Running health check...');
 
         const indicators = [
-            async () => this.dbHealth.isHealthy('5428010618035323201'),
             async () => this.redisHealth.isHealthy('healthcheck/test'),
         ];
+
+        if (!process.env.TESTING_MODE && process.env.TESTING_MODE !== 'true') {
+            indicators.push(async () => this.dbHealth.isHealthy('5428010618035323201'));
+        }
 
         if (process.env.AGGREGATOR_ENABLED === 'true') {
             indicators.push(
