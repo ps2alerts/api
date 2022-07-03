@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: application
-          image: maelstromeous/applications:ps2alerts-api-{{ environment }}-{{ version }}
+          image: maelstromeous/ps2alerts:ps2alerts-api-{{ environment }}-{{ version }}
           imagePullPolicy: IfNotPresent
           resources:
             requests:
