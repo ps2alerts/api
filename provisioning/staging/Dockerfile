@@ -1,4 +1,4 @@
-FROM maelstromeous/applications:ps2alerts-api-base
+FROM maelstromeous/ps2alerts:ps2alerts-api-base
 
 USER root
 COPY provisioning/staging/entrypoint.sh /etc/service/entrypoint.sh
