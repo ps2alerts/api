@@ -45,7 +45,7 @@ export class CombatHistoryCron {
 
                 const factionCombatNoId: {
                     // eslint-disable-next-line @typescript-eslint/naming-convention
-                    _id?: Object;
+                    _id?: unknown;
                     instance: string;
                     vs: CombatStats;
                     nc: CombatStats;
@@ -54,7 +54,7 @@ export class CombatHistoryCron {
                     totals: CombatStats;
                     factionKills: FactionVersusFactionEmbed;
                 } = {
-                    ...factionCombat
+                    ...factionCombat,
                 };
 
                 delete factionCombatNoId._id;
