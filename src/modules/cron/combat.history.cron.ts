@@ -8,8 +8,6 @@ import InstanceFactionCombatAggregateEntity
 import InstanceCombatHistoryAggregateEntity
     from '../data/entities/aggregate/instance/instance.combat.history.aggregate.entity';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
-import CombatStats from '../data/entities/aggregate/common/combat.stats.embed';
-import FactionVersusFactionEmbed from '../data/entities/aggregate/common/faction.versus.faction.embed';
 
 @Injectable()
 export class CombatHistoryCron {
@@ -43,24 +41,10 @@ export class CombatHistoryCron {
                     {instance: row.instanceId},
                 );
 
-                const factionCombatNoId: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    _id?: unknown;
-                    instance: string;
-                    vs: CombatStats;
-                    nc: CombatStats;
-                    tr: CombatStats;
-                    nso: CombatStats;
-                    totals: CombatStats;
-                    factionKills: FactionVersusFactionEmbed;
-                } = {
-                    ...factionCombat,
-                };
-
-                delete factionCombatNoId._id;
+                delete factionCombat._id;
 
                 documents.push(Object.assign(
-                    factionCombatNoId,
+                    factionCombat,
                     {
                         timestamp: new Date(),
                     },
