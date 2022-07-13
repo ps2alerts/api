@@ -131,7 +131,7 @@ export class BracketCron {
                         this.logger.log(`Updated brackets for instance ${result._id}`);
                     } catch (e) {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-                        this.logger.error(`Unable to update bracket for instance ${result._id} - E: ${e.message}`);
+                        this.logger.error(`Unable to update bracket for instance ${result._id} - E: ${(<Error>e).message}`);
                     }
                 }
             } catch (e) {

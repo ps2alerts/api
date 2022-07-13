@@ -21,7 +21,7 @@ export default class AggregatorGlobalVictoryAggregateController {
             );
         } catch (e) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-            this.logger.error(`Unable to process ${MqAcceptedPatterns.GLOBAL_VICTORY_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
+            this.logger.error(`Unable to process ${MqAcceptedPatterns.GLOBAL_VICTORY_AGGREGATE} message for instance ${data.instance}! Error: ${(<Error>e).message}`);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             await context.getChannelRef().ack(context.getMessage());
