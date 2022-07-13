@@ -42,8 +42,10 @@ export class CombatHistoryCron {
                     InstanceFactionCombatAggregateEntity,
                     {instance: row.instanceId},
                 );
-                class InstanceFactionCombatAggregateEntityNoId {
-                    _id?: any;
+
+                const factionCombatNoId: {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    _id?: Object;
                     instance: string;
                     vs: CombatStats;
                     nc: CombatStats;
@@ -51,9 +53,10 @@ export class CombatHistoryCron {
                     nso: CombatStats;
                     totals: CombatStats;
                     factionKills: FactionVersusFactionEmbed;
-                }
+                } = {
+                    ...factionCombat
+                };
 
-                const factionCombatNoId: InstanceFactionCombatAggregateEntityNoId = {...factionCombat};
                 delete factionCombatNoId._id;
 
                 documents.push(Object.assign(
