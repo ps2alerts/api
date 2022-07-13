@@ -53,9 +53,9 @@ export default class MongoOperationsService {
             }
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            if (!(error as Error).message.includes('E11000')) {
+            if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
-                throw new Error(`insertOne failed! E: ${(error as Error).message}`);
+                throw new Error(`insertOne failed! E: ${error.message}`);
             }
         }
 
@@ -73,9 +73,9 @@ export default class MongoOperationsService {
             }
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            if (!(error as Error).message.includes('E11000')) {
+            if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
-                throw new Error(`insertMany failed! E: ${(error as Error).message}`);
+                throw new Error(`insertMany failed! E: ${error.message}`);
             }
         }
 
@@ -102,9 +102,9 @@ export default class MongoOperationsService {
             return result.upsertedCount ? result.upsertedCount > 0 : result.modifiedCount ? result.modifiedCount > 0 : false;
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            if (!(error as Error).message.includes('E11000')) {
+            if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
-                throw new Error(`Upsert failed! E: ${(error as Error).message}`);
+                throw new Error(`Upsert failed! E: ${error.message}`);
             }
 
             return true;
@@ -118,7 +118,7 @@ export default class MongoOperationsService {
             return !!result.result.ok;
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-            throw new Error(`Delete failed! E:${(error as Error).message}`);
+            throw new Error(`Delete failed! E:${error.message}`);
         }
     }
 
@@ -127,7 +127,7 @@ export default class MongoOperationsService {
             return this.em.aggregate(entity, pipeline, options).toArray();
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
-            throw new Error(`Aggregate search failed! E: ${(error as Error).message}`);
+            throw new Error(`Aggregate search failed! E: ${error.message}`);
         }
     }
 

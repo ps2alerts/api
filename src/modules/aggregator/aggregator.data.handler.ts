@@ -24,7 +24,7 @@ export default class AggregatorDataHandler {
             );
         } catch (err) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const error: Error = err as Error;
+            const error: Error = err;
 
             if (!error.message.includes('E11000')) {
                 this.logger.error(`Unable to create data for Aggregation! E: ${error.message}`);
@@ -44,7 +44,7 @@ export default class AggregatorDataHandler {
             );
         } catch (err) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const error: Error = err as Error;
+            const error: Error = err;
 
             if (!error.message.includes('E11000')) {
                 this.logger.error(`Unable to upsert data for Aggregation! E: ${error.message}`);
@@ -74,7 +74,7 @@ export default class AggregatorDataHandler {
             );
         } catch (err) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const error: Error = err as Error;
+            const error: Error = err;
 
             if (!error.message.includes('E11000')) {
                 throw new Error(`Unable to upsert data for Global Aggregation! E: ${error.message}`);

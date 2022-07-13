@@ -40,7 +40,6 @@ export class CombatHistoryCron {
                     InstanceFactionCombatAggregateEntity,
                     {instance: row.instanceId},
                 );
-
                 delete factionCombat._id;
 
                 documents.push(Object.assign(
