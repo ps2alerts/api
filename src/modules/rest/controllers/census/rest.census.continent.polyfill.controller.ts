@@ -65,7 +65,7 @@ export default class RestCensusContinentPolyfillController {
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
             // eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires
-            JSON.parse(this.readFile(path.resolve(__dirname, `../../../data/ps2alerts-constants/map/regions-${zone}-${version}.json`))),
+            JSON.parse(this.readFile(path.resolve(__dirname, `../../../data/ps2alerts-constants/maps/regions-${zone}-${version}.json`))),
             1200);
     }
 
