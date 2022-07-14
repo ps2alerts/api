@@ -87,4 +87,8 @@ export class CreateInstanceMetagameDto {
     @IsNotEmpty()
     @ApiModelProperty({example: {captureHistory: true}})
     features: Ps2AlertsFeaturesInterface;
+
+    @IsNotEmpty()
+    @ApiModelProperty({example: '1.0'})
+    mapVersion: string;
 }
