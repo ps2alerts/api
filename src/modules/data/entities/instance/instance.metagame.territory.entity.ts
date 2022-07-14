@@ -96,4 +96,10 @@ export default class InstanceMetagameTerritoryEntity {
     @ApiProperty({description: 'Enabled features / data for this instance'})
     @Column(() => InstanceFeaturesEmbed)
     features: InstanceFeaturesEmbed;
+
+    @ApiProperty({example: '1.0', description: 'The map\'s version, which enables us to provide different map layouts and tiles for historical alerts'})
+    @Column({
+        type: 'string',
+    })
+    mapVersion: string;
 }
