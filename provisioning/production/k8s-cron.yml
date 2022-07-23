@@ -23,11 +23,11 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: "200m"
+              memory: "175Mi"
             limits:
               cpu: "1000m"
-              memory: "128Mi"
+              memory: "175Mi"
           env:
             - name: NODE_ENV
               value: "{{ environment }}"
