@@ -109,7 +109,7 @@ export class RestInstanceMetagameController {
     @Delete('/:instance')
     @ApiOperation({summary: 'INTERNAL: Delete a single metagame instance'})
     @ApiOkResponse({description: 'Record deleted'})
-    @ApiUnauthorizedResponse({description: 'TFhis is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
     async deleteOne(

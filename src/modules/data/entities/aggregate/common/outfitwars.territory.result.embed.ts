@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column} from 'typeorm';
 import {ApiProperty} from '@nestjs/swagger';
-import {Team, outfitWarsTeamArray} from '../../../ps2alerts-constants/outfitWarsTeam';
+import {Team, outfitWarsTeamArray} from '../../../ps2alerts-constants/outfitwars/team';
 import OutfitWarsTeamsEmbed from './outfitwars.teams.embed';
 
 export default class OutfitWarsTerritoryResultEmbed {

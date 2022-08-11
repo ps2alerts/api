@@ -34,11 +34,11 @@ import {RESULT_VICTOR_QUERY} from './common/rest.result.victor.query';
 //import {Faction} from '../../data/ps2alerts-constants/faction';
 import {RedisCacheService} from '../../../services/cache/redis.cache.service';
 import {AuthGuard} from '@nestjs/passport';
-import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
-import {CreateInstanceMetagameDto} from '../Dto/CreateInstanceMetagameDto';
 import {ObjectID} from 'typeorm';
 import InstanceOutfitWarsTerritoryEntity from '../../data/entities/instance/instance.outfitwars.territory.entity';
-import { Team } from '../../data/ps2alerts-constants/outfitWarsTeam';
+import { Team } from '../../data/ps2alerts-constants/outfitwars/team';
+import { CreateInstanceOutfitWarsDto } from '../Dto/CreateInstanceOutfitWarsDto';
+import { UpdateInstanceOutfitWarsDto } from '../Dto/UpdateInstanceOutfitWarsDto';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
@@ -87,7 +87,7 @@ export class RestInstanceOutfitWarsController {
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
     async createOne(
-        @Body() entity: CreateInstanceMetagameDto,
+        @Body() entity: CreateInstanceOutfitWarsDto,
     ): Promise<ObjectID> {
         return await this.mongoOperationsService.insertOne(InstanceOutfitWarsTerritoryEntity, entity);
     }
@@ -102,7 +102,7 @@ export class RestInstanceOutfitWarsController {
     @UseGuards(AuthGuard('basic'))
     async patchOne(
         @Param('instance') instanceId: string,
-            @Body() entity: UpdateInstanceMetagameDto,
+            @Body() entity: UpdateInstanceOutfitWarsDto,
     ): Promise<boolean> {
         return await this.mongoOperationsService.upsert(InstanceOutfitWarsTerritoryEntity, [{$set: entity}], [{instanceId}]);
     }
@@ -110,7 +110,7 @@ export class RestInstanceOutfitWarsController {
     @Delete('/:instance')
     @ApiOperation({summary: 'INTERNAL: Delete a single metagame instance'})
     @ApiOkResponse({description: 'Record deleted'})
-    @ApiUnauthorizedResponse({description: 'TFhis is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
     async deleteOne(
