@@ -3,7 +3,7 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {Faction, factionArray} from '../../ps2alerts-constants/faction';
-import MapControlEmbed from './mapcontrol.embed.ts';
+import TerritoryControlMapControlEmbed from './territory.control.mapcontrol.embed';
 
 @Entity({
     name: 'instance_facility_controls',
@@ -73,7 +73,7 @@ export default class InstanceFacilityControlEntity {
     })
     outfitCaptured?: string | null;
 
-    @ApiProperty({type: MapControlEmbed, description: 'Snapshot of the territory control at the point of capture'})
-    @Column(() => MapControlEmbed)
-    mapControl: MapControlEmbed;
+    @ApiProperty({type: TerritoryControlMapControlEmbed, description: 'Snapshot of the territory control at the point of capture'})
+    @Column(() => TerritoryControlMapControlEmbed)
+    mapControl: TerritoryControlMapControlEmbed;
 }
