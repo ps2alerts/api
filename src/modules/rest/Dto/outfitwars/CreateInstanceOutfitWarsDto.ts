@@ -22,12 +22,12 @@ import {Ps2alertsEventType} from '../../../data/ps2alerts-constants/ps2alertsEve
 export class CreateInstanceOutfitWarsDto {
     @IsString()
     @IsNotEmpty()
-    @ApiModelProperty({example: 'outfitwars-10-10-123'})
+    @ApiModelProperty({example: 'outfitwars-17-10-123'})
     instanceId: string;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: World.MILLER})
+    @ApiModelProperty({example: World.EMERALD})
     world: World;
 
     @IsNumber()

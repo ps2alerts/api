@@ -4,7 +4,6 @@ import {
     IsNumber,
     IsObject,
     IsOptional,
-    IsString,
 } from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import {Ps2alertsEventState} from '../../../data/ps2alerts-constants/ps2alertsEventState';
@@ -14,11 +13,6 @@ import {
 import {Team} from '../../../data/ps2alerts-constants/outfitwars/team';
 
 export class UpdateInstanceOutfitWarsDto {
-    @IsString()
-    @IsNotEmpty()
-    @ApiModelProperty({example: 'outfitwars-10-10-123'})
-    instanceId: string;
-
     @IsDateString()
     @IsNotEmpty()
     @IsOptional()
