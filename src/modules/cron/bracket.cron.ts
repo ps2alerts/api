@@ -40,22 +40,28 @@ export class BracketCron {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED});
 
-        for await (const row of actives) {
+        for await (const instance of actives) {
             // If Jaeger, skip and keep as 0 (N/A)
-            if (row.world === World.JAEGER) {
+            if (instance.world === World.JAEGER) {
                 this.logger.debug('Jaeger instance detected, skipping bracket calculation');
+                continue;
+            }
+
+            const now = new Date().getTime();
+            const startCountingFrom = instance.timeStarted.getTime() + (60 * 5 * 1000);
+
+            if (now < startCountingFrom) {
+                this.logger.debug(`Skipping bracket calculations for instance ${instance.instanceId}, pops still warming up`);
                 continue;
             }
 
             // Pull latest faction combat entity
             try {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 const averages: PipelineResult[] = await this.mongoOperationsService.aggregate(
                     InstancePopulationAggregateEntity,
                     [{
                         $match: {
-                            instance: row.instanceId,
+                            instance: instance.instanceId,
                         },
                     }, {
                         $group: {
