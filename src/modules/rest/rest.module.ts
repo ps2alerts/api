@@ -2,7 +2,7 @@
 import {APP_INTERCEPTOR} from '@nestjs/core';
 import {CacheModule, ClassSerializerInterceptor, Module} from '@nestjs/common';
 import {RestInstanceMetagameController} from './controllers/rest.instance.metagame.controller';
-import { RestInstanceOutfitWarsController } from './controllers/rest.instance.outfitwars.controller';
+import {RestOutfitwarsController} from './controllers/rest.outfitwars.controller';
 import {TypeOrmModule} from '@nestjs/typeorm';
 // Global Aggregate Entities
 import GlobalCharacterAggregateEntity from '../data/entities/aggregate/global/global.character.aggregate.entity';
@@ -135,7 +135,7 @@ import {AuthModule} from '../../auth/auth.module';
         // Instance Event Controllers
         RestInstanceFacilityControlController,
         RestInstanceMetagameController,
-        RestInstanceOutfitWarsController,
+        RestOutfitwarsController,
     ],
     providers: [
         {provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor},
