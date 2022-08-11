@@ -38,7 +38,7 @@ export class CreateInstanceOutfitWarsDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 12345})
+    @ApiModelProperty({example: 12})
     zoneInstanceId: number;
 
     @IsDateString()
@@ -56,8 +56,8 @@ export class CreateInstanceOutfitWarsDto {
     @IsOptional()
     @ApiModelProperty({
         example: {
-            team1: 55,
-            team2: 45,
+            blue: 55,
+            red: 45,
             cutoff: 0,
             outOfPlay: 0,
             victor: null,
@@ -68,7 +68,7 @@ export class CreateInstanceOutfitWarsDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 2700, default: 2700})
+    @ApiModelProperty({example: 27000000, default: 27000000})
     duration: number;
 
     @IsNumber()
@@ -82,14 +82,14 @@ export class CreateInstanceOutfitWarsDto {
     @ApiModelProperty({example: Ps2alertsEventType.OUTFIT_WARS_AUG_2022})
     ps2alertsEventType: Ps2alertsEventType.OUTFIT_WARS_AUG_2022;
 
-    @IsNotEmpty()
-    @ApiModelProperty({example: '2'})
-    matchId: number;
-
     @IsNumber()
     @IsOptional()
     @ApiModelProperty({example: Phase.QUALIFIERS})
     phase: Phase;
+
+    @IsNotEmpty()
+    @ApiModelProperty({example: '2'})
+    round: number;
 
     @IsObject()
     @IsNotEmpty()

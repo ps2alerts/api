@@ -2,14 +2,13 @@
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../ps2alerts-constants/world';
 import {Zone, zoneArray} from '../../ps2alerts-constants/zone';
-import {MetagameEventType, metagameEventTypeArray} from '../../ps2alerts-constants/metagameEventType';
 import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../ps2alerts-constants/ps2alertsEventState';
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import MetagameTerritoryResultEmbed from '../aggregate/common/metagame.territory.result.embed';
-import {Bracket, ps2alertsBracketArray} from '../../ps2alerts-constants/bracket';
 import InstanceFeaturesEmbed from './instance.features.embed';
 import OutfitWarsTerritoryResultEmbed from '../aggregate/common/outfitwars.territory.result.embed';
+import {Ps2alertsEventType, ps2alertsEventTypeArray} from '../../ps2alerts-constants/ps2alertsEventType';
+import {Phase} from '../../ps2alerts-constants/outfitwars/phase';
 
 @Entity({
     name: 'instance_metagame_territories',
@@ -24,6 +23,12 @@ export default class InstanceOutfitWarsTerritoryEntity {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _id: ObjectID;
 
+    @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination to create a unique metagame instance ID that\'s human readable'})
+    @Column({
+        type: 'string',
+    })
+    instanceId: string;
+
     @ApiProperty({enum: worldArray, example: 10, description: 'Server / World ID'})
     @Column({
         type: 'enum',
@@ -31,30 +36,18 @@ export default class InstanceOutfitWarsTerritoryEntity {
     })
     world: World;
 
-    @ApiProperty({example: '12345', description: 'An ID as reported to us from Census. This in combination with world gives us a unique identifier.'})
-    @Column({
-        type: 'number',
-    })
-    censusInstanceId: number;
-
-    @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination to create a unique metagame instance ID that\'s human readable'})
-    @Column({
-        type: 'string',
-    })
-    instanceId: string;
-
-    @ApiProperty({example: '12345', description: 'An instance ID as reported to us from Census. This in combination with zone ID gives us a unique identifier for an instanced continent.'})
-    @Column({
-        type: 'number',
-    })
-    zoneInstanceId: number;
-
     @ApiProperty({enum: zoneArray, description: 'Continent / Zone ID'})
     @Column({
         type: 'enum',
         enum: zoneArray,
     })
-    zone: Zone;
+    zone: Zone.NEXUS; // Currently this will always be Nexus
+
+    @ApiProperty({example: '12', description: 'Incrementing number of instances for the zone in question as deferred by the definitionID'})
+    @Column({
+        type: 'number',
+    })
+    zoneInstanceId: number;
 
     @ApiProperty({example: new Date(), description: 'Time the Outfit Wars instance started in UTC'})
     @Column({
@@ -69,14 +62,11 @@ export default class InstanceOutfitWarsTerritoryEntity {
     })
     timeEnded?: Date;
 
-    @ApiProperty({enum: metagameEventTypeArray, description: 'The census metagame event type. This is what we use to determine what kind of alert this is (e.g. meltdown or not)'})
-    @Column({
-        type: 'enum',
-        enum: metagameEventTypeArray,
-    })
-    censusMetagameEventType: MetagameEventType;
+    @ApiProperty({description: 'Victory data for the instance'})
+    @Column(() => OutfitWarsTerritoryResultEmbed)
+    result: OutfitWarsTerritoryResultEmbed;
 
-    @ApiProperty({example: 27000000, description: 'The expected duration of the metagame instance in miliseconds. For Outfit Wars 2022 this is 45 minutes.'})
+    @ApiProperty({example: 27000000, description: 'The expected duration of the metagame instance in milliseconds. For Outfit Wars 2022 this is 45 minutes.'})
     @Column({
         type: 'number',
     })
@@ -89,16 +79,24 @@ export default class InstanceOutfitWarsTerritoryEntity {
     })
     state: Ps2alertsEventState;
 
-    @ApiProperty({example: Bracket.PRIME, enum: ps2alertsBracketArray, description: 'Activity bracket level of the instance'})
+    @ApiProperty({example: 27000000, description: 'The expected duration of the metagame instance in milliseconds. For Outfit Wars 2022 this is 45 minutes.'})
     @Column({
-        type: 'enum',
-        enum: ps2alertsBracketArray,
+        type: 'number',
+        enum: ps2alertsEventTypeArray,
     })
-    bracket: Bracket;
+    ps2alertsEventType: Ps2alertsEventType.OUTFIT_WARS_AUG_2022;
 
-    @ApiProperty({description: 'Victory data for the instance'})
-    @Column(() => OutfitWarsTerritoryResultEmbed)
-    result: OutfitWarsTerritoryResultEmbed;
+    @ApiProperty({example: Phase.QUALIFIERS, description: 'Phase of the event'})
+    @Column({
+        type: 'number',
+    })
+    phase: Phase;
+
+    @ApiProperty({example: 2, description: 'Round of the phase'})
+    @Column({
+        type: 'number',
+    })
+    round: number;
 
     @ApiProperty({description: 'Enabled features / data for this instance'})
     @Column(() => InstanceFeaturesEmbed)

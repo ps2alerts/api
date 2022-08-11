@@ -5,17 +5,17 @@ import {Team, outfitWarsTeamArray} from '../../../ps2alerts-constants/outfitwars
 import OutfitWarsTeamsEmbed from './outfitwars.teams.embed';
 
 export default class OutfitWarsTerritoryResultEmbed {
-    @ApiProperty({example: 33, description: 'Red team capture percentage'})
-    @Column({
-        type: 'number',
-    })
-    red: number;
-
     @ApiProperty({example: 33, description: 'Blue team capture percentage'})
     @Column({
         type: 'number',
     })
     blue: number;
+
+    @ApiProperty({example: 33, description: 'Red team capture percentage'})
+    @Column({
+        type: 'number',
+    })
+    red: number;
 
     @ApiProperty({example: 33, description: 'Percentage of bases cut off from warpgates (which don\'t contribute to faction score)'})
     @Column({

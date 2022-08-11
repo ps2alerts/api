@@ -30,8 +30,8 @@ export class UpdateInstanceOutfitWarsDto {
     @IsOptional()
     @ApiModelProperty({
         example: {
-            team1: 55,
-            team2: 45,
+            blue: 55,
+            red: 45,
             cutoff: 0,
             outOfPlay: 0,
             victor: Team.BLUE,
