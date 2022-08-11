@@ -18,6 +18,7 @@ import {
 import {
     PS2AlertsInstanceFeaturesInterface,
 } from '../../data/ps2alerts-constants/interfaces/PS2AlertsInstanceFeaturesInterface';
+import {Ps2alertsEventType} from '../../data/ps2alerts-constants/ps2alertsEventType';
 
 export class CreateInstanceMetagameDto {
     @IsString()
@@ -37,7 +38,10 @@ export class CreateInstanceMetagameDto {
 
     @IsDateString()
     @IsOptional()
-    @ApiModelProperty({example: null, default: null})
+    @ApiModelProperty({
+        example: null,
+        default: null,
+    })
     timeEnded: string | null; // Can't use null for some reason
 
     @IsObject()
@@ -84,7 +88,18 @@ export class CreateInstanceMetagameDto {
 
     @IsNumber()
     @IsOptional()
-    @ApiModelProperty({example: Bracket.UNKNOWN, default: Bracket.UNKNOWN})
+    @ApiModelProperty({
+        example: Ps2alertsEventType.LIVE_METAGAME,
+        default: Ps2alertsEventType.LIVE_METAGAME,
+    })
+    ps2alertsEventType: Ps2alertsEventType;
+
+    @IsNumber()
+    @IsOptional()
+    @ApiModelProperty({
+        example: Bracket.UNKNOWN,
+        default: Bracket.UNKNOWN,
+    })
     bracket: Bracket;
 
     @IsObject()

@@ -111,7 +111,7 @@ export default class InstanceOutfitWarsTerritoryEntity {
     @ApiProperty({
         example: Ps2alertsEventType.OUTFIT_WARS_AUG_2022,
         enum: ps2alertsEventTypeArray,
-        description: 'The expected duration of the metagame instance in milliseconds. For Outfit Wars 2022 this is 45 minutes.',
+        description: 'The event type identifier - this is used to filter by live metagame and outfitwars etc',
     })
     @Column({
         type: 'number',
