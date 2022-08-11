@@ -24,7 +24,10 @@ export default class InstanceOutfitWarsTerritoryEntity {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _id: ObjectID;
 
-    @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination to create a unique metagame instance ID that\'s human readable'})
+    @ApiProperty({
+        example: 'outfitwars-17-10-123',
+        description: 'Unique identifier for outfitwars instances that\'s human readable',
+    })
     @Column({
         type: 'string',
     })
