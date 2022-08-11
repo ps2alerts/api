@@ -8,12 +8,12 @@ import {Exclude} from 'class-transformer';
 import InstanceFeaturesEmbed from './instance.features.embed';
 import OutfitWarsTerritoryResultEmbed from '../aggregate/common/outfitwars.territory.result.embed';
 import {Ps2alertsEventType, ps2alertsEventTypeArray} from '../../ps2alerts-constants/ps2alertsEventType';
-import {Phase} from '../../ps2alerts-constants/outfitwars/phase';
+import {Phase, phaseArray} from '../../ps2alerts-constants/outfitwars/phase';
 
 @Entity({
-    name: 'instance_metagame_territories',
+    name: 'instance_outfitwars_2022',
 })
-@Index(['world', 'censusInstanceId'], {unique: true})
+@Index(['world', 'zone', 'zoneInstanceId'], {unique: true})
 @Index(['instanceId'])
 @Index(['zone'])
 @Index(['state'])
@@ -72,27 +72,41 @@ export default class InstanceOutfitWarsTerritoryEntity {
     })
     duration: number;
 
-    @ApiProperty({example: Ps2alertsEventState.ENDED, enum: ps2alertsEventStateArray, description: 'The internal event state. 0 = starting, 1 = in progress, 2 = finished'})
+    @ApiProperty({
+        example: Ps2alertsEventState.ENDED,
+        enum: ps2alertsEventStateArray,
+        description: 'The internal event state. 0 = starting, 1 = in progress, 2 = finished',
+    })
     @Column({
         type: 'enum',
         enum: ps2alertsEventStateArray,
     })
     state: Ps2alertsEventState;
 
-    @ApiProperty({example: 27000000, description: 'The expected duration of the metagame instance in milliseconds. For Outfit Wars 2022 this is 45 minutes.'})
+    @ApiProperty({
+        example: 27000000,
+        enum: ps2alertsEventTypeArray,
+        description: 'The expected duration of the metagame instance in milliseconds. For Outfit Wars 2022 this is 45 minutes.',
+    })
     @Column({
         type: 'number',
         enum: ps2alertsEventTypeArray,
     })
     ps2alertsEventType: Ps2alertsEventType.OUTFIT_WARS_AUG_2022;
 
-    @ApiProperty({example: Phase.QUALIFIERS, description: 'Phase of the event'})
+    @ApiProperty({
+        example: Phase.QUALIFIERS,
+        enum: phaseArray,
+        description: 'Phase of the event',
+    })
     @Column({
-        type: 'number',
+        type: 'enum',
+        enum: phaseArray,
+
     })
     phase: Phase;
 
-    @ApiProperty({example: 2, description: 'Round of the phase'})
+    @ApiProperty({example: 2, description: 'Round count, this is incremental and is not directly linked to phase.'})
     @Column({
         type: 'number',
     })
