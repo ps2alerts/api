@@ -15,6 +15,7 @@ import {Phase, phaseArray} from '../../ps2alerts-constants/outfitwars/phase';
 })
 @Index(['world', 'zone', 'zoneInstanceId'], {unique: true})
 @Index(['instanceId'])
+@Index(['zoneInstanceId'])
 @Index(['zone'])
 @Index(['state'])
 export default class InstanceOutfitWarsTerritoryEntity {
@@ -29,33 +30,51 @@ export default class InstanceOutfitWarsTerritoryEntity {
     })
     instanceId: string;
 
-    @ApiProperty({enum: worldArray, example: 10, description: 'Server / World ID'})
+    @ApiProperty({
+        example: World.EMERALD,
+        enum: worldArray,
+        description: 'Server / World ID',
+    })
     @Column({
         type: 'enum',
         enum: worldArray,
     })
     world: World;
 
-    @ApiProperty({enum: zoneArray, description: 'Continent / Zone ID'})
+    @ApiProperty({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        example: Zone.NEXUS,
+        enum: zoneArray,
+        description: 'Continent / Zone ID',
+    })
     @Column({
         type: 'enum',
         enum: zoneArray,
     })
     zone: Zone.NEXUS; // Currently this will always be Nexus
 
-    @ApiProperty({example: '12', description: 'Incrementing number of instances for the zone in question as deferred by the definitionID'})
+    @ApiProperty({
+        example: '12',
+        description: 'Incrementing number of instances for the zone in question as deferred by the definitionID',
+    })
     @Column({
         type: 'number',
     })
     zoneInstanceId: number;
 
-    @ApiProperty({example: new Date(), description: 'Time the Outfit Wars instance started in UTC'})
+    @ApiProperty({
+        example: new Date(),
+        description: 'Time the Outfit Wars instance started in UTC',
+    })
     @Column({
         type: 'date',
     })
     timeStarted: Date;
 
-    @ApiProperty({example: new Date(), description: 'Time the Outfit Wars instance ended in UTC'})
+    @ApiProperty({
+        example: new Date(),
+        description: 'Time the Outfit Wars instance ended in UTC',
+    })
     @Column({
         type: 'date',
         nullable: true,
@@ -66,7 +85,10 @@ export default class InstanceOutfitWarsTerritoryEntity {
     @Column(() => OutfitWarsTerritoryResultEmbed)
     result: OutfitWarsTerritoryResultEmbed;
 
-    @ApiProperty({example: 27000000, description: 'The expected duration of the metagame instance in milliseconds. For Outfit Wars 2022 this is 45 minutes.'})
+    @ApiProperty({
+        example: 27000000,
+        description: 'The expected duration of the metagame instance in milliseconds. For Outfit Wars 2022 this is 45 minutes.',
+    })
     @Column({
         type: 'number',
     })
@@ -84,7 +106,7 @@ export default class InstanceOutfitWarsTerritoryEntity {
     state: Ps2alertsEventState;
 
     @ApiProperty({
-        example: 27000000,
+        example: Ps2alertsEventType.OUTFIT_WARS_AUG_2022,
         enum: ps2alertsEventTypeArray,
         description: 'The expected duration of the metagame instance in milliseconds. For Outfit Wars 2022 this is 45 minutes.',
     })
@@ -102,11 +124,13 @@ export default class InstanceOutfitWarsTerritoryEntity {
     @Column({
         type: 'enum',
         enum: phaseArray,
-
     })
     phase: Phase;
 
-    @ApiProperty({example: 2, description: 'Round count, this is incremental and is not directly linked to phase.'})
+    @ApiProperty({
+        example: 2,
+        description: 'Round count, this is incremental and is not directly linked to phase.',
+    })
     @Column({
         type: 'number',
     })
@@ -116,7 +140,10 @@ export default class InstanceOutfitWarsTerritoryEntity {
     @Column(() => InstanceFeaturesEmbed)
     features: InstanceFeaturesEmbed;
 
-    @ApiProperty({example: '1.0', description: 'The map\'s version, which enables us to provide different map layouts and tiles for historical alerts'})
+    @ApiProperty({
+        example: '1.0',
+        description: 'The map\'s version, which enables us to provide different map layouts and tiles for historical alerts',
+    })
     @Column({
         type: 'string',
     })
