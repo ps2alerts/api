@@ -185,4 +185,38 @@ export class RestInstanceMetagameController {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
     }
+
+    // @Get('/outfit-wars')
+    // @ApiOperation({summary: 'Return a paginated list of outfit wars instances, optionally requested by world'})
+    // @ApiImplicitQueries(INSTANCE_IMPLICIT_QUERIES)
+    // @ApiResponse({
+    //     status: 200,
+    //     description: 'List of OutfitWars Instances',
+    //     type: InstanceMetagameTerritoryEntity,
+    //     isArray: true,
+    // })
+    // async findAllOutfitWars(
+    //     @Query('world', OptionalIntPipe) world?: World,
+    //         @Query('zone', OptionalIntPipe) zone?: Zone,
+    //         @Query('timeStartedFrom', OptionalDatePipe) timeStartedFrom?: Date | undefined,
+    //         @Query('timeStartedTo', OptionalDatePipe) timeStartedTo?: Date | undefined,
+    //         @Query('bracket', OptionalIntPipe) bracket?: Bracket,
+    //         @Query('victor', OptionalIntPipe) victor?: Faction,
+    //         @Query('sortBy') sortBy?: string,
+    //         @Query('order') order?: string,
+    //         @Query('page', OptionalIntPipe) page?: number,
+    //         @Query('pageSize', OptionalIntPipe) pageSize?: number,
+    // ): Promise<InstanceMetagameTerritoryEntity[]> {
+    //     const range = (timeStartedFrom && timeStartedTo) ? new Range('timeStarted', timeStartedFrom, timeStartedTo).build() : undefined;
+    //     const filter: TerritoryControlFilterInterface = {
+    //         world,
+    //         zone,
+    //         bracket,
+    //         timeStarted: range,
+    //         'result.victor': victor ?? undefined,
+    //     };
+    //
+    //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    //     return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
+    // }
 }

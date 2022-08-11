@@ -1,24 +1,18 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
 
-export default class MapControlEmbed {
-    @ApiProperty({example: 20, description: 'VS Capture Percentage'})
+export default class OutfitwarsMapControlEmbed {
+    @ApiProperty({example: 20, description: 'Team 1 (blue) percentage'})
     @Column({
         type: 'number',
     })
-    vs: number;
+    team1: number;
 
-    @ApiProperty({example: 35, description: 'NC Capture Percentage'})
+    @ApiProperty({example: 35, description: 'Team 2 (red) percentage'})
     @Column({
         type: 'number',
     })
-    nc: number;
-
-    @ApiProperty({example: 45, description: 'TR Capture Percentage'})
-    @Column({
-        type: 'number',
-    })
-    tr: number;
+    team: number;
 
     @ApiProperty({example: 0, description: 'Cutoff bases Percentage'})
     @Column({
@@ -26,6 +20,7 @@ export default class MapControlEmbed {
     })
     cutoff: number;
 
+    // This will likely always be zero
     @ApiProperty({example: 0, description: 'Out of play percentage'})
     @Column({
         type: 'number',

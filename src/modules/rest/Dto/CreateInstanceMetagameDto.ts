@@ -11,9 +11,13 @@ import {World} from '../../data/ps2alerts-constants/world';
 import {Zone} from '../../data/ps2alerts-constants/zone';
 import {MetagameEventType} from '../../data/ps2alerts-constants/metagameEventType';
 import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
-import {Ps2AlertsFeaturesInterface} from '../../../interfaces/Ps2AlertsFeaturesInterface';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
-import Ps2AlertsInstanceResultInterface from '../../../interfaces/Ps2AlertsInstanceResultInterface';
+import {
+    MetagameTerritoryControlResultInterface,
+} from '../../data/ps2alerts-constants/interfaces/MetagameTerritoryControlResultInterface';
+import {
+    PS2AlertsInstanceFeaturesInterface,
+} from '../../data/ps2alerts-constants/interfaces/PS2AlertsInstanceFeaturesInterface';
 
 export class CreateInstanceMetagameDto {
     @IsString()
@@ -51,7 +55,7 @@ export class CreateInstanceMetagameDto {
             perBasePercentage: 1.1627906976744187,
         },
     })
-    result: Ps2AlertsInstanceResultInterface;
+    result: MetagameTerritoryControlResultInterface;
 
     @IsNumber()
     @IsNotEmpty()
@@ -85,8 +89,8 @@ export class CreateInstanceMetagameDto {
 
     @IsObject()
     @IsNotEmpty()
-    @ApiModelProperty({example: {captureHistory: true}})
-    features: Ps2AlertsFeaturesInterface;
+    @ApiModelProperty({example: {captureHistory: true, xpm: true}})
+    features: PS2AlertsInstanceFeaturesInterface;
 
     @IsNotEmpty()
     @ApiModelProperty({example: '1.0'})

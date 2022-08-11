@@ -7,15 +7,16 @@ import {
     IsString,
 } from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
-import {Bracket} from '../../data/ps2alerts-constants/bracket';
-import Ps2AlertsInstanceResultInterface from '../../../interfaces/Ps2AlertsInstanceResultInterface';
-import { Faction } from '../../data/ps2alerts-constants/faction';
+import {Ps2alertsEventState} from '../../../data/ps2alerts-constants/ps2alertsEventState';
+import {
+    OutfitwarsTerritoryResultInterface,
+} from '../../../data/ps2alerts-constants/interfaces/OutfitwarsTerritoryResultInterface';
+import {Team} from '../../../data/ps2alerts-constants/outfitwars/team';
 
 export class UpdateInstanceOutfitWarsDto {
     @IsString()
     @IsNotEmpty()
-    @ApiModelProperty({example: '10-12345'})
+    @ApiModelProperty({example: 'outfitwars-10-10-123'})
     instanceId: string;
 
     @IsDateString()
@@ -29,25 +30,18 @@ export class UpdateInstanceOutfitWarsDto {
     @IsOptional()
     @ApiModelProperty({
         example: {
-            vs: 0,
-            nc: 44,
-            tr: 55,
+            team1: 55,
+            team2: 45,
             cutoff: 0,
             outOfPlay: 0,
-            victor: Faction.TERRAN_REPUBLIC,
-            draw: false,
-            perBasePercentage: 100/9,
+            victor: Team.BLUE,
+            perBasePercentage: 100 / 9,
         },
     })
-    result: Ps2AlertsInstanceResultInterface;
+    result: OutfitwarsTerritoryResultInterface;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiModelProperty({example: Ps2alertsEventState.ENDED})
     state: Ps2alertsEventState;
-
-    @IsNumber()
-    @IsOptional()
-    @ApiModelProperty({example: Bracket.UNKNOWN, default: Bracket.UNKNOWN})
-    bracket: Bracket;
 }

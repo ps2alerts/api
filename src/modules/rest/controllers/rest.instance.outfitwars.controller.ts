@@ -31,14 +31,14 @@ import Range from '../../../services/mongo/range';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
 import {BRACKET_IMPLICIT_QUERY} from './common/rest.bracket.query';
 import {RESULT_VICTOR_QUERY} from './common/rest.result.victor.query';
-//import {Faction} from '../../data/ps2alerts-constants/faction';
+// import {Faction} from '../../data/ps2alerts-constants/faction';
 import {RedisCacheService} from '../../../services/cache/redis.cache.service';
 import {AuthGuard} from '@nestjs/passport';
 import {ObjectID} from 'typeorm';
 import InstanceOutfitWarsTerritoryEntity from '../../data/entities/instance/instance.outfitwars.territory.entity';
-import { Team } from '../../data/ps2alerts-constants/outfitwars/team';
-import { CreateInstanceOutfitWarsDto } from '../Dto/CreateInstanceOutfitWarsDto';
-import { UpdateInstanceOutfitWarsDto } from '../Dto/UpdateInstanceOutfitWarsDto';
+import {Team} from '../../data/ps2alerts-constants/outfitwars/team';
+import {CreateInstanceOutfitWarsDto} from '../Dto/outfitwars/CreateInstanceOutfitWarsDto';
+import {UpdateInstanceOutfitWarsDto} from '../Dto/outfitwars/UpdateInstanceOutfitWarsDto';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
