@@ -36,6 +36,7 @@ export class UpdateInstanceOutfitWarsDto {
 
     @IsNumber()
     @IsNotEmpty()
+    @IsOptional()
     @ApiModelProperty({example: Ps2alertsEventState.ENDED})
     state: Ps2alertsEventState;
 }
