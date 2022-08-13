@@ -15,7 +15,7 @@ export default class RestCensusContinentPolyfillController {
     @ApiOperation({summary: 'Return a specifically formatted census replacement for continent map data'})
     @ApiResponse({
         status: 200,
-        description: 'Data used for mapping a continent\'s hex overlay',
+        description: 'Census map_region_data polyfill alongside lattice links',
     })
     async serveRegions(
         @Param('zone', ParseIntPipe) zone: number,
