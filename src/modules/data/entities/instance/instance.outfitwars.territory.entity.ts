@@ -151,4 +151,9 @@ export default class InstanceOutfitWarsTerritoryEntity {
         type: 'string',
     })
     mapVersion: string;
+
+    //
+    // @ApiProperty({description: 'Victory data for the match'})
+    // @Column(() => OutfitWarsTeamsEmbed)
+    // outfits: OutfitWarsTeamsEmbed;
 }

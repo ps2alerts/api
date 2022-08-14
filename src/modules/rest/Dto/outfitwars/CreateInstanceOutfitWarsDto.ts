@@ -99,4 +99,8 @@ export class CreateInstanceOutfitWarsDto {
     @IsNotEmpty()
     @ApiModelProperty({example: '1.0'})
     mapVersion: string;
+    //
+    // @ApiProperty({description: 'Victory data for the match'})
+    // @Column(() => OutfitWarsTeamsEmbed)
+    // outfits: OutfitWarsTeamsEmbed;
 }

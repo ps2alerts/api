@@ -4,13 +4,13 @@ import {
     Controller, Delete,
     Get, HttpCode,
     Inject,
-    Param, Patch, Post,
+    Param, ParseIntPipe, Patch, Post,
     Query, UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import {
     ApiAcceptedResponse,
-    ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse,
+    ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiOkResponse,
     ApiOperation,
     ApiResponse,
     ApiSecurity,
@@ -37,6 +37,11 @@ import {Phase} from '../../data/ps2alerts-constants/outfitwars/phase';
 import {OUTFITWARS_IMPLICIT_QUERIES} from './common/rest.outfitwars.queries';
 import {WORLD_IMPLICIT_QUERY} from './common/rest.world.query';
 import {PAGINATION_IMPLICIT_QUERIES} from './common/rest.pagination.queries';
+import {OptionalBoolPipe} from '../pipes/OptionalBoolPipe';
+import {CreateFacilityControlDto} from '../Dto/CreateFacilityControlDto';
+import {UpdateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/UpdateFacilityControlOutfitWarsDto';
+import OutfitwarsFacilityControlEntity from '../../data/entities/instance/outfitwars.facility.control.entity';
+import {CreateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/CreateFacilityControlOutfitWarsDto';
 
 const IMPLICIT_QUERIES = [
     WORLD_IMPLICIT_QUERY,
@@ -178,5 +183,102 @@ export class RestOutfitwarsController {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.mongoOperationsService.findMany(InstanceOutfitWarsTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
+    }
+
+    @Get(':instance/facility')
+    @ApiOperation({summary: 'Returns a list of OutfitwarsFacilityControlEntity for an instance'})
+    @ApiImplicitQueries([...PAGINATION_IMPLICIT_QUERIES, {
+        name: 'noDefences',
+        required: false,
+        type: Boolean,
+    }])
+    @ApiResponse({
+        status: 200,
+        description: 'The list of OutfitwarsFacilityControlEntity for an instance',
+        type: OutfitwarsFacilityControlEntity,
+        isArray: true,
+    })
+    async findAll(
+        @Param('instance') instance: string,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('noDefences', OptionalBoolPipe) noDefences?: boolean | undefined,
+    ): Promise<OutfitwarsFacilityControlEntity[]> {
+        const filter = {instance} as {instance: string, isDefence?: boolean};
+
+        if (noDefences) {
+            filter.isDefence = false;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.mongoOperationsService.findMany(OutfitwarsFacilityControlEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
+    }
+
+    @Post(':instance/facility')
+    @HttpCode(201)
+    @ApiOperation({summary: 'INTERNAL: Store a OutfitwarsFacilityControlEntity for an instance'})
+    @ApiCreatedResponse({description: 'Record created'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
+    @ApiSecurity('basic')
+    @UseGuards(AuthGuard('basic'))
+    async createOneInstanceFacility(
+        @Param('instance') instance: string,
+            @Body() entity: CreateFacilityControlOutfitWarsDto,
+    ): Promise<void> {
+        await this.mongoOperationsService.insertOne(OutfitwarsFacilityControlEntity, entity);
+    }
+
+    @Get(':instance/facility/:facility')
+    @ApiOperation({summary: 'Returns the latest OutfitwarsFacilityControlEntity of an instance'})
+    @ApiResponse({
+        status: 200,
+        description: 'The OutfitwarsFacilityControlEntity instance',
+        type: OutfitwarsFacilityControlEntity,
+    })
+    async findOneInstanceFacility(
+        @Param('instance') instance: string,
+            @Param('facility', ParseIntPipe) facility: number,
+    ): Promise<OutfitwarsFacilityControlEntity> {
+        const pagination = new Pagination({sortBy: 'timestamp', order: 'desc'}, true);
+        return await this.mongoOperationsService.findOne(OutfitwarsFacilityControlEntity, {instance, facility}, pagination);
+    }
+
+    @Patch(':instance/facility/:facility')
+    @HttpCode(202) // Can't use 204 as Axios doesn't like it
+    @ApiOperation({summary: 'INTERNAL: Update a OutfitwarsFacilityControlEntity for an instance, by latest record'})
+    @ApiAcceptedResponse({description: 'Record updated'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
+    @ApiSecurity('basic')
+    @UseGuards(AuthGuard('basic'))
+    async patchOneInstanceFacility(
+        @Param('instance') instance: string,
+            @Param('facility', ParseIntPipe) facility: number,
+            @Body() entity: UpdateFacilityControlOutfitWarsDto,
+    ): Promise<void> {
+        const record: OutfitwarsFacilityControlEntity = await this.findOneInstanceFacility(instance, facility);
+
+        const updatedRecord = Object.assign(record, entity);
+
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        await this.mongoOperationsService.upsert(OutfitwarsFacilityControlEntity, [{$set: updatedRecord}], [{_id: updatedRecord._id}]);
+    }
+
+    @Post('facility/batch')
+    @HttpCode(202)
+    @ApiOperation({summary: 'INTERNAL: Store many InstanceFacilityControlEntities for an instance'})
+    @ApiCreatedResponse({description: 'Records created'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
+    @ApiSecurity('basic')
+    @UseGuards(AuthGuard('basic'))
+    @ApiBody({type: [CreateFacilityControlDto]})
+    async createManyInstanceFacility(
+        @Body() entities: CreateFacilityControlDto[],
+    ): Promise<ObjectID[]> {
+        return await this.mongoOperationsService.insertMany(OutfitwarsFacilityControlEntity, entities);
     }
 }

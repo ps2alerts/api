@@ -5,12 +5,6 @@ import {Team} from '../../../data/ps2alerts-constants/outfitwars/team';
 import OutfitwarsMapControlEmbed from '../../../data/entities/instance/outfitwars.mapcontrol.embed';
 
 export class UpdateFacilityControlOutfitWarsDto {
-    // This is missing in the metagame version, wut
-    @IsString()
-    @IsNotEmpty()
-    @ApiModelProperty({example: 'outfitwars-10-10-123'})
-    instanceId: string;
-
     @IsNumber()
     @IsNotEmpty()
     @IsOptional()

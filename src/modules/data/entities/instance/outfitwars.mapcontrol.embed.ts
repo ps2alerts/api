@@ -12,7 +12,7 @@ export default class OutfitwarsMapControlEmbed {
     @Column({
         type: 'number',
     })
-    team: number;
+    red: number;
 
     @ApiProperty({example: 0, description: 'Cutoff bases Percentage'})
     @Column({
