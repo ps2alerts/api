@@ -94,6 +94,9 @@ deployments:
       min: 5
       max: 10
       targetCpu: 50
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 2
   two:
     index: "aggregator"
     enabled: true
