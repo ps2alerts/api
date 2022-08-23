@@ -47,10 +47,10 @@ deployments:
 #        value: "${{ secrets.DB_USER }}"
 #      - name: DB_PASS
 #        value: "${{ secrets.DB_PASS_NEW }}"
-      - name: DB_HOST
-        value: "ps2alerts-db"
-#      - name: DB_PORT
-#        value: "27017"
+#      - name: DB_HOST
+#        value: "ps2alerts-db"
+      - name: DB_PORT
+        value: "27017"
 #      - name: DB_NAME
 #        value: "ps2alerts"
 #      - name: DB_DEBUG
