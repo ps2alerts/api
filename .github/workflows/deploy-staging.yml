@@ -69,6 +69,13 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Find and replace version
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "{{ version }}"
+          replace: "${{ github.sha }}"
+          include: provisioning/staging/values.yaml
+
       - name: Deploy Helm
         uses: glopezep/helm@v1.7.1
         with:
