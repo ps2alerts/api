@@ -90,11 +90,3 @@ jobs:
           # timeout: 120s # Apparently this isn't supported but it's in the docs? :shrug:
         env:
           KUBECONFIG_FILE: "${{ secrets.KUBE_CONFIG_RAW }}"
-
-      # Outputs the rollout status and returns a 0 signal (thus completing the workflow) once it's rolled out.
-      - uses: actions-hub/kubectl@master
-        name: Wait for deployment to finish
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: rollout status deployment/ps2alerts-api-staging-api -n ps2alerts
