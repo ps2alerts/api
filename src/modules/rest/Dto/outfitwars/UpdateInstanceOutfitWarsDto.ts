@@ -48,10 +48,20 @@ export class UpdateInstanceOutfitWarsDto {
         example: {
             teams: {
                 blue: {
-                    id: '37509488620604883'
+                    id: "37509488620604883",
+                    name: "Dignity of War",
+                    faction: 1,
+                    world: 10,
+                    leader: "8276172967445322465",
+                    tag: "DIG"
                 },
                 red: {
-                    id: '37570391403474491'
+                    id: "37570391403474491",
+                    name: "Un1ty",
+                    faction: 3,
+                    world: 1,
+                    leader: "5428482802434229601",
+                    tag: "UN17"
                 }
             }
         }

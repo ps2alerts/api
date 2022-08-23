@@ -107,23 +107,6 @@ export class RestOutfitwarsController {
         @Param('instance') instanceId: string,
             @Body() entity: UpdateInstanceOutfitWarsDto,
     ): Promise<boolean> {
-        if(entity.outfitwars && entity.outfitwars.teams) {
-            const instance: InstanceOutfitWarsTerritoryEntity = await this.mongoOperationsService.findOne(InstanceOutfitWarsTerritoryEntity, {instanceId});
-            if(entity.outfitwars.teams.blue){
-                const blue: GlobalOutfitAggregateEntity = await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {'outfit.id': entity.outfitwars.teams.blue.id, 'world': instance.world});
-                entity.outfitwars.teams.blue = blue.outfit;
-            }
-            if(entity.outfitwars.teams.red){
-                const red: GlobalOutfitAggregateEntity = await this.mongoOperationsService.findOne(GlobalOutfitAggregateEntity, {'outfit.id': entity.outfitwars.teams.red.id, 'world': instance.world});
-                entity.outfitwars.teams.red = red.outfit;
-            }
-            if(instance.outfitwars.teams && instance.outfitwars.teams.blue) {
-                entity.outfitwars.teams.blue = instance.outfitwars.teams.blue;
-            }
-            if(instance.outfitwars.teams && instance.outfitwars.teams.red) {
-                entity.outfitwars.teams.red = instance.outfitwars.teams.red;
-            }
-        }
         return await this.mongoOperationsService.upsert(InstanceOutfitWarsTerritoryEntity, [{$set: entity}], [{instanceId}]);
     }
 
