@@ -21,8 +21,8 @@ deployments:
     containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     resources:
       cpu:
-        limits: 500m
-        requests: 150m
+        limits: 250m
+        requests: 100m
       mem:
         limits: 256Mi
         requests: 128Mi
@@ -91,7 +91,7 @@ deployments:
         value: "${{ secrets.INTERNAL_API_PASS }}"
     scaling:
       enabled: true
-      min: 5
+      min: 2
       max: 10
       targetCpu: 50
     podDisruptionBudget:
@@ -103,8 +103,8 @@ deployments:
     containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     resources:
       cpu:
-        limits: 300m
-        requests: 100m
+        limits: 450m
+        requests: 150m
       mem:
         limits: 256Mi
         requests: 128Mi
@@ -173,7 +173,7 @@ deployments:
         value: "${{ secrets.INTERNAL_API_PASS }}"
     scaling:
       enabled: true
-      min: 5
+      min: 1
       max: 10
       targetCpu: 75
   three:
@@ -182,11 +182,11 @@ deployments:
     containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     resources:
       cpu:
-        limits: 300m
-        requests: 100m
+        limits: 450m
+        requests: 150m
       mem:
-        limits: 128Mi
-        requests: 64Mi
+        limits: 256Mi
+        requests: 128Mi
     probes:
       startupProbe:
         enabled: true
