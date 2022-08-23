@@ -14,7 +14,7 @@ import {DatabaseHealthIndicator} from './indicators/DatabaseHealthIndicator';
 import {RedisHealthIndicator} from './indicators/RedisHealthIndicator';
 import {CronHealthIndicator} from './indicators/CronHealthIndicator';
 
-@Module({
+const metadata = {
     controllers: [
         HealthcheckController,
     ],
@@ -46,5 +46,7 @@ import {CronHealthIndicator} from './indicators/CronHealthIndicator';
         RedisHealthIndicator,
         CronHealthIndicator,
     ],
-})
+};
+
+@Module(metadata)
 export class HealthCheckModule {}
