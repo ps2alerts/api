@@ -31,17 +31,17 @@ deployments:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 15
+        initialDelaySeconds: 10
       readinessProbe:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 30
+        initialDelaySeconds: 15
       livenessProbe:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 30
+        initialDelaySeconds: 15
     env:
       - name: NODE_ENV
         value: "production"
@@ -117,17 +117,17 @@ deployments:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 15
+        initialDelaySeconds: 10
       readinessProbe:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 30
+        initialDelaySeconds: 15
       livenessProbe:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 30
+        initialDelaySeconds: 15
     env:
       - name: NODE_ENV
         value: "production"
@@ -196,17 +196,17 @@ deployments:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 15
+        initialDelaySeconds: 10
       readinessProbe:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 30
+        initialDelaySeconds: 15
       livenessProbe:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
-        initialDelaySeconds: 30
+        initialDelaySeconds: 15
     env:
       - name: NODE_ENV
         value: "production"
