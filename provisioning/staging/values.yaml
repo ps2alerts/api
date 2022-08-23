@@ -50,7 +50,7 @@ deployments:
 #      - name: DB_HOST
 #        value: "ps2alerts-db"
       - name: DB_PORT
-        value: "27017"
+        value: 27017
 #      - name: DB_NAME
 #        value: "ps2alerts"
 #      - name: DB_DEBUG
