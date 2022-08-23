@@ -97,6 +97,10 @@ deployments:
     podDisruptionBudget:
       enabled: true
       minAvailable: 2
+    strategy: # Best effort controlled rollout
+      enabled: true
+      maxSurge: 0
+      maxUnavailable: 25%
   two:
     index: "aggregator"
     enabled: true
