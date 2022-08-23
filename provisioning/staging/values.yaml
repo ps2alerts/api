@@ -39,8 +39,8 @@ deployments:
         type: httpGet
         httpGetPath: /healthcheck
     env:
-#      - name: NODE_ENV
-#        value: "production"
+      - name: NODE_ENV
+        value: "production"
       - name: VERSION
         value: "{{ version }}"
       - name: DB_USER
