@@ -62,7 +62,7 @@ deployments:
       - name: DB_POOL_SIZE
         value: '"10"'
       - name: RABBITMQ_HOST
-        value: "ps2alerts-mq"
+        value: "ps2alerts-rabbitmq"
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
