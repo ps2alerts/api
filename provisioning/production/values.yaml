@@ -170,7 +170,7 @@ deployments:
         value: "${{ secrets.INTERNAL_API_PASS }}"
     scaling:
       enabled: true
-      min: 1
+      min: 5
       max: 10
       targetCpu: 75
   three:
