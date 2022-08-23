@@ -61,6 +61,8 @@ deployments:
         value: '"false"'
       - name: DB_POOL_SIZE
         value: '"25"'
+      - name: RABBITMQ_HOST
+        value: "ps2alerts-rabbitmq"
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
@@ -129,7 +131,7 @@ deployments:
       - name: DB_POOL_SIZE
         value: '"50"'
       - name: RABBITMQ_HOST
-        value: "ps2alerts-mq"
+        value: "ps2alerts-rabbitmq"
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
@@ -197,6 +199,8 @@ deployments:
         value: '"false"'
       - name: DB_POOL_SIZE
         value: '"25"'
+      - name: RABBITMQ_HOST
+        value: "ps2alerts-rabbitmq"
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
