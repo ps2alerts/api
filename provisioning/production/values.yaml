@@ -93,7 +93,7 @@ deployments:
       enabled: true
       min: 2
       max: 10
-      targetCpu: 50
+      targetCpu: 75
     podDisruptionBudget:
       enabled: true
       minAvailable: 2
