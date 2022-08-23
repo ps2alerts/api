@@ -8,7 +8,6 @@ application:
 
 ingress:
   enabled: true
-  wwwRedirect: true
 
 service:
   enabled: true
