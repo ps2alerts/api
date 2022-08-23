@@ -54,7 +54,7 @@ deployments:
       - name: DB_NAME
         value: "ps2alerts"
       - name: DB_DEBUG
-        value: "false"
+        value: '"false"'
       - name: DB_POOL_SIZE
         value: '"100"'
       - name: REDIS_HOST
@@ -64,11 +64,11 @@ deployments:
       - name: REDIS_DB
         value: '"11"'
       - name: AGGREGATOR_ENABLED
-        value: "false"
+        value: '"false"'
       - name: CRON_ENABLED
-        value: "false"
+        value: '"false"'
       - name: REST_ENABLED
-        value: "true"
+        value: '"true"'
       - name: INTERNAL_API_USER
         value: "${{ secrets.INTERNAL_API_USER }}"
       - name: INTERNAL_API_PASS
