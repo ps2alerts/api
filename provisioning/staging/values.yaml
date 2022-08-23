@@ -39,36 +39,36 @@ deployments:
         type: httpGet
         httpGetPath: /healthcheck
     env:
-      - name: NODE_ENV
-        value: "production"
+#      - name: NODE_ENV
+#        value: "production"
       - name: VERSION
         value: "{{ version }}"
       - name: DB_USER
         value: "${{ secrets.DB_USER }}"
       - name: DB_PASS
         value: "${{ secrets.DB_PASS_NEW }}"
-      - name: DB_HOST
-        value: "ps2alerts-db"
-      - name: DB_PORT
-        value: "27017"
-      - name: DB_NAME
-        value: "ps2alerts"
-      - name: DB_DEBUG
-        value: "false"
-      - name: DB_POOL_SIZE
-        value: "100"
+#      - name: DB_HOST
+#        value: "ps2alerts-db"
+#      - name: DB_PORT
+#        value: "27017"
+#      - name: DB_NAME
+#        value: "ps2alerts"
+#      - name: DB_DEBUG
+#        value: "false"
+#      - name: DB_POOL_SIZE
+#        value: "100"
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
         value: "${{ secrets.REDIS_PASS }}"
-      - name: REDIS_DB
-        value: "11"
-      - name: AGGREGATOR_ENABLED
-        value: "false"
-      - name: CRON_ENABLED
-        value: "false"
-      - name: REST_ENABLED
-        value: "true"
+#      - name: REDIS_DB
+#        value: "11"
+#      - name: AGGREGATOR_ENABLED
+#        value: "false"
+#      - name: CRON_ENABLED
+#        value: "false"
+#      - name: REST_ENABLED
+#        value: "true"
       - name: INTERNAL_API_USER
         value: "${{ secrets.INTERNAL_API_USER }}"
       - name: INTERNAL_API_PASS
