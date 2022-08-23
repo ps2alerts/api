@@ -11,6 +11,7 @@ import {
     OutfitwarsTerritoryResultInterface,
 } from '../../../data/ps2alerts-constants/interfaces/OutfitwarsTerritoryResultInterface';
 import {Team} from '../../../data/ps2alerts-constants/outfitwars/team';
+import OutfitwarsMetadataEmbed from '../../../data/entities/instance/outfitwars.metadata.embed';
 
 export class UpdateInstanceOutfitWarsDto {
     @IsDateString()
@@ -39,4 +40,21 @@ export class UpdateInstanceOutfitWarsDto {
     @IsOptional()
     @ApiModelProperty({example: Ps2alertsEventState.ENDED})
     state: Ps2alertsEventState;
+
+    @IsObject()
+    @IsNotEmpty()
+    @IsOptional()
+    @ApiModelProperty({
+        example: {
+            teams: {
+                blue: {
+                    id: '37509488620604883'
+                },
+                red: {
+                    id: '37570391403474491'
+                }
+            }
+        }
+    })
+    outfitwars: OutfitwarsMetadataEmbed;
 }

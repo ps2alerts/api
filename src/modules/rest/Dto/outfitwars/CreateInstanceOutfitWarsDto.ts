@@ -18,6 +18,7 @@ import {
     OutfitwarsTerritoryResultInterface,
 } from '../../../data/ps2alerts-constants/interfaces/OutfitwarsTerritoryResultInterface';
 import {Ps2alertsEventType} from '../../../data/ps2alerts-constants/ps2alertsEventType';
+import OutfitwarsMetadataEmbed from '../../../data/entities/instance/outfitwars.metadata.embed';
 
 export class CreateInstanceOutfitWarsDto {
     @IsString()
@@ -82,14 +83,11 @@ export class CreateInstanceOutfitWarsDto {
     @ApiModelProperty({example: Ps2alertsEventType.OUTFIT_WARS_AUG_2022})
     ps2alertsEventType: Ps2alertsEventType.OUTFIT_WARS_AUG_2022;
 
-    @IsNumber()
-    @IsOptional()
-    @ApiModelProperty({example: Phase.QUALIFIERS})
-    phase: Phase;
 
+    @IsObject()
     @IsNotEmpty()
-    @ApiModelProperty({example: '2'})
-    round: number;
+    @ApiModelProperty({example: {phase: Phase.QUALIFIERS, round: 3, teams: null}})
+    outfitwars: OutfitwarsMetadataEmbed;
 
     @IsObject()
     @IsNotEmpty()

@@ -8,7 +8,8 @@ import {Exclude} from 'class-transformer';
 import InstanceFeaturesEmbed from './instance.features.embed';
 import OutfitWarsTerritoryResultEmbed from '../aggregate/common/outfitwars.territory.result.embed';
 import {Ps2alertsEventType, ps2alertsEventTypeArray} from '../../ps2alerts-constants/ps2alertsEventType';
-import {Phase, phaseArray} from '../../ps2alerts-constants/outfitwars/phase';
+import OutfitwarsMetadataEmbed from './outfitwars.metadata.embed';
+
 
 @Entity({
     name: 'instance_outfitwars_2022',
@@ -119,26 +120,6 @@ export default class InstanceOutfitWarsTerritoryEntity {
     })
     ps2alertsEventType: Ps2alertsEventType.OUTFIT_WARS_AUG_2022;
 
-    @ApiProperty({
-        example: Phase.QUALIFIERS,
-        enum: phaseArray,
-        description: 'Phase of the event',
-    })
-    @Column({
-        type: 'enum',
-        enum: phaseArray,
-    })
-    phase: Phase;
-
-    @ApiProperty({
-        example: 2,
-        description: 'Round count, this is incremental and is not directly linked to phase.',
-    })
-    @Column({
-        type: 'number',
-    })
-    round: number;
-
     @ApiProperty({description: 'Enabled features / data for this instance'})
     @Column(() => InstanceFeaturesEmbed)
     features: InstanceFeaturesEmbed;
@@ -152,8 +133,7 @@ export default class InstanceOutfitWarsTerritoryEntity {
     })
     mapVersion: string;
 
-    //
-    // @ApiProperty({description: 'Victory data for the match'})
-    // @Column(() => OutfitWarsTeamsEmbed)
-    // outfits: OutfitWarsTeamsEmbed;
+    @ApiProperty({description: 'Outfit Wars team metadata'})
+    @Column(() => OutfitwarsMetadataEmbed)
+    outfitwars: OutfitwarsMetadataEmbed;
 }
