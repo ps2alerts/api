@@ -4,6 +4,7 @@ common:
 
 application:
   version: {{ version }}
+  port: 3000
 
 ingress:
   enabled: true
