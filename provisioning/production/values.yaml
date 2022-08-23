@@ -1,23 +1,24 @@
 common:
-  name: ps2alerts-api-staging
-  hostname: staging.api.ps2alerts.com
+  name: ps2alerts-api-production
+  hostname: api.ps2alerts.com
 
 application:
   version: {{ version }}
 
 ingress:
   enabled: true
+  wwwRedirect: true
 
 service:
   enabled: true
   prometheusMonitoring: true
-  backendTarget: ps2alerts-api-staging-rest # Points to deployment index 1
+  backendTarget: ps2alerts-api-production-rest # Points to deployment index 1
 
 deployments:
   one:
     index: "rest"
     enabled: true
-    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-staging-{{ version }}"
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     env:
       - name: NODE_ENV
         value: "production"
@@ -36,7 +37,7 @@ deployments:
       - name: DB_DEBUG
         value: "false"
       - name: DB_POOL_SIZE
-        value: "100"
+        value: "25"
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
@@ -53,24 +54,24 @@ deployments:
         value: "${{ secrets.INTERNAL_API_USER }}"
       - name: INTERNAL_API_PASS
         value: "${{ secrets.INTERNAL_API_PASS }}"
-#    nodeSelector:
-#      nodepool: perm-pool
+    nodeSelector:
+      nodepool: perm-pool
     resources:
       cpu:
-        limits: 150m
-        requests: 10m
+        limits: 75m
+        requests: 25m
       mem:
         limits: 128Mi
         requests: 64Mi
     scaling:
       enabled: true
       min: 1
-      max: 2
-      targetCpu: 75
+      max: 5
+      targetCpu: 50
   two:
     index: "cron"
-    enabled: false # Turn off for staging
-    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-staging-{{ version }}"
+    enabled: true
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     env:
       - name: NODE_ENV
         value: "production"
@@ -89,7 +90,7 @@ deployments:
       - name: DB_DEBUG
         value: "false"
       - name: DB_POOL_SIZE
-        value: "100"
+        value: "10"
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
@@ -117,8 +118,8 @@ deployments:
         requests: 128Mi
   three:
     index: "aggregator"
-    enabled: false # Turn off for staging
-    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-staging-{{ version }}"
+    enabled: true
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     env:
       - name: NODE_ENV
         value: "production"
@@ -137,7 +138,7 @@ deployments:
       - name: DB_DEBUG
         value: "false"
       - name: DB_POOL_SIZE
-        value: "100"
+        value: "50"
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
@@ -158,8 +159,13 @@ deployments:
 #      nodepool: perm-pool
     resources:
       cpu:
-        limits: 300m
-        requests: 100m
+        limits: 150m
+        requests: 50m
       mem:
         limits: 128Mi
         requests: 64Mi
+    scaling:
+      enabled: true
+      min: 1
+      max: 10
+      targetCpu: 75
