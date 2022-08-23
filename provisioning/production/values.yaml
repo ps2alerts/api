@@ -1,0 +1,171 @@
+common:
+  name: ps2alerts-api-production
+  hostname: api.ps2alerts.com
+
+application:
+  version: {{ version }}
+
+ingress:
+  enabled: true
+  wwwRedirect: true
+
+service:
+  enabled: true
+  prometheusMonitoring: true
+  backendTarget: ps2alerts-api-production-rest # Points to deployment index 1
+
+deployments:
+  one:
+    index: "rest"
+    enabled: true
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
+    env:
+      - name: NODE_ENV
+        value: "production"
+      - name: VERSION
+        value: "{{ version }}"
+      - name: DB_USER
+        value: "${{ secrets.DB_USER }}"
+      - name: DB_PASS
+        value: "${{ secrets.DB_PASS_NEW }}"
+      - name: DB_HOST
+        value: "ps2alerts-db"
+      - name: DB_PORT
+        value: "27017"
+      - name: DB_NAME
+        value: "ps2alerts"
+      - name: DB_DEBUG
+        value: "false"
+      - name: DB_POOL_SIZE
+        value: "25"
+      - name: REDIS_HOST
+        value: "ps2alerts-redis-master"
+      - name: REDIS_PASS
+        value: "${{ secrets.REDIS_PASS }}"
+      - name: REDIS_DB
+        value: "11"
+      - name: AGGREGATOR_ENABLED
+        value: "false"
+      - name: CRON_ENABLED
+        value: "false"
+      - name: REST_ENABLED
+        value: "true"
+      - name: INTERNAL_API_USER
+        value: "${{ secrets.INTERNAL_API_USER }}"
+      - name: INTERNAL_API_PASS
+        value: "${{ secrets.INTERNAL_API_PASS }}"
+    nodeSelector:
+      nodepool: perm-pool
+    resources:
+      cpu:
+        limits: 75m
+        requests: 25m
+      mem:
+        limits: 128Mi
+        requests: 64Mi
+    scaling:
+      enabled: true
+      min: 1
+      max: 5
+      targetCpu: 50
+  two:
+    index: "cron"
+    enabled: true
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
+    env:
+      - name: NODE_ENV
+        value: "production"
+      - name: VERSION
+        value: "{{ version }}"
+      - name: DB_USER
+        value: "${{ secrets.DB_USER }}"
+      - name: DB_PASS
+        value: "${{ secrets.DB_PASS_NEW }}"
+      - name: DB_HOST
+        value: "ps2alerts-db"
+      - name: DB_PORT
+        value: "27017"
+      - name: DB_NAME
+        value: "ps2alerts"
+      - name: DB_DEBUG
+        value: "false"
+      - name: DB_POOL_SIZE
+        value: "10"
+      - name: REDIS_HOST
+        value: "ps2alerts-redis-master"
+      - name: REDIS_PASS
+        value: "${{ secrets.REDIS_PASS }}"
+      - name: REDIS_DB
+        value: "11"
+      - name: AGGREGATOR_ENABLED
+        value: "false"
+      - name: CRON_ENABLED
+        value: "true"
+      - name: REST_ENABLED
+        value: "false"
+      - name: INTERNAL_API_USER
+        value: "${{ secrets.INTERNAL_API_USER }}"
+      - name: INTERNAL_API_PASS
+        value: "${{ secrets.INTERNAL_API_PASS }}"
+    nodeSelector:
+      nodepool: perm-pool
+    resources:
+      cpu:
+        limits: 300m
+        requests: 100m
+      mem:
+        limits: 256Mi
+        requests: 128Mi
+  three:
+    index: "aggregator"
+    enabled: true
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
+    env:
+      - name: NODE_ENV
+        value: "production"
+      - name: VERSION
+        value: "{{ version }}"
+      - name: DB_USER
+        value: "${{ secrets.DB_USER }}"
+      - name: DB_PASS
+        value: "${{ secrets.DB_PASS_NEW }}"
+      - name: DB_HOST
+        value: "ps2alerts-db"
+      - name: DB_PORT
+        value: "27017"
+      - name: DB_NAME
+        value: "ps2alerts"
+      - name: DB_DEBUG
+        value: "false"
+      - name: DB_POOL_SIZE
+        value: "50"
+      - name: REDIS_HOST
+        value: "ps2alerts-redis-master"
+      - name: REDIS_PASS
+        value: "${{ secrets.REDIS_PASS }}"
+      - name: REDIS_DB
+        value: "11"
+      - name: AGGREGATOR_ENABLED
+        value: "true"
+      - name: CRON_ENABLED
+        value: "false"
+      - name: REST_ENABLED
+        value: "false"
+      - name: INTERNAL_API_USER
+        value: "${{ secrets.INTERNAL_API_USER }}"
+      - name: INTERNAL_API_PASS
+        value: "${{ secrets.INTERNAL_API_PASS }}"
+#    nodeSelector:
+#      nodepool: perm-pool
+    resources:
+      cpu:
+        limits: 150m
+        requests: 50m
+      mem:
+        limits: 128Mi
+        requests: 64Mi
+    scaling:
+      enabled: true
+      min: 1
+      max: 10
+      targetCpu: 75
