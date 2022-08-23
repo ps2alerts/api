@@ -31,14 +31,17 @@ deployments:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
+        initialDelaySeconds: 15
       readinessProbe:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
+        initialDelaySeconds: 30
       livenessProbe:
         enabled: true
         type: httpGet
         httpGetPath: /healthcheck
+        initialDelaySeconds: 30
     env:
       - name: NODE_ENV
         value: "production"
