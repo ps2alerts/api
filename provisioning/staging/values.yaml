@@ -1,6 +1,7 @@
 common:
   name: ps2alerts-api-staging
   hostname: staging.api.ps2alerts.com
+  backendTarget: ps2alerts-api-staging-rest # Points to deployment index 1
 
 application:
   version: {{ version }}
@@ -12,7 +13,6 @@ ingress:
 service:
   enabled: true
   prometheusMonitoring: true
-  backendTarget: ps2alerts-api-staging-rest # Points to deployment index 1
 
 deployments:
   one:
