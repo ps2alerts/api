@@ -103,8 +103,8 @@ deployments:
         limits: 300m
         requests: 100m
       mem:
-        limits: 128Mi
-        requests: 64Mi
+        limits: 256Mi
+        requests: 128Mi
     probes:
       startupProbe:
         enabled: true
@@ -151,7 +151,7 @@ deployments:
       - name: RABBITMQ_QUEUE
         value: "api-queue-production"
       - name: RABBITMQ_PREFETCH
-        value: '"1000"'
+        value: '"500"'
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
