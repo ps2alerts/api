@@ -69,10 +69,10 @@ deployments:
 #        value: "false"
 #      - name: REST_ENABLED
 #        value: "true"
-      - name: INTERNAL_API_USER
-        value: "${{ secrets.INTERNAL_API_USER }}"
-      - name: INTERNAL_API_PASS
-        value: "${{ secrets.INTERNAL_API_PASS }}"
+#      - name: INTERNAL_API_USER
+#        value: "${{ secrets.INTERNAL_API_USER }}"
+#      - name: INTERNAL_API_PASS
+#        value: "${{ secrets.INTERNAL_API_PASS }}"
 #    nodeSelector:
 #      nodepool: perm-pool
     scaling:
