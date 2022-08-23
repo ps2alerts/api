@@ -44,15 +44,9 @@ const metadata = {
         RedisCacheService,
         DatabaseHealthIndicator,
         RedisHealthIndicator,
+        CronHealthIndicator,
     ],
 };
-
-if (process.env.CRON_ENABLED === 'true') {
-    // Don't be so bloody stupid TS! It's a fecking array!!
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    metadata.providers.push(CronHealthIndicator);
-}
 
 @Module(metadata)
 export class HealthCheckModule {}
