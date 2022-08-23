@@ -60,7 +60,7 @@ deployments:
       - name: DB_DEBUG
         value: '"false"'
       - name: DB_POOL_SIZE
-        value: '"100"'
+        value: '"10"'
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
