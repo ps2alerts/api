@@ -92,7 +92,7 @@ deployments:
     scaling:
       enabled: true
       min: 1
-      max: 5
+      max: 10
       targetCpu: 50
   two:
     index: "aggregator"
