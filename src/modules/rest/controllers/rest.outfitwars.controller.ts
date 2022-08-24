@@ -287,8 +287,9 @@ export class RestOutfitwarsController {
     @ApiOperation({summary: 'Returns all OutfitwarsRankingEntities'})
     @ApiResponse({
         status: 200,
-        description: 'The OutfitwarsRankingEntity instance',
+        description: 'All OutfitwarsRankingEntities for every world',
         type: OutfitwarsRankingEntity,
+        isArray: true,
     })
     @ApiImplicitQueries([
         ...PAGINATION_IMPLICIT_QUERIES.slice(0, 2),
@@ -317,8 +318,9 @@ export class RestOutfitwarsController {
     @ApiOperation({summary: 'Returns all OutfitwarsRankingEntities for a specific server'})
     @ApiResponse({
         status: 200,
-        description: 'The OutfitwarsRankingEntity instance',
+        description: 'The OutfitwarsRankingEntity instances for a server',
         type: OutfitwarsRankingEntity,
+        isArray: true,
     })
     @ApiImplicitQueries([
         ...PAGINATION_IMPLICIT_QUERIES.slice(0, 2),

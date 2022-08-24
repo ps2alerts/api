@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, ObjectID} from 'typeorm';
 import OutfitEmbed from '../aggregate/common/outfit.embed';
 import OutfitwarsRankingParamsEmbed from './outfitwars.ranking.params.embed';
 
@@ -43,37 +43,35 @@ export default class OutfitwarsRankingEntity {
     })
     roundId: string;
 
-    @ApiProperty({
-        example: {
-            "id" : "37570391403474491",
-            "name" : "Un1ty",
-            "faction" : 3,
-            "world" : 1,
-            "leader" : "5428482802434229601",
-            "tag" : "UN17"
-        }, 
-        description: 'Outfit information'})
-    @Column(() => OutfitEmbed)
-    outfit: OutfitEmbed;
-
-    @ApiProperty({
-        example: {
-            "TotalScore": 0,
-            "MatchesPlayed": 0,
-            "VictoryPoints": 0,
-            "Gold": 0,
-            "Silver": 0,
-            "Bronze": 0,
-            "FactionRank": 0,
-            "GlobalRank": 12
-        },
-        description: 'The ranking parameters used to determine an outfit\'s place on the leader boards'})
-    @Column(() => OutfitwarsRankingParamsEmbed)
-    rankingParameters: OutfitwarsRankingParamsEmbed;
-
     @ApiProperty({example: 6, description: 'The order by which outfits signed up for this outfit war'})
     @Column({
         type: 'number',
     })
     order: number;
+
+    @ApiProperty({example: {
+        id: '37570391403474491',
+        name: 'Un1ty',
+        faction: 3,
+        world: 1,
+        leader: '5428482802434229601',
+        tag: 'UN17',
+    },
+    description: 'Outfit information'})
+    @Column(() => OutfitEmbed)
+    outfit: OutfitEmbed;
+
+    @ApiProperty({example: {
+        TotalScore: 0,
+        MatchesPlayed: 0,
+        VictoryPoints: 0,
+        Gold: 0,
+        Silver: 0,
+        Bronze: 0,
+        FactionRank: 0,
+        GlobalRank: 12,
+    },
+    description: 'The ranking parameters used to determine an outfit\'s place on the leader boards'})
+    @Column(() => OutfitwarsRankingParamsEmbed)
+    rankingParameters: OutfitwarsRankingParamsEmbed;
 }
