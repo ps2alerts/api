@@ -1,16 +1,20 @@
 import {HttpService, Inject, Injectable, Logger} from '@nestjs/common';
-import {Cron, CronExpression} from '@nestjs/schedule';
+import {Cron} from '@nestjs/schedule';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
-import { lithafalconCensusUrl, lithafalconEndpoints } from '../data/ps2alerts-constants/lithafalconEndpoints';
+import {lithafalconCensusUrl, lithafalconEndpoints} from '../data/ps2alerts-constants/lithafalconEndpoints';
 import LithaFalconOutfitWarDataInterface from '../data/ps2alerts-constants/interfaces/LithaFalconOutfitWarDataInterface';
 import GlobalOutfitAggregateEntity from '../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import OutfitwarsRankingEntity from '../data/entities/instance/outfitwars.ranking.entity';
-import { World } from '../data/ps2alerts-constants/world';
-import { getOutfitWarRound } from '../data/ps2alerts-constants/outfitwars/utils';
+import {World} from '../data/ps2alerts-constants/world';
+import {getOutfitWarRound} from '../data/ps2alerts-constants/outfitwars/utils';
 import OutfitEmbed from '../data/entities/aggregate/common/outfit.embed';
-import { ConfigService } from '@nestjs/config';
-
+import {ConfigService} from '@nestjs/config';
+import getCensusBaseUrl from '../data/ps2alerts-constants/utils/census';
+import {CensusEnvironment} from '../data/ps2alerts-constants/censusEnvironments';
+import {
+    OutfitLeaderCharacterFactionJoinInterface,
+} from '../data/ps2alerts-constants/interfaces/census-responses/OutfitLeaderCharacterFactionJoinInterface';
 
 @Injectable()
 export class OutfitWarsRankingsCron {
@@ -19,78 +23,92 @@ export class OutfitWarsRankingsCron {
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
         private readonly httpService: HttpService,
         private readonly cacheService: RedisCacheService,
-        private readonly config: ConfigService
+        private readonly config: ConfigService,
     ) {}
 
-    @Cron("0 8 * 8,9,10 0")
+    @Cron('0 8 * 8,9,10 0')
     async handleCron(): Promise<void> {
         this.logger.log('Running Outfit Wars Matches job');
+
+        const serviceId: string | undefined = this.config.get('census.serviceId');
+
+        if (!serviceId) {
+            throw new Error('Service ID is empty!');
+        }
 
         const documents = [];
         const conditionals = [];
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
         const outfitRankings: LithaFalconOutfitWarDataInterface[] = (await this.httpService.get(lithafalconCensusUrl + lithafalconEndpoints.outfitWarMatches).toPromise()).data.outfit_war_list;
         const timestamp = new Date();
 
         for (const outfitRanking of outfitRankings) {
-            if(outfitRanking.world_id === World.SOLTECH) {
-                // We cannot support Soltech due to API issues
+            if (outfitRanking.world_id === World.SOLTECH) {
+                // We cannot support SolTech due to API issues
                 continue;
             }
+
             const outfitWarRanking = outfitRanking.outfit_war_id_join_outfit_war_rounds.primary_round_id_join_outfit_war_ranking;
             const outfit: OutfitEmbed | null = await this.mongoOperationsService.findOne<GlobalOutfitAggregateEntity>(
                 GlobalOutfitAggregateEntity, {
-                    'outfit.id': outfitWarRanking.outfit_id
-                }
+                    'outfit.id': outfitWarRanking.outfit_id,
+                },
             ).then((entity: GlobalOutfitAggregateEntity) => {
                 return entity.outfit;
             }).catch(() => {
-                this.logger.error('Failed to find outfit with our own data! Falling back to census!');
-                return this.httpService.get(`https://census.daybreakgames.com/s:${this.config.get<string>('census.serviceId')}/get/ps2:v2/outfit?outfit_id=${outfitWarRanking.outfit_id}&c:show=alias,name,leader_character_id,outfit_id&c:join=type:character^on:leader_character_id^to:character_id^show:faction_id^inject_at:leader&c:limit=1`).toPromise().then((res) => {
-                    if(res.data.error) {
-                        throw new Error(res.data.error);
+                this.logger.warn('Failed to find outfit with our own data! Falling back to census!');
+                return this.httpService.get(`${getCensusBaseUrl(serviceId, CensusEnvironment.PC)}/outfit?outfit_id=${outfitWarRanking.outfit_id}&c:show=alias,name,leader_character_id,outfit_id&c:join=type:character^on:leader_character_id^to:character_id^show:faction_id^inject_at:leader&c:limit=1`).toPromise().then((res) => {
+                    const data = res.data as OutfitLeaderCharacterFactionJoinInterface;
+
+                    if (data.error) {
+                        throw new Error(data.error);
                     }
-                    const outfitInfo = res.data.outfit_list[0];
+
+                    const outfitInfo = data.outfit_list[0];
                     return {
                         id: outfitInfo.outfit_id,
                         name: outfitInfo.name,
                         faction: parseInt(outfitInfo.leader.faction_id, 10),
                         world: outfitRanking.world_id,
                         leader: outfitInfo.leader_character_id,
-                        tag: outfitInfo.alias
+                        tag: outfitInfo.alias,
                     };
                 }).catch((err: Error) => {
                     this.logger.error(`Census failed to return outfit '${outfitWarRanking.outfit_id}' with error '${err.message}'! Skipping it!`);
                     return null;
                 });
             });
+
             if (outfit === null) {
                 continue;
             }
-            documents.push({'$set': {
+
+            documents.push({$set: {
                 timestamp,
                 round: getOutfitWarRound(timestamp),
                 world: outfitRanking.world_id,
                 outfitWarId: outfitRanking.outfit_war_id,
                 roundId: outfitWarRanking.round_id,
-                outfit: outfit,
+                outfit,
                 rankingParameters: outfitWarRanking.ranking_parameters,
-                order: outfitWarRanking.order
+                order: outfitWarRanking.order,
             }});
 
             conditionals.push({
                 round: getOutfitWarRound(timestamp),
-                'outfit.id': outfit.id
+                'outfit.id': outfit.id,
             });
         }
 
         if (documents.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             await this.mongoOperationsService.upsertMany(
                 OutfitwarsRankingEntity,
                 documents,
-                conditionals
+                conditionals,
             ).catch((err: Error) => {
-                this.logger.error(`${err.name} during upsertMany: ${err.message}`)
+                this.logger.error(`${err.name} during upsertMany: ${err.message}`);
             });
         }
 
