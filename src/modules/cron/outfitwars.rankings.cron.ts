@@ -26,7 +26,8 @@ export class OutfitWarsRankingsCron {
         private readonly config: ConfigService,
     ) {}
 
-    @Cron('0 8 * 8,9,10 0')
+    // @Cron('*/1 * * * *') // Swap to this to get the data now
+    @Cron('0 */1 * * * *') // Every hour
     async handleCron(): Promise<void> {
         this.logger.log('Running Outfit Wars Matches job');
 
@@ -110,12 +111,13 @@ export class OutfitWarsRankingsCron {
             ).catch((err: Error) => {
                 this.logger.error(`${err.name} during upsertMany: ${err.message}`);
             });
+            this.logger.log('Outfit Wars rankings updated!');
         }
 
         // @See CronHealthIndicator
         // This sets the fact that the cron has run, so if it hasn't been run it will be terminated.
         const key = '/crons/outfitwarsrankings';
-        await this.cacheService.set(key, Date.now(), 65); // 65 seconds = deadline for this cron
+        await this.cacheService.set(key, Date.now(), 60 * 65); // 1 hour 5 mins
         this.logger.debug('Set outfit wars ranking cron run time');
     }
 }
