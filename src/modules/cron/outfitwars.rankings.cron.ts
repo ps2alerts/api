@@ -22,7 +22,7 @@ export class OutfitWarsRankingsCron {
         private readonly config: ConfigService
     ) {}
 
-    @Cron(CronExpression.EVERY_MINUTE /*"0 8 * 8,9,10 0"*/)
+    @Cron("0 8 * 8,9,10 0")
     async handleCron(): Promise<void> {
         this.logger.log('Running Outfit Wars Matches job');
 
