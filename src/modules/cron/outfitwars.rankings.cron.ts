@@ -27,7 +27,7 @@ export class OutfitWarsRankingsCron {
     ) {}
 
     // @Cron('*/1 * * * *') // Swap to this to get the data now
-    @Cron('0 */1 * * * *') // Every hour
+    @Cron('0 8 * 8,9,10 0') // 8AM UTC on every Sunday in August - October
     async handleCron(): Promise<void> {
         this.logger.log('Running Outfit Wars Matches job');
 
