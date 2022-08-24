@@ -42,7 +42,7 @@ import {CreateFacilityControlDto} from '../Dto/CreateFacilityControlDto';
 import {UpdateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/UpdateFacilityControlOutfitWarsDto';
 import OutfitwarsFacilityControlEntity from '../../data/entities/instance/outfitwars.facility.control.entity';
 import {CreateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/CreateFacilityControlOutfitWarsDto';
-import GlobalOutfitAggregateEntity from '../../data/entities/aggregate/global/global.outfit.aggregate.entity';
+import OutfitwarsRankingEntity from '../../data/entities/instance/outfitwars.ranking.entity';
 
 const IMPLICIT_QUERIES = [
     WORLD_IMPLICIT_QUERY,
@@ -281,5 +281,38 @@ export class RestOutfitwarsController {
         @Body() entities: CreateFacilityControlDto[],
     ): Promise<ObjectID[]> {
         return await this.mongoOperationsService.insertMany(OutfitwarsFacilityControlEntity, entities);
+    }
+
+    @Get('rankings')
+    @ApiOperation({summary: 'Returns all OutfitwarsRankingEntities'})
+    @ApiResponse({
+        status: 200,
+        description: 'The OutfitwarsRankingEntity instance',
+        type: OutfitwarsRankingEntity,
+    })
+    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES.slice(0, 2))
+    async findManyRankings(
+        @Query('sortBy') sortBy?: string,
+        @Query('order') order?: string,
+    ): Promise<OutfitwarsRankingEntity[]> {
+        const pagination = new Pagination({sortBy: sortBy || 'timestamp', order: order || 'desc'}, true);
+        return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, {}, pagination);
+    }
+
+    @Get('rankings/:world')
+    @ApiOperation({summary: 'Returns all OutfitwarsRankingEntities for a specific server'})
+    @ApiResponse({
+        status: 200,
+        description: 'The OutfitwarsRankingEntity instance',
+        type: OutfitwarsRankingEntity,
+    })
+    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES.slice(0, 2))
+    async findManyRankingsByWorld(
+        @Param('world', ParseIntPipe) world: number,
+        @Query('sortBy') sortBy?: string,
+        @Query('order') order?: string,
+    ): Promise<OutfitwarsRankingEntity[]> {
+        const pagination = new Pagination({sortBy: sortBy || 'timestamp', order: order || 'desc'}, true);
+        return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, {world}, pagination);
     }
 }
