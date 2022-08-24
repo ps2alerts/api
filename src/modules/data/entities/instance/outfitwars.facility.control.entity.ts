@@ -14,7 +14,7 @@ export default class OutfitwarsFacilityControlEntity {
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({example: 'outfitwars-1-10-34709/', description: 'Unique outfitwars identifier'})
+    @ApiProperty({example: 'outfitwars-1-10-34709', description: 'Unique outfitwars identifier'})
     @Column({
         type: 'string',
     })
