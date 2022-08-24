@@ -111,6 +111,46 @@ export default class MongoOperationsService {
         }
     }
 
+    /**
+     * Returns a promise that indicates success or failure
+     * An equal number of conditionals and docs must be provided
+     * @param entity entity type to return
+     * @param docs list of objects provided to update values
+     * @param conditionals list of objects provided choosing which documents to update
+     */
+    public async upsertMany(entity: any, docs: any[], conditionals: any[]): Promise<boolean> {
+        if(docs.length !== conditionals.length) {
+            throw new Error('UpsertMany requires equal lengths of documents and conditionals!');
+        }
+        
+        docs = this.transform(docs);
+        const operations: any[] = [];
+
+        // Gather operations, setOnInserts etc should be first and will create the record correctly to then subsequently update.
+        docs.forEach((doc, index) => {
+            operations.push({
+                updateMany: {
+                    filter: conditionals[index],
+                    update: doc,
+                    upsert: true,
+                },
+            });
+        });
+
+        try {
+            const result = await this.em.bulkWrite(entity, operations, {ordered: true});
+            return result.upsertedCount ? result.upsertedCount > 0 : result.modifiedCount ? result.modifiedCount > 0 : false;
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            if (!error.message.includes('E11000')) {
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
+                throw new Error(`UpsertMany failed! E: ${error.message}`);
+            }
+
+            return true;
+        }
+    }
+
     public async deleteOne(entity: any, conditional: any): Promise<boolean> {
         try {
             const result = await this.em.deleteOne(entity, conditional);
