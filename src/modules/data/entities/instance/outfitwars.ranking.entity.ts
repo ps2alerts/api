@@ -8,7 +8,6 @@ import OutfitwarsRankingParamsEmbed from './outfitwars.ranking.params.embed';
 @Entity({
     name: 'outfitwars_rankings',
 })
-@Index(['outfitWarId', 'roundId', 'timestamp', 'outfit.id'], {unique: true})
 export default class OutfitwarsRankingEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -19,6 +18,12 @@ export default class OutfitwarsRankingEntity {
         type: 'date',
     })
     timestamp: Date;
+
+    @ApiProperty({example: 1, description: 'The round during which this ranking was created'})
+    @Column({
+        type: 'number',
+    })
+    round: number;
 
     @ApiProperty({example: 1, description: 'World'})
     @Column({

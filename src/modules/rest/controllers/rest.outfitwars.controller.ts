@@ -299,7 +299,7 @@ export class RestOutfitwarsController {
         return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, {}, pagination);
     }
 
-    @Get('rankings/:world')
+    @Get('rankings/:round/:world')
     @ApiOperation({summary: 'Returns all OutfitwarsRankingEntities for a specific server'})
     @ApiResponse({
         status: 200,
@@ -308,6 +308,7 @@ export class RestOutfitwarsController {
     })
     @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES.slice(0, 2))
     async findManyRankingsByWorld(
+        @Param('round', ParseIntPipe) round: number,
         @Param('world', ParseIntPipe) world: number,
         @Query('sortBy') sortBy?: string,
         @Query('order') order?: string,
