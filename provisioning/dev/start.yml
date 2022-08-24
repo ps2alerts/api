@@ -2,6 +2,7 @@
 - hosts: localhost
   vars_files:
     - "{{ playbook_dir }}/../vars.yml"
+    - ../../vars.local.yml
   #    - "{{ playbook_dir }}/../vars_local.yml"
   tasks:
     - debug:
@@ -31,6 +32,7 @@
           NODE_ENV: "development"
           VERSION: "12345"
           HTTP_PORT: "3000"
+          CENSUS_SERVICE_ID: "{{ census_service_id }}"
           DB_HOST: "ps2alerts-db"
           DB_PORT: "27017"
           DB_USER: "root"

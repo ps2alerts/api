@@ -5,6 +5,8 @@
 # Provisioning
 provisioning/vars_local.yml
 
+vars.local.yml
+
 # Logs
 logs
 *.log
