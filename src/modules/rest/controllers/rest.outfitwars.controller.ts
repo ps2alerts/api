@@ -304,7 +304,7 @@ export class RestOutfitwarsController {
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
     ): Promise<OutfitwarsRankingEntity[]> {
-        const pagination = new Pagination({sortBy: sortBy || 'timestamp', order: order || 'desc'}, true);
+        const pagination = new Pagination({sortBy: sortBy ?? 'timestamp', order: order ?? 'desc'}, true);
         const filter: {round?: number} = {};
 
         if (round !== undefined) {
@@ -336,7 +336,7 @@ export class RestOutfitwarsController {
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
     ): Promise<OutfitwarsRankingEntity[]> {
-        const pagination = new Pagination({sortBy: sortBy || 'timestamp', order: order || 'desc'}, true);
+        const pagination = new Pagination({sortBy: sortBy ?? 'timestamp', order: order ?? 'desc'}, true);
         const filter: {world: number, round?: number} = {world};
 
         if (round !== undefined) {
