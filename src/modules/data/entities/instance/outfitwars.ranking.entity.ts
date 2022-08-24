@@ -4,11 +4,13 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, ObjectID} from 'typeorm';
 import OutfitEmbed from '../aggregate/common/outfit.embed';
 import OutfitwarsRankingParamsEmbed from './outfitwars.ranking.params.embed';
+import {World} from '../../ps2alerts-constants/world';
+import {OutfitwarsRankingInterface} from '../../ps2alerts-constants/interfaces/OutfitwarsRankingInterface';
 
 @Entity({
     name: 'outfitwars_rankings',
 })
-export default class OutfitwarsRankingEntity {
+export default class OutfitwarsRankingEntity implements OutfitwarsRankingInterface {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
@@ -29,7 +31,7 @@ export default class OutfitwarsRankingEntity {
     @Column({
         type: 'number',
     })
-    world: number;
+    world: World;
 
     @ApiProperty({example: 35, description: 'Outfit War Unique ID'})
     @Column({

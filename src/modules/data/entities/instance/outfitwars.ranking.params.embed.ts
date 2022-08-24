@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
 import LithaFalconOutfitWarRankingParametersInterface from '../../ps2alerts-constants/interfaces/LithaFalconOutfitWarRankingParametersInterface';

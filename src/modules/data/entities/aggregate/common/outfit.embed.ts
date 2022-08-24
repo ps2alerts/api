@@ -3,8 +3,9 @@ import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
 import {Faction} from '../../../ps2alerts-constants/faction';
 import {World} from '../../../ps2alerts-constants/world';
+import {OutfitwarsOutfitDataInterface} from '../../../ps2alerts-constants/interfaces/OutfitwarsRankingInterface';
 
-export default class OutfitEmbed {
+export default class OutfitEmbed implements OutfitwarsOutfitDataInterface {
     @ApiProperty({example: '37509488620604883', description: 'Census outfit ID'})
     @Column({
         type: 'string',
