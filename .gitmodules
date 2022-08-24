@@ -2,3 +2,7 @@
 	path = src/modules/data/ps2alerts-constants
 	url = https://github.com/ps2alerts/constants
 	branch = outfit-wars
+[submodule "provisioning/helm"]
+	path = provisioning/helm
+	url = https://github.com/ps2alerts/helm-charts
+	branch = master
