@@ -290,30 +290,53 @@ export class RestOutfitwarsController {
         description: 'The OutfitwarsRankingEntity instance',
         type: OutfitwarsRankingEntity,
     })
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES.slice(0, 2))
+    @ApiImplicitQueries([
+        ...PAGINATION_IMPLICIT_QUERIES.slice(0, 2),
+        {
+            name: 'round',
+            required: false,
+            type: Number,
+        },
+    ])
     async findManyRankings(
+        @Query('round', OptionalIntPipe) round?: number,
         @Query('sortBy') sortBy?: string,
         @Query('order') order?: string,
     ): Promise<OutfitwarsRankingEntity[]> {
         const pagination = new Pagination({sortBy: sortBy || 'timestamp', order: order || 'desc'}, true);
-        return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, {}, pagination);
+        const filter: {round?: number} = {}
+        if(round !== undefined) {
+            filter.round = round;
+        }
+        return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, filter, pagination);
     }
 
-    @Get('rankings/:round/:world')
+    @Get('rankings/:world')
     @ApiOperation({summary: 'Returns all OutfitwarsRankingEntities for a specific server'})
     @ApiResponse({
         status: 200,
         description: 'The OutfitwarsRankingEntity instance',
         type: OutfitwarsRankingEntity,
     })
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES.slice(0, 2))
+    @ApiImplicitQueries([
+        ...PAGINATION_IMPLICIT_QUERIES.slice(0, 2),
+        {
+            name: 'round',
+            required: false,
+            type: Number,
+        },
+    ])
     async findManyRankingsByWorld(
-        @Param('round', ParseIntPipe) round: number,
         @Param('world', ParseIntPipe) world: number,
+        @Query('round', OptionalIntPipe) round?: number,
         @Query('sortBy') sortBy?: string,
         @Query('order') order?: string,
     ): Promise<OutfitwarsRankingEntity[]> {
         const pagination = new Pagination({sortBy: sortBy || 'timestamp', order: order || 'desc'}, true);
-        return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, {world}, pagination);
+        const filter: {world: number, round?: number} = {world};
+        if(round !== undefined) {
+            filter.round = round;
+        }
+        return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, filter, pagination);
     }
 }
