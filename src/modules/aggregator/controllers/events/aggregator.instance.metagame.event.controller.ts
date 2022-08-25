@@ -2,7 +2,6 @@ import {Controller} from '@nestjs/common';
 import {EventPattern, Payload} from '@nestjs/microservices';
 import {MqAcceptedPatterns} from '../../../data/ps2alerts-constants/mqAcceptedPatterns';
 
-
 interface InstanceMetagameMessageData {
     instanceId: string;
     type: string;
