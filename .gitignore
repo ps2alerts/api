@@ -3,8 +3,6 @@
 /node_modules
 
 # Provisioning
-provisioning/vars.local.yml
-
 vars.local.yml
 
 # Logs
