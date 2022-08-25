@@ -1,5 +1,7 @@
 import {Controller} from '@nestjs/common';
 import {EventPattern, Payload} from '@nestjs/microservices';
+import {MqAcceptedPatterns} from '../../../data/ps2alerts-constants/mqAcceptedPatterns';
+
 
 interface InstanceMetagameMessageData {
     instanceId: string;
@@ -13,7 +15,7 @@ export default class AggregatorInstanceMetagameEventController {
     // PATCH
 
     // MQHANDLE
-    @EventPattern('instanceMetagame')
+    @EventPattern(MqAcceptedPatterns.INSTANCE_METAGAME)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleMessage(@Payload() data: InstanceMetagameMessageData): void {
 
