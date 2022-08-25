@@ -51,6 +51,16 @@ export class OutfitWarsRankingsCron {
             }
 
             const outfitWarRanking = outfitRanking.outfit_war_id_join_outfit_war_rounds.primary_round_id_join_outfit_war_ranking;
+            // Cobalt is not updated yet apparently?
+            if(!outfitWarRanking.ranking_parameters.Wins) {
+                outfitWarRanking.ranking_parameters.Wins = 0;
+                outfitWarRanking.ranking_parameters.Losses = 0;
+                outfitWarRanking.ranking_parameters.TiebreakerPoints = 0;
+                delete outfitWarRanking.ranking_parameters.Gold;
+                delete outfitWarRanking.ranking_parameters.Silver;
+                delete outfitWarRanking.ranking_parameters.Bronze;
+                delete outfitWarRanking.ranking_parameters.VictoryPoints;
+            }
             const outfit: OutfitEmbed | null = await this.mongoOperationsService.findOne<GlobalOutfitAggregateEntity>(
                 GlobalOutfitAggregateEntity, {
                     'outfit.id': outfitWarRanking.outfit_id,
