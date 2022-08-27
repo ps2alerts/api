@@ -4,62 +4,62 @@ on:
   push:
     branches: [master]
 jobs:
-#  build-docker-images:
-#    runs-on: ${{ matrix.os }}
-#
-#    strategy:
-#      matrix:
-#        os: [ubuntu-latest]
-#        node: [20]
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#
-#      - name: Set current date as env variable
-#        run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
-#
-#      - name: Set Short SHA variable
-#        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
-#
-#      - name: Get Latest tag
-#        id: latesttag
-#        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-#        with:
-#          fallback: 'UNKNOWN' # Optional fallback tag to use when no tag can be found
-#
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v2
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v2
-#        with:
-#          version: latest
-#
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#
-#      - name: Build and push production image
-#        uses: docker/build-push-action@v2
-#        with:
-#          file: provisioning/production/Dockerfile
-#          platforms: linux/amd64,linux/arm64
-#          push: true
-#          tags: |
-#            maelstromeous/ps2alerts:ps2alerts-api-production-${{ github.sha }}
-#            maelstromeous/ps2alerts:ps2alerts-api-production-latest
-#          build-args: |
-#            BUILD_SHA=${{ env.SHORT_SHA }}
-#            BUILT=${{ env.NOW }}
-#            VERSION=${{ steps.latesttag.outputs.tag }}
+  build-docker-images:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [20]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+
+      - name: Set Short SHA variable
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+
+      - name: Get Latest tag
+        id: latesttag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: 'UNKNOWN' # Optional fallback tag to use when no tag can be found
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          version: latest
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push production image
+        uses: docker/build-push-action@v2
+        with:
+          file: provisioning/production/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            maelstromeous/ps2alerts:ps2alerts-api-production-${{ github.sha }}
+            maelstromeous/ps2alerts:ps2alerts-api-production-latest
+          build-args: |
+            BUILD_SHA=${{ env.SHORT_SHA }}
+            BUILT=${{ env.NOW }}
+            VERSION=${{ steps.latesttag.outputs.tag }}
 
   deploy-to-k8s:
-#    needs: build-docker-images
+    needs: build-docker-images
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -72,7 +72,7 @@ jobs:
         uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "{{ version }}"
-          replace: "ea215417373bff5abe856d2855c40f7d30994f1e"
+          replace: "${{ github.sha }}"
           include: provisioning/production/values.yaml
 
       - name: Deploy Helm
@@ -85,7 +85,7 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
           token: ${{ github.token }}
           value-files: provisioning/production/values.yaml
-          version: ea215417373bff5abe856d2855c40f7d30994f1e
+          version: ${{ github.sha }}
           # timeout: 120s # Apparently this isn't supported but it's in the docs? :shrug:
         env:
           KUBECONFIG_FILE: "${{ secrets.KUBE_CONFIG_RAW }}"
