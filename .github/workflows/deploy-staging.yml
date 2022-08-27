@@ -77,7 +77,7 @@ jobs:
           include: provisioning/staging/values.yaml
 
       - name: Deploy Helm
-        uses: glopezep/helm@v1.7.1
+        uses: glopezep/helm@v1.8.0
         with:
           helm: helm3
           release: ps2alerts-api-staging
