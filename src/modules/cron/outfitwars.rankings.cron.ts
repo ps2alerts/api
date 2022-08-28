@@ -26,8 +26,8 @@ export class OutfitWarsRankingsCron {
         private readonly config: ConfigService,
     ) {}
 
-    // @Cron('*/1 * * * *') // Swap to this to get the data now
-    @Cron('0 8 * 8,9,10 0') // 8AM UTC on every Sunday in August - October
+    // @Cron('0 8 * 8,9,10 0') // 8AM UTC on every Sunday in August - October
+    @Cron('*/1 * * * *') // Swap to this to get the data now
     async handleCron(): Promise<void> {
         this.logger.log('Running Outfit Wars Matches job');
 
@@ -51,8 +51,9 @@ export class OutfitWarsRankingsCron {
             }
 
             const outfitWarRanking = outfitRanking.outfit_war_id_join_outfit_war_rounds.primary_round_id_join_outfit_war_ranking;
+
             // Cobalt is not updated yet apparently?
-            if(!outfitWarRanking.ranking_parameters.Wins) {
+            if (!outfitWarRanking.ranking_parameters.Wins) {
                 outfitWarRanking.ranking_parameters.Wins = 0;
                 outfitWarRanking.ranking_parameters.Losses = 0;
                 outfitWarRanking.ranking_parameters.TiebreakerPoints = 0;
@@ -61,6 +62,7 @@ export class OutfitWarsRankingsCron {
                 delete outfitWarRanking.ranking_parameters.Bronze;
                 delete outfitWarRanking.ranking_parameters.VictoryPoints;
             }
+
             const outfit: OutfitEmbed | null = await this.mongoOperationsService.findOne<GlobalOutfitAggregateEntity>(
                 GlobalOutfitAggregateEntity, {
                     'outfit.id': outfitWarRanking.outfit_id,
