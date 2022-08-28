@@ -4,12 +4,14 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {Loadout, loadoutArray} from '../../../ps2alerts-constants/loadout';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
+import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
 
 @Entity({
     name: 'aggregate_instance_loadouts',
 })
-@Index(['instance', 'loadout'], {unique: true})
+@Index(['instance', 'loadout', 'ps2AlertsEventType'], {unique: true})
 @Index(['loadout'])
+@Index(['ps2AlertsEventType'])
 export default class InstanceLoadoutAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -73,4 +75,14 @@ export default class InstanceLoadoutAggregateEntity {
     @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
     @Column(() => FactionVersusFactionEmbed)
     factionKills: FactionVersusFactionEmbed;
+
+    @ApiProperty({
+        example: Ps2alertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2alertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2alertsEventType;
 }

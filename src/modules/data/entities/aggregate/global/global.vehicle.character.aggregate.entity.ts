@@ -6,13 +6,15 @@ import VehicleStatsEmbed from '../common/vehicle.vs.vehicle.embed';
 import {World, worldArray} from '../../../ps2alerts-constants/world';
 import {Vehicle, vehicleArray} from '../../../ps2alerts-constants/vehicle';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
+import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
 
 @Entity({
     name: 'aggregate_global_vehicles_characters',
 })
-@Index(['world', 'vehicle', 'character', 'bracket'], {unique: true})
+@Index(['world', 'vehicle', 'character', 'bracket', 'ps2AlertsEventType'], {unique: true})
 @Index(['character'])
 @Index(['bracket'])
+@Index(['ps2AlertsEventType'])
 export default class GlobalVehicleCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -90,4 +92,14 @@ export default class GlobalVehicleCharacterAggregateEntity {
     })
     // eslint-disable-next-line @typescript-eslint/ban-types
     vehicleTeamkilledMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
+
+    @ApiProperty({
+        example: Ps2alertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2alertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2alertsEventType;
 }

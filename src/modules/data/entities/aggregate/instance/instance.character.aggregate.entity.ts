@@ -5,12 +5,14 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import CharacterEmbed from '../common/character.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 import XperminuteEmbed from '../common/xperminute.embed';
+import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
 
 @Entity({
     name: 'aggregate_instance_characters',
 })
-@Index(['instance', 'character.id'], {unique: true})
+@Index(['instance', 'character.id', 'ps2AlertsEventType'], {unique: true})
 @Index(['character.id'])
+@Index(['ps2AlertsEventType'])
 export default class InstanceCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -89,4 +91,14 @@ export default class InstanceCharacterAggregateEntity {
     @ApiProperty({type: XperminuteEmbed, description: 'Statistics per minute for character relative to duration in alert'})
     @Column(() => XperminuteEmbed)
     xPerMinutes: XperminuteEmbed;
+
+    @ApiProperty({
+        example: Ps2alertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2alertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2alertsEventType;
 }

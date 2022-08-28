@@ -6,11 +6,12 @@ import {World, worldArray} from '../../../ps2alerts-constants/world';
 import OutfitEmbed from '../common/outfit.embed';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
+import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
 
 @Entity({
     name: 'aggregate_global_outfits',
 })
-@Index(['world', 'outfit.id', 'bracket'], {unique: true})
+@Index(['world', 'outfit.id', 'bracket', 'ps2AlertsEventType'], {unique: true})
 @Index(['outfit.id'])
 @Index(['bracket'])
 @Index(['kills'])
@@ -20,6 +21,7 @@ import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 @Index(['suicides'])
 @Index(['headshots'])
 @Index(['captures'])
+@Index(['ps2AlertsEventType'])
 export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -95,4 +97,14 @@ export default class GlobalOutfitAggregateEntity {
     @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
     @Column(() => FactionVersusFactionEmbed)
     factionKills: FactionVersusFactionEmbed;
+
+    @ApiProperty({
+        example: Ps2alertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2alertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2alertsEventType;
 }

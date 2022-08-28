@@ -4,12 +4,14 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import FacilityFactionControl from '../common/facility.faction.control.embed';
 import FacilityEmbed from '../common/facility.embed';
+import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
 
 @Entity({
     name: 'aggregate_instance_facility_controls',
 })
-@Index(['instance', 'facility.id'], {unique: true})
+@Index(['instance', 'facility.id', 'ps2AlertsEventType'], {unique: true})
 @Index(['facility.id'])
+@Index(['ps2AlertsEventType'])
 export default class InstanceFacilityControlAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -42,4 +44,14 @@ export default class InstanceFacilityControlAggregateEntity {
     @ApiProperty({type: FacilityFactionControl, description: 'Facility Capture / Defenses for all factions'})
     @Column(() => FacilityFactionControl)
     totals: FacilityFactionControl;
+
+    @ApiProperty({
+        example: Ps2alertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2alertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2alertsEventType;
 }

@@ -5,13 +5,15 @@ import {Exclude} from 'class-transformer';
 import {World, worldArray} from '../../../ps2alerts-constants/world';
 import {Zone, zoneArray} from '../../../ps2alerts-constants/zone';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
+import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
 
 @Entity({
     name: 'aggregate_global_victories',
 })
-@Index(['world', 'zone', 'date', 'bracket'], {unique: true})
+@Index(['world', 'zone', 'date', 'bracket', 'ps2AlertsEventType'], {unique: true})
 @Index(['date'])
 @Index(['bracket'])
+@Index(['ps2AlertsEventType'])
 export default class GlobalVictoryAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -67,4 +69,14 @@ export default class GlobalVictoryAggregateEntity {
         type: 'number',
     })
     draws: number;
+
+    @ApiProperty({
+        example: Ps2alertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2alertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2alertsEventType;
 }
