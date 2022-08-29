@@ -2,7 +2,7 @@
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../ps2alerts-constants/world';
 import {Zone, zoneArray} from '../../ps2alerts-constants/zone';
-import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState, ps2AlertsEventStateArray} from '../../ps2alerts-constants/ps2AlertsEventState';
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import InstanceFeaturesEmbed from './instance.features.embed';
@@ -98,15 +98,15 @@ export default class InstanceOutfitWarsTerritoryEntity {
     duration: number;
 
     @ApiProperty({
-        example: Ps2alertsEventState.ENDED,
-        enum: ps2alertsEventStateArray,
+        example: Ps2AlertsEventState.ENDED,
+        enum: ps2AlertsEventStateArray,
         description: 'The internal event state. 0 = starting, 1 = in progress, 2 = finished',
     })
     @Column({
         type: 'enum',
-        enum: ps2alertsEventStateArray,
+        enum: ps2AlertsEventStateArray,
     })
-    state: Ps2alertsEventState;
+    state: Ps2AlertsEventState;
 
     @ApiProperty({
         example: Ps2AlertsEventType.OUTFIT_WARS_AUG_2022,

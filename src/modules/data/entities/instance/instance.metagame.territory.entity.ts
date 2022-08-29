@@ -3,7 +3,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import {World, worldArray} from '../../ps2alerts-constants/world';
 import {Zone, zoneArray} from '../../ps2alerts-constants/zone';
 import {MetagameEventType, metagameEventTypeArray} from '../../ps2alerts-constants/metagameEventType';
-import {Ps2alertsEventState, ps2alertsEventStateArray} from '../../ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState, ps2AlertsEventStateArray} from '../../ps2alerts-constants/ps2AlertsEventState';
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import MetagameTerritoryResultEmbed from '../aggregate/common/metagame.territory.result.embed';
@@ -76,12 +76,12 @@ export default class InstanceMetagameTerritoryEntity {
     })
     duration: number;
 
-    @ApiProperty({example: Ps2alertsEventState.ENDED, enum: ps2alertsEventStateArray, description: 'The internal event state. 0 = starting, 1 = in progress, 2 = finished'})
+    @ApiProperty({example: Ps2AlertsEventState.ENDED, enum: ps2AlertsEventStateArray, description: 'The internal event state. 0 = starting, 1 = in progress, 2 = finished'})
     @Column({
         type: 'enum',
-        enum: ps2alertsEventStateArray,
+        enum: ps2AlertsEventStateArray,
     })
-    state: Ps2alertsEventState;
+    state: Ps2AlertsEventState;
 
     @ApiProperty({
         example: Ps2AlertsEventType.LIVE_METAGAME,

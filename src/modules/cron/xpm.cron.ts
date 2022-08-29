@@ -2,7 +2,7 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {Cron} from '@nestjs/schedule';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
-import {Ps2alertsEventState} from '../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../data/ps2alerts-constants/ps2AlertsEventState';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import InstanceCharacterAggregateEntity from '../data/entities/aggregate/instance/instance.character.aggregate.entity';
@@ -23,7 +23,7 @@ export class XpmCron {
 
         // Grab the current actives
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED, 'features.xpm': true});
+        const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2AlertsEventState.STARTED, 'features.xpm': true});
 
         for await (const instance of actives) {
             if (Date.now() > (instance.timeStarted.getTime() + instance.duration)) {

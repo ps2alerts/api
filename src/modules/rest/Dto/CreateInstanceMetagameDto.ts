@@ -10,7 +10,7 @@ import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-proper
 import {World} from '../../data/ps2alerts-constants/world';
 import {Zone} from '../../data/ps2alerts-constants/zone';
 import {MetagameEventType} from '../../data/ps2alerts-constants/metagameEventType';
-import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../../data/ps2alerts-constants/ps2AlertsEventState';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
 import {
     MetagameTerritoryControlResultInterface,
@@ -83,8 +83,8 @@ export class CreateInstanceMetagameDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: Ps2alertsEventState.STARTED})
-    state: Ps2alertsEventState;
+    @ApiModelProperty({example: Ps2AlertsEventState.STARTED})
+    state: Ps2AlertsEventState;
 
     @IsNumber()
     @IsOptional()

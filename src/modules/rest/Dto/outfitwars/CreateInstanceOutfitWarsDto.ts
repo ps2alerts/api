@@ -9,7 +9,7 @@ import {
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import {World} from '../../../data/ps2alerts-constants/world';
 import {Zone} from '../../../data/ps2alerts-constants/zone';
-import {Ps2alertsEventState} from '../../../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../../../data/ps2alerts-constants/ps2AlertsEventState';
 import {Phase} from '../../../data/ps2alerts-constants/outfitwars/phase';
 import {
     PS2AlertsInstanceFeaturesInterface,
@@ -74,8 +74,8 @@ export class CreateInstanceOutfitWarsDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: Ps2alertsEventState.STARTED})
-    state: Ps2alertsEventState;
+    @ApiModelProperty({example: Ps2AlertsEventState.STARTED})
+    state: Ps2AlertsEventState;
 
     @IsNumber()
     @IsNotEmpty()

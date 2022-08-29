@@ -6,7 +6,7 @@ import {
     IsOptional,
 } from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import {Ps2alertsEventState} from '../../../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../../../data/ps2alerts-constants/ps2AlertsEventState';
 import {
     OutfitwarsTerritoryResultInterface,
 } from '../../../data/ps2alerts-constants/interfaces/OutfitwarsTerritoryResultInterface';
@@ -38,8 +38,8 @@ export class UpdateInstanceOutfitWarsDto {
     @IsNumber()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: Ps2alertsEventState.ENDED})
-    state: Ps2alertsEventState;
+    @ApiModelProperty({example: Ps2AlertsEventState.ENDED})
+    state: Ps2AlertsEventState;
 
     @IsObject()
     @IsNotEmpty()
@@ -48,23 +48,23 @@ export class UpdateInstanceOutfitWarsDto {
         example: {
             teams: {
                 blue: {
-                    id: "37509488620604883",
-                    name: "Dignity of War",
+                    id: '37509488620604883',
+                    name: 'Dignity of War',
                     faction: 1,
                     world: 10,
-                    leader: "8276172967445322465",
-                    tag: "DIG"
+                    leader: '8276172967445322465',
+                    tag: 'DIG',
                 },
                 red: {
-                    id: "37570391403474491",
-                    name: "Un1ty",
+                    id: '37570391403474491',
+                    name: 'Un1ty',
                     faction: 3,
                     world: 1,
-                    leader: "5428482802434229601",
-                    tag: "UN17"
-                }
-            }
-        }
+                    leader: '5428482802434229601',
+                    tag: 'UN17',
+                },
+            },
+        },
     })
     outfitwars: OutfitwarsMetadataEmbed;
 }
