@@ -17,7 +17,7 @@ import {
 import {
     OutfitwarsTerritoryResultInterface,
 } from '../../../data/ps2alerts-constants/interfaces/OutfitwarsTerritoryResultInterface';
-import {Ps2alertsEventType} from '../../../data/ps2alerts-constants/ps2alertsEventType';
+import {Ps2AlertsEventType} from '../../../data/ps2alerts-constants/ps2AlertsEventType';
 import OutfitwarsMetadataEmbed from '../../../data/entities/instance/outfitwars.metadata.embed';
 
 export class CreateInstanceOutfitWarsDto {
@@ -80,9 +80,8 @@ export class CreateInstanceOutfitWarsDto {
     @IsNumber()
     @IsNotEmpty()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    @ApiModelProperty({example: Ps2alertsEventType.OUTFIT_WARS_AUG_2022})
-    ps2alertsEventType: Ps2alertsEventType.OUTFIT_WARS_AUG_2022;
-
+    @ApiModelProperty({example: Ps2AlertsEventType.OUTFIT_WARS_AUG_2022})
+    ps2AlertsEventType: Ps2AlertsEventType.OUTFIT_WARS_AUG_2022;
 
     @IsObject()
     @IsNotEmpty()

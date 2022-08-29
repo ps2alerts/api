@@ -6,7 +6,7 @@ import VehicleStatsEmbed from '../common/vehicle.vs.vehicle.embed';
 import {World, worldArray} from '../../../ps2alerts-constants/world';
 import {Vehicle, vehicleArray} from '../../../ps2alerts-constants/vehicle';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
-import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_global_vehicles_characters',
@@ -94,12 +94,12 @@ export default class GlobalVehicleCharacterAggregateEntity {
     vehicleTeamkilledMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
 
     @ApiProperty({
-        example: Ps2alertsEventType.LIVE_METAGAME,
+        example: Ps2AlertsEventType.LIVE_METAGAME,
         description: 'PS2Alerts Event Type for the aggregate',
     })
     @Column({
         type: 'number',
-        default: Ps2alertsEventType.LIVE_METAGAME,
+        default: Ps2AlertsEventType.LIVE_METAGAME,
     })
-    ps2AlertsEventType: Ps2alertsEventType;
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

@@ -18,7 +18,7 @@ import {
 import {
     PS2AlertsInstanceFeaturesInterface,
 } from '../../data/ps2alerts-constants/interfaces/PS2AlertsInstanceFeaturesInterface';
-import {Ps2alertsEventType} from '../../data/ps2alerts-constants/ps2alertsEventType';
+import {Ps2AlertsEventType} from '../../data/ps2alerts-constants/ps2AlertsEventType';
 
 export class CreateInstanceMetagameDto {
     @IsString()
@@ -89,10 +89,10 @@ export class CreateInstanceMetagameDto {
     @IsNumber()
     @IsOptional()
     @ApiModelProperty({
-        example: Ps2alertsEventType.LIVE_METAGAME,
-        default: Ps2alertsEventType.LIVE_METAGAME,
+        example: Ps2AlertsEventType.LIVE_METAGAME,
+        default: Ps2AlertsEventType.LIVE_METAGAME,
     })
-    ps2alertsEventType: Ps2alertsEventType;
+    ps2AlertsEventType: Ps2AlertsEventType;
 
     @IsNumber()
     @IsOptional()

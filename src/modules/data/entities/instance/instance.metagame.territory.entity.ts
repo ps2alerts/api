@@ -9,7 +9,7 @@ import {Exclude} from 'class-transformer';
 import MetagameTerritoryResultEmbed from '../aggregate/common/metagame.territory.result.embed';
 import {Bracket, ps2alertsBracketArray} from '../../ps2alerts-constants/bracket';
 import InstanceFeaturesEmbed from './instance.features.embed';
-import {Ps2alertsEventType, ps2alertsEventTypeArray} from '../../ps2alerts-constants/ps2alertsEventType';
+import {Ps2AlertsEventType, ps2AlertsEventTypeArray} from '../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'instance_metagame_territories',
@@ -84,15 +84,15 @@ export default class InstanceMetagameTerritoryEntity {
     state: Ps2alertsEventState;
 
     @ApiProperty({
-        example: Ps2alertsEventType.LIVE_METAGAME,
-        enum: ps2alertsEventTypeArray,
+        example: Ps2AlertsEventType.LIVE_METAGAME,
+        enum: ps2AlertsEventTypeArray,
         description: 'The event type identifier - this is used to filter by live metagame and outfitwars etc',
     })
     @Column({
         type: 'number',
-        enum: ps2alertsEventTypeArray,
+        enum: ps2AlertsEventTypeArray,
     })
-    ps2alertsEventType: Ps2alertsEventType.LIVE_METAGAME;
+    ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME;
 
     @ApiProperty({example: Bracket.PRIME, enum: ps2alertsBracketArray, description: 'Activity bracket level of the instance'})
     @Column({
