@@ -18,7 +18,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
-import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../../data/ps2alerts-constants/ps2AlertsEventState';
 import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
 import {World} from '../../data/ps2alerts-constants/world';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
@@ -147,7 +147,7 @@ export class RestOutfitwarsController {
             await this.mongoOperationsService.findMany(
                 InstanceOutfitWarsTerritoryEntity,
                 {
-                    state: Ps2alertsEventState.STARTED,
+                    state: Ps2AlertsEventState.STARTED,
                     world,
                     zone,
                 },

@@ -6,7 +6,7 @@ import {World, worldArray} from '../../../ps2alerts-constants/world';
 import ItemEmbed from '../common/item.embed';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
-import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_global_weapons',
@@ -75,12 +75,12 @@ export default class GlobalWeaponAggregateEntity {
     factionKills: FactionVersusFactionEmbed;
 
     @ApiProperty({
-        example: Ps2alertsEventType.LIVE_METAGAME,
+        example: Ps2AlertsEventType.LIVE_METAGAME,
         description: 'PS2Alerts Event Type for the aggregate',
     })
     @Column({
         type: 'number',
-        default: Ps2alertsEventType.LIVE_METAGAME,
+        default: Ps2AlertsEventType.LIVE_METAGAME,
     })
-    ps2AlertsEventType: Ps2alertsEventType;
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

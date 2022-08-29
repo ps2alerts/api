@@ -5,7 +5,7 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import CharacterEmbed from '../common/character.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 import XperminuteEmbed from '../common/xperminute.embed';
-import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_instance_characters',
@@ -93,12 +93,12 @@ export default class InstanceCharacterAggregateEntity {
     xPerMinutes: XperminuteEmbed;
 
     @ApiProperty({
-        example: Ps2alertsEventType.LIVE_METAGAME,
+        example: Ps2AlertsEventType.LIVE_METAGAME,
         description: 'PS2Alerts Event Type for the aggregate',
     })
     @Column({
         type: 'number',
-        default: Ps2alertsEventType.LIVE_METAGAME,
+        default: Ps2AlertsEventType.LIVE_METAGAME,
     })
-    ps2AlertsEventType: Ps2alertsEventType;
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

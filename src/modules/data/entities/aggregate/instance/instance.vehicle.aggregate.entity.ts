@@ -4,7 +4,7 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import VehicleStatsEmbed from '../common/vehicle.vs.vehicle.embed';
 import {Vehicle} from '../../../ps2alerts-constants/vehicle';
-import {Ps2alertsEventType} from '../../../ps2alerts-constants/ps2alertsEventType';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_instance_vehicles',
@@ -78,12 +78,12 @@ export default class InstanceVehicleAggregateEntity {
     vehicleTeamkilledMatrix: object; // TODO: Fix this to be an object keyed via the Vehicle enum. Left it free for now.
 
     @ApiProperty({
-        example: Ps2alertsEventType.LIVE_METAGAME,
+        example: Ps2AlertsEventType.LIVE_METAGAME,
         description: 'PS2Alerts Event Type for the aggregate',
     })
     @Column({
         type: 'number',
-        default: Ps2alertsEventType.LIVE_METAGAME,
+        default: Ps2AlertsEventType.LIVE_METAGAME,
     })
-    ps2AlertsEventType: Ps2alertsEventType;
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

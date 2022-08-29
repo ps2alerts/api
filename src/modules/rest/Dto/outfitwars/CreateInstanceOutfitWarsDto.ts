@@ -9,7 +9,7 @@ import {
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import {World} from '../../../data/ps2alerts-constants/world';
 import {Zone} from '../../../data/ps2alerts-constants/zone';
-import {Ps2alertsEventState} from '../../../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../../../data/ps2alerts-constants/ps2AlertsEventState';
 import {Phase} from '../../../data/ps2alerts-constants/outfitwars/phase';
 import {
     PS2AlertsInstanceFeaturesInterface,
@@ -17,7 +17,7 @@ import {
 import {
     OutfitwarsTerritoryResultInterface,
 } from '../../../data/ps2alerts-constants/interfaces/OutfitwarsTerritoryResultInterface';
-import {Ps2alertsEventType} from '../../../data/ps2alerts-constants/ps2alertsEventType';
+import {Ps2AlertsEventType} from '../../../data/ps2alerts-constants/ps2AlertsEventType';
 import OutfitwarsMetadataEmbed from '../../../data/entities/instance/outfitwars.metadata.embed';
 
 export class CreateInstanceOutfitWarsDto {
@@ -74,15 +74,14 @@ export class CreateInstanceOutfitWarsDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: Ps2alertsEventState.STARTED})
-    state: Ps2alertsEventState;
+    @ApiModelProperty({example: Ps2AlertsEventState.STARTED})
+    state: Ps2AlertsEventState;
 
     @IsNumber()
     @IsNotEmpty()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    @ApiModelProperty({example: Ps2alertsEventType.OUTFIT_WARS_AUG_2022})
-    ps2alertsEventType: Ps2alertsEventType.OUTFIT_WARS_AUG_2022;
-
+    @ApiModelProperty({example: Ps2AlertsEventType.OUTFIT_WARS_AUG_2022})
+    ps2AlertsEventType: Ps2AlertsEventType.OUTFIT_WARS_AUG_2022;
 
     @IsObject()
     @IsNotEmpty()
