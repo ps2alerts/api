@@ -43,6 +43,7 @@ import {UpdateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/UpdateFacili
 import OutfitwarsFacilityControlEntity from '../../data/entities/instance/outfitwars.facility.control.entity';
 import {CreateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/CreateFacilityControlOutfitWarsDto';
 import OutfitwarsRankingEntity from '../../data/entities/instance/outfitwars.ranking.entity';
+import { UpdateRankingOutfitWarsDto } from '../Dto/outfitwars/UpdateRankingOutfitWarsDto';
 
 const IMPLICIT_QUERIES = [
     WORLD_IMPLICIT_QUERY,
@@ -284,10 +285,10 @@ export class RestOutfitwarsController {
     }
 
     @Get('rankings')
-    @ApiOperation({summary: 'Returns all OutfitwarsRankingEntities'})
+    @ApiOperation({summary: 'Queries all OutfitwarsRankingEntities and returns either all rankings or those matching an optional round and world'})
     @ApiResponse({
         status: 200,
-        description: 'All OutfitwarsRankingEntities for every world',
+        description: 'All OutfitwarsRankingEntities, with optional filters',
         type: OutfitwarsRankingEntity,
         isArray: true,
     })
@@ -295,54 +296,54 @@ export class RestOutfitwarsController {
         ...PAGINATION_IMPLICIT_QUERIES.slice(0, 2),
         {
             name: 'round',
+            required: false,
+            type: Number,
+        },
+        {
+            name: 'world',
             required: false,
             type: Number,
         },
     ])
     async findManyRankings(
-        @Query('round', OptionalIntPipe) round?: number,
-            @Query('sortBy') sortBy?: string,
-            @Query('order') order?: string,
-    ): Promise<OutfitwarsRankingEntity[]> {
-        const pagination = new Pagination({sortBy: sortBy ?? 'timestamp', order: order ?? 'desc', pageSize: 448}, true);
-        const filter: {round?: number} = {};
-
-        if (round !== undefined) {
-            filter.round = round;
-        }
-
-        return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, filter, pagination);
-    }
-
-    @Get('rankings/:world')
-    @ApiOperation({summary: 'Returns all OutfitwarsRankingEntities for a specific server'})
-    @ApiResponse({
-        status: 200,
-        description: 'The OutfitwarsRankingEntity instances for a server',
-        type: OutfitwarsRankingEntity,
-        isArray: true,
-    })
-    @ApiImplicitQueries([
-        ...PAGINATION_IMPLICIT_QUERIES.slice(0, 2),
-        {
-            name: 'round',
-            required: false,
-            type: Number,
-        },
-    ])
-    async findManyRankingsByWorld(
-        @Param('world', ParseIntPipe) world: number,
+        @Query('world', OptionalIntPipe) world?: number,
             @Query('round', OptionalIntPipe) round?: number,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
     ): Promise<OutfitwarsRankingEntity[]> {
         const pagination = new Pagination({sortBy: sortBy ?? 'timestamp', order: order ?? 'desc', pageSize: 448}, true);
-        const filter: {world: number, round?: number} = {world};
+        const filter: {world?: number, round?: number} = {};
 
         if (round !== undefined) {
             filter.round = round;
         }
 
+        if (world !== undefined) {
+            filter.world = world;
+        }
+
         return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, filter, pagination);
+    }
+
+    @Patch('ranking/{outfit}/{round}')
+    @HttpCode(202)
+    @ApiOperation({summary: 'INTERNAL: Update a ranking for an outfit by round'})
+    @ApiCreatedResponse({description: 'Record updated'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiBadRequestResponse({description: 'Bad request, check your data against the Dto object.'})
+    @ApiSecurity('basic')
+    @UseGuards(AuthGuard('basic'))
+    async updateRanking(
+        @Param('outfit') outfitId: string,
+        @Param('round', ParseIntPipe) round: number,
+        @Body() entity: UpdateRankingOutfitWarsDto,
+    ): Promise<boolean> {
+        const filter = {'outfit.id': outfitId, round};
+        const record: OutfitwarsRankingEntity = await this.mongoOperationsService.findOne(OutfitwarsRankingEntity, filter);
+
+        const updatedRecord = Object.assign(record, entity);
+
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        return await this.mongoOperationsService.upsert(OutfitwarsRankingEntity, [{'$set':updatedRecord}], [{_id: updatedRecord._id}]);
     }
 }

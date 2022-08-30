@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
-import LithaFalconOutfitWarRankingParametersInterface from '../../ps2alerts-constants/interfaces/LithaFalconOutfitWarRankingParametersInterface';
 
-export default class OutfitwarsRankingParamsEmbed implements LithaFalconOutfitWarRankingParametersInterface {
+export default class OutfitwarsRankingParamsEmbed {
     @ApiProperty({
-        example: 2,
-        description: 'Total number of match wins for this outfit',
+        example: 30444,
+        description: 'Total number of points this outfit has accrued',
     })
     @Column({
         type: 'number',
@@ -23,44 +22,35 @@ export default class OutfitwarsRankingParamsEmbed implements LithaFalconOutfitWa
     MatchesPlayed: number;
 
     @ApiProperty({
-        example: 500,
-        description: 'Total number of VictoryPoints an outfit has accrued, used in tie-breakers',
+        example: 3,
+        description: 'Total number of matches an outfit has won',
     })
     @Column({
         type: 'number',
     })
-    VictoryPoints: number;
+    Wins: number;
 
     @ApiProperty({
-        example: 0,
-        description: 'Whether the outfit has won the Gold medal',
+        example: 1,
+        description: 'Total number of matches an outfit has lost',
     })
     @Column({
         type: 'number',
     })
-    Gold: number;
+    Losses: number;
 
     @ApiProperty({
-        example: 0,
-        description: 'Whether the outfit has won the Silver medal',
+        example: 444,
+        description: 'Total number of tiebreaker points an outfit has earned',
     })
     @Column({
         type: 'number',
     })
-    Silver: number;
+    TiebreakerPoints: number;
 
     @ApiProperty({
         example: 0,
-        description: 'Whether the outfit has won the Bronze medal',
-    })
-    @Column({
-        type: 'number',
-    })
-    Bronze: number;
-
-    @ApiProperty({
-        example: 0,
-        description: 'Rank among the outfit\'s faction',
+        description: 'Rank among own faction',
     })
     @Column({
         type: 'number',

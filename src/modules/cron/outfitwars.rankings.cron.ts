@@ -44,23 +44,13 @@ export class OutfitWarsRankingsCron {
         const outfitRankings: LithaFalconOutfitWarDataInterface[] = (await this.httpService.get(lithafalconCensusUrl + lithafalconEndpoints.outfitWarMatches).toPromise()).data.outfit_war_list;
         const timestamp = new Date();
 
-        for (const outfitRanking of outfitRankings) {
-            if (outfitRanking.world_id === World.SOLTECH) {
+        for (const outfitRankingInterface of outfitRankings) {
+            
+            const outfitWarRanking = this.parseLithaFalconRanking(outfitRankingInterface);
+            
+            if (outfitWarRanking.world_id === World.SOLTECH) {
                 // We cannot support SolTech due to API issues
                 continue;
-            }
-
-            const outfitWarRanking = outfitRanking.outfit_war_id_join_outfit_war_rounds.primary_round_id_join_outfit_war_ranking;
-
-            // Cobalt is not updated yet apparently?
-            if (!outfitWarRanking.ranking_parameters.Wins) {
-                outfitWarRanking.ranking_parameters.Wins = 0;
-                outfitWarRanking.ranking_parameters.Losses = 0;
-                outfitWarRanking.ranking_parameters.TiebreakerPoints = 0;
-                delete outfitWarRanking.ranking_parameters.Gold;
-                delete outfitWarRanking.ranking_parameters.Silver;
-                delete outfitWarRanking.ranking_parameters.Bronze;
-                delete outfitWarRanking.ranking_parameters.VictoryPoints;
             }
 
             const outfit: OutfitEmbed | null = await this.mongoOperationsService.findOne<GlobalOutfitAggregateEntity>(
@@ -83,7 +73,7 @@ export class OutfitWarsRankingsCron {
                         id: outfitInfo.outfit_id,
                         name: outfitInfo.name,
                         faction: parseInt(outfitInfo.leader.faction_id, 10),
-                        world: outfitRanking.world_id,
+                        world: outfitWarRanking.world_id,
                         leader: outfitInfo.leader_character_id,
                         tag: outfitInfo.alias,
                     };
@@ -100,12 +90,13 @@ export class OutfitWarsRankingsCron {
             documents.push({$set: {
                 timestamp,
                 round: getOutfitWarRound(timestamp),
-                world: outfitRanking.world_id,
-                outfitWarId: outfitRanking.outfit_war_id,
+                world: outfitWarRanking.world_id,
+                outfitWarId: outfitWarRanking.outfit_war_id,
                 roundId: outfitWarRanking.round_id,
                 outfit,
                 rankingParameters: outfitWarRanking.ranking_parameters,
                 order: outfitWarRanking.order,
+                instanceId: null
             }});
 
             conditionals.push({
@@ -131,5 +122,42 @@ export class OutfitWarsRankingsCron {
         const key = '/crons/outfitwarsrankings';
         await this.cacheService.set(key, Date.now(), 60 * 65); // 1 hour 5 mins
         this.logger.debug('Set outfit wars ranking cron run time');
+    }
+
+    parseLithaFalconRanking(data: LithaFalconOutfitWarDataInterface): {
+        world_id: number,
+        outfit_war_id: number
+        round_id: string,
+        outfit_id: string,
+        order: number,
+        ranking_parameters: {
+            TotalScore: number,
+            MatchesPlayed: number,
+            Wins: number,
+            Losses: number,
+            TiebreakerPoints: number,
+            FactionRank: number,
+            GlobalRank: number
+        }
+    } {        
+        const outfitWarRankingInterface = data.outfit_war_id_join_outfit_war_rounds.primary_round_id_join_outfit_war_ranking;
+        const rankingParameters = outfitWarRankingInterface.ranking_parameters
+        const outfitWarRanking = {
+            world_id: parseInt(data.world_id),
+            outfit_war_id: parseInt(data.outfit_war_id),
+            round_id: outfitWarRankingInterface.round_id,
+            outfit_id: outfitWarRankingInterface.outfit_id,
+            order: parseInt(outfitWarRankingInterface.order),
+            ranking_parameters: {
+                TotalScore: parseInt(rankingParameters.TotalScore),
+                MatchesPlayed: parseInt(rankingParameters.MatchesPlayed),
+                Wins: parseInt(rankingParameters.Wins),
+                Losses: parseInt(rankingParameters.Losses),
+                TiebreakerPoints: parseInt(rankingParameters.TiebreakerPoints),
+                FactionRank: parseInt(rankingParameters.FactionRank),
+                GlobalRank: parseInt(rankingParameters.GlobalRank)
+            }
+        }
+        return outfitWarRanking;
     }
 }

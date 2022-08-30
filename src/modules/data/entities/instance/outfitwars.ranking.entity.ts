@@ -5,12 +5,11 @@ import {Column, ObjectIdColumn, Entity, ObjectID} from 'typeorm';
 import OutfitEmbed from '../aggregate/common/outfit.embed';
 import OutfitwarsRankingParamsEmbed from './outfitwars.ranking.params.embed';
 import {World} from '../../ps2alerts-constants/world';
-import {OutfitwarsRankingInterface} from '../../ps2alerts-constants/interfaces/OutfitwarsRankingInterface';
 
 @Entity({
     name: 'outfitwars_rankings',
 })
-export default class OutfitwarsRankingEntity implements OutfitwarsRankingInterface {
+export default class OutfitwarsRankingEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
@@ -50,6 +49,13 @@ export default class OutfitwarsRankingEntity implements OutfitwarsRankingInterfa
         type: 'number',
     })
     order: number;
+
+    @ApiProperty({example: 'outfitwars-1-10-25939', description: 'The instance corresponding to the match this outfit played in this round'})
+    @Column({
+        type: 'string',
+        nullable: true
+    })
+    instanceId: string | null;
 
     @ApiProperty({example: {
         id: '37570391403474491',
