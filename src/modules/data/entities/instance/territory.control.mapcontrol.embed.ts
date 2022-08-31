@@ -1,7 +1,7 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Column} from 'typeorm';
 
-export default class MapControlEmbed {
+export default class TerritoryControlMapControlEmbed {
     @ApiProperty({example: 20, description: 'VS Capture Percentage'})
     @Column({
         type: 'number',

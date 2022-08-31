@@ -10,10 +10,15 @@ import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-proper
 import {World} from '../../data/ps2alerts-constants/world';
 import {Zone} from '../../data/ps2alerts-constants/zone';
 import {MetagameEventType} from '../../data/ps2alerts-constants/metagameEventType';
-import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
-import {Ps2AlertsFeaturesInterface} from '../../../interfaces/Ps2AlertsFeaturesInterface';
+import {Ps2AlertsEventState} from '../../data/ps2alerts-constants/ps2AlertsEventState';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
-import Ps2AlertsInstanceResultInterface from '../../../interfaces/Ps2AlertsInstanceResultInterface';
+import {
+    MetagameTerritoryControlResultInterface,
+} from '../../data/ps2alerts-constants/interfaces/MetagameTerritoryControlResultInterface';
+import {
+    PS2AlertsInstanceFeaturesInterface,
+} from '../../data/ps2alerts-constants/interfaces/PS2AlertsInstanceFeaturesInterface';
+import {Ps2AlertsEventType} from '../../data/ps2alerts-constants/ps2AlertsEventType';
 
 export class CreateInstanceMetagameDto {
     @IsString()
@@ -33,7 +38,10 @@ export class CreateInstanceMetagameDto {
 
     @IsDateString()
     @IsOptional()
-    @ApiModelProperty({example: null, default: null})
+    @ApiModelProperty({
+        example: null,
+        default: null,
+    })
     timeEnded: string | null; // Can't use null for some reason
 
     @IsObject()
@@ -51,7 +59,7 @@ export class CreateInstanceMetagameDto {
             perBasePercentage: 1.1627906976744187,
         },
     })
-    result: Ps2AlertsInstanceResultInterface;
+    result: MetagameTerritoryControlResultInterface;
 
     @IsNumber()
     @IsNotEmpty()
@@ -75,18 +83,29 @@ export class CreateInstanceMetagameDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: Ps2alertsEventState.STARTED})
-    state: Ps2alertsEventState;
+    @ApiModelProperty({example: Ps2AlertsEventState.STARTED})
+    state: Ps2AlertsEventState;
 
     @IsNumber()
     @IsOptional()
-    @ApiModelProperty({example: Bracket.UNKNOWN, default: Bracket.UNKNOWN})
+    @ApiModelProperty({
+        example: Ps2AlertsEventType.LIVE_METAGAME,
+        default: Ps2AlertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2AlertsEventType;
+
+    @IsNumber()
+    @IsOptional()
+    @ApiModelProperty({
+        example: Bracket.UNKNOWN,
+        default: Bracket.UNKNOWN,
+    })
     bracket: Bracket;
 
     @IsObject()
     @IsNotEmpty()
-    @ApiModelProperty({example: {captureHistory: true}})
-    features: Ps2AlertsFeaturesInterface;
+    @ApiModelProperty({example: {captureHistory: true, xpm: true}})
+    features: PS2AlertsInstanceFeaturesInterface;
 
     @IsNotEmpty()
     @ApiModelProperty({example: '1.0'})

@@ -19,7 +19,7 @@ import {
 } from '@nestjs/swagger';
 import InstanceMetagameTerritoryEntity from '../../data/entities/instance/instance.metagame.territory.entity';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
-import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../../data/ps2alerts-constants/ps2AlertsEventState';
 import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
 import {World} from '../../data/ps2alerts-constants/world';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
@@ -38,9 +38,11 @@ import {AuthGuard} from '@nestjs/passport';
 import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
 import {CreateInstanceMetagameDto} from '../Dto/CreateInstanceMetagameDto';
 import {ObjectID} from 'typeorm';
+import {ZONE_IMPLICIT_QUERY} from './common/rest.zone.query';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
+    ZONE_IMPLICIT_QUERY,
     RESULT_VICTOR_QUERY,
     ...TIME_STARTED_IMPLICIT_QUERIES,
     ...COMMON_IMPLICIT_QUERIES,
@@ -109,7 +111,7 @@ export class RestInstanceMetagameController {
     @Delete('/:instance')
     @ApiOperation({summary: 'INTERNAL: Delete a single metagame instance'})
     @ApiOkResponse({description: 'Record deleted'})
-    @ApiUnauthorizedResponse({description: 'TFhis is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
+    @ApiUnauthorizedResponse({description: 'This is an internal PS2Alerts endpoint, you won\'t have access to this - ever.'})
     @ApiSecurity('basic')
     @UseGuards(AuthGuard('basic'))
     async deleteOne(
@@ -143,7 +145,7 @@ export class RestInstanceMetagameController {
             await this.mongoOperationsService.findMany(
                 InstanceMetagameTerritoryEntity,
                 {
-                    state: Ps2alertsEventState.STARTED,
+                    state: Ps2AlertsEventState.STARTED,
                     world,
                     zone,
                 },
@@ -161,7 +163,7 @@ export class RestInstanceMetagameController {
         type: InstanceMetagameTerritoryEntity,
         isArray: true,
     })
-    async findAllTerritoryControl(
+    async findAllTerritoryControls(
         @Query('world', OptionalIntPipe) world?: World,
             @Query('zone', OptionalIntPipe) zone?: Zone,
             @Query('timeStartedFrom', OptionalDatePipe) timeStartedFrom?: Date | undefined,

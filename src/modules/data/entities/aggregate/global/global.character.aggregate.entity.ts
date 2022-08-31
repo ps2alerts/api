@@ -6,12 +6,14 @@ import {World, worldArray} from '../../../ps2alerts-constants/world';
 import CharacterEmbed from '../common/character.embed';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_global_characters',
 })
-@Index(['world', 'character.id', 'bracket'], {unique: true})
+@Index(['world', 'character.id', 'bracket', 'ps2AlertsEventType'], {unique: true})
 @Index(['character.id'])
+@Index(['character.name'])
 @Index(['bracket'])
 @Index(['kills'])
 @Index(['deaths'])
@@ -19,6 +21,7 @@ import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 @Index(['teamKilled'])
 @Index(['suicides'])
 @Index(['headshots'])
+@Index(['ps2AlertsEventType'])
 export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -87,4 +90,14 @@ export default class GlobalCharacterAggregateEntity {
     @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
     @Column(() => FactionVersusFactionEmbed)
     factionKills: FactionVersusFactionEmbed;
+
+    @ApiProperty({
+        example: Ps2AlertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2AlertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

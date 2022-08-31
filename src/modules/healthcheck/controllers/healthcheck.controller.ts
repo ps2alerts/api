@@ -40,7 +40,8 @@ export default class HealthcheckController {
             async () => this.redisHealth.isHealthy('healthcheck/test'),
         ];
 
-        if (!process.env.TESTING_MODE && process.env.TESTING_MODE !== 'true') {
+        // If production, Mael's character should always be present in the database
+        if (process.env.NODE_ENV === 'production') {
             indicators.push(async () => this.dbHealth.isHealthy('5428010618035323201'));
         }
 
@@ -63,6 +64,7 @@ export default class HealthcheckController {
         if (process.env.CRON_ENABLED === 'true') {
             indicators.push(async () => this.cronHealth.isHealthy('brackets', 65));
             indicators.push(async () => this.cronHealth.isHealthy('combatHistory', 65));
+            // indicators.push(async () => this.cronHealth.isHealthy('outfitwarsrankings', 60 * 60 * 24 + 300));
             indicators.push(async () => this.cronHealth.isHealthy('xpm', 35));
         }
 

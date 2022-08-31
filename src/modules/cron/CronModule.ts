@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {CacheModule, Module} from '@nestjs/common';
+import {CacheModule, HttpModule, Module} from '@nestjs/common';
 import {CombatHistoryCron} from './combat.history.cron';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import {TypeOrmModule} from '@nestjs/typeorm';
@@ -14,13 +14,17 @@ import {ConfigService} from '@nestjs/config';
 import * as redisStore from 'cache-manager-ioredis';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import {XpmCron} from './xpm.cron';
+import { OutfitWarsRankingsCron } from './outfitwars.rankings.cron';
+import OutfitwarsRankingEntity from '../data/entities/instance/outfitwars.ranking.entity';
 
 @Module({
     imports: [
+        HttpModule,
         TypeOrmModule.forFeature([
             InstanceCombatHistoryAggregateEntity,
             InstanceFactionCombatAggregateEntity,
             InstanceMetagameTerritoryEntity,
+            OutfitwarsRankingEntity,
         ]),
         CacheModule.registerAsync({
             imports: [ConfigModule],
@@ -41,6 +45,7 @@ import {XpmCron} from './xpm.cron';
         RedisCacheService,
         CombatHistoryCron,
         BracketCron,
+        OutfitWarsRankingsCron,
         XpmCron,
     ],
 })

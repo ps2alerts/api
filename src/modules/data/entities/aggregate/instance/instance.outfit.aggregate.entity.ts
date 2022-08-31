@@ -5,12 +5,14 @@ import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import OutfitEmbed from '../common/outfit.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 import XperminuteOutfitEmbed from '../common/xperminute.outfit.embed';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_instance_outfits',
 })
-@Index(['instance', 'outfit.id'], {unique: true})
+@Index(['instance', 'outfit.id', 'ps2AlertsEventType'], {unique: true})
 @Index(['outfit.id'])
+@Index(['ps2AlertsEventType'])
 export default class InstanceOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -103,4 +105,14 @@ export default class InstanceOutfitAggregateEntity {
     @ApiProperty({type: XperminuteOutfitEmbed, description: 'Statistics per minute for outfit relative to duration in alert'})
     @Column(() => XperminuteOutfitEmbed)
     xPerMinutes: XperminuteOutfitEmbed;
+
+    @ApiProperty({
+        example: Ps2AlertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2AlertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

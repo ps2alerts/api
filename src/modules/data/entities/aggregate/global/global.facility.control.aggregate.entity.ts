@@ -6,13 +6,15 @@ import {World, worldArray} from '../../../ps2alerts-constants/world';
 import FacilityFactionControl from '../common/facility.faction.control.embed';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
 import FacilityEmbed from '../common/facility.embed';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_global_facility_controls',
 })
-@Index(['world', 'facility.id', 'bracket'], {unique: true})
+@Index(['world', 'facility.id', 'bracket', 'ps2AlertsEventType'], {unique: true})
 @Index(['bracket'])
 @Index(['facility.zone'])
+@Index(['ps2AlertsEventType'])
 export default class GlobalFacilityControlAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -53,4 +55,14 @@ export default class GlobalFacilityControlAggregateEntity {
     @ApiProperty({type: FacilityFactionControl, description: 'Facility Capture / Defenses for all factions'})
     @Column(() => FacilityFactionControl)
     totals: FacilityFactionControl;
+
+    @ApiProperty({
+        example: Ps2AlertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2AlertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

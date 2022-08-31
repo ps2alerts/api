@@ -5,7 +5,7 @@ import {Inject, Injectable, Logger} from '@nestjs/common';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import GlobalAggregatorMessageInterface from './interfaces/global.aggregator.message.interface';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
-import {Ps2alertsEventState} from '../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../data/ps2alerts-constants/ps2AlertsEventState';
 import {Bracket} from '../data/ps2alerts-constants/bracket';
 
 @Injectable()
@@ -88,45 +88,40 @@ export default class AggregatorDataHandler {
     public async transformGlobal(data: GlobalAggregatorMessageInterface): Promise<GlobalAggregatorMessageInterface> {
         const newConditionals: any[] = [];
 
-        // If bracket has been supplied intentionally (such as the "Total" bracket (0)) then add it in now
-        if (data.bracket === Bracket.TOTAL) {
-            data.conditionals.forEach((conditional) => {
-                // Format for any dates
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                conditional = this.transformDateConditional(conditional);
+        for (let conditional of data.conditionals) {
+            // Format for any dates
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            conditional = this.transformDateConditional(conditional);
 
-                newConditionals.push(Object.assign(conditional, {
-                    bracket: Bracket.TOTAL,
-                }));
-            });
-        } else {
-            let instance: InstanceMetagameTerritoryEntity;
+            let bracket: Bracket;
 
-            try {
-                // If none is found an exception will throw (fineOneOrFail)
-                instance = await this.mongoOperationsService.findOne(
-                    InstanceMetagameTerritoryEntity,
-                    {instanceId: data.instance},
-                );
-            } catch (e) {
-                throw new Error(`Instance ${data.instance} does not exist.`);
-            }
-
-            // Pull out conditionals and apply bracket to them
-            if (instance.state === Ps2alertsEventState.ENDED) {
-                data.conditionals.forEach((conditional) => {
-                    // Format for any dates
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    conditional = this.transformDateConditional(conditional);
-                    newConditionals.push(Object.assign(conditional, {
-                        bracket: instance.bracket,
-                    }));
-                });
+            // If total bracket was not supplied, we are going to pull in the instance and get it's bracket
+            if (data.bracket === Bracket.TOTAL) {
+                bracket = Bracket.TOTAL;
             } else {
-                this.logger.error(`Received Global Aggregate message for unfinished instance ${data.instance}`);
+                let instance: InstanceMetagameTerritoryEntity;
+
+                try {
+                    // If none is found an exception will throw (fineOneOrFail)
+                    instance = await this.mongoOperationsService.findOne(
+                        InstanceMetagameTerritoryEntity,
+                        {instanceId: data.instance},
+                    );
+                } catch (e) {
+                    throw new Error(`Instance ${data.instance} does not exist.`);
+                }
+
+                if (instance.state === Ps2AlertsEventState.ENDED) {
+                    bracket = instance.bracket;
+                } else {
+                    throw new Error(`Received Global Aggregate message for unfinished instance ${data.instance}`);
+                }
             }
+
+            newConditionals.push(Object.assign(conditional, {bracket}));
         }
 
+        // Reassign the conditionals to the newly generated conditions
         data.conditionals = newConditionals;
 
         return data;

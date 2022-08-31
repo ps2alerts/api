@@ -2,19 +2,19 @@
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {Faction, factionArray} from '../../ps2alerts-constants/faction';
-import TerritoryControlMapControlEmbed from './territory.control.mapcontrol.embed';
+import {outfitWarsTeamArray, Team} from '../../ps2alerts-constants/outfitwars/team';
+import OutfitWarsTerritoryResultEmbed from '../aggregate/common/outfitwars.territory.result.embed';
 
 @Entity({
-    name: 'instance_facility_controls',
+    name: 'outfitwars_facility_controls',
 })
 @Index(['instance', 'facility', 'timestamp'], {unique: true})
-export default class InstanceFacilityControlEntity {
+export default class OutfitwarsFacilityControlEntity {
     @ObjectIdColumn()
     @Exclude()
     _id: ObjectID;
 
-    @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination'})
+    @ApiProperty({example: 'outfitwars-1-10-34709', description: 'Unique outfitwars identifier'})
     @Column({
         type: 'string',
     })
@@ -32,19 +32,19 @@ export default class InstanceFacilityControlEntity {
     })
     timestamp: Date;
 
-    @ApiProperty({enum: factionArray, description: 'Losing faction that lost control of the facility'})
+    @ApiProperty({enum: outfitWarsTeamArray, description: 'Losing team that lost control of the facility'})
     @Column({
         type: 'enum',
-        enum: factionArray,
+        enum: outfitWarsTeamArray,
     })
-    oldFaction: Faction;
+    oldFaction: Team;
 
-    @ApiProperty({enum: factionArray, description: 'Winning faction that took control of the facility'})
+    @ApiProperty({enum: outfitWarsTeamArray, description: 'Winning team that took control of the facility'})
     @Column({
         type: 'enum',
-        enum: factionArray,
+        enum: outfitWarsTeamArray,
     })
-    newFaction: Faction;
+    newFaction: Team;
 
     @ApiProperty({example: 0, description: 'Time since last capture / defense event (in seconds)'})
     @Column({
@@ -73,7 +73,7 @@ export default class InstanceFacilityControlEntity {
     })
     outfitCaptured?: string | null;
 
-    @ApiProperty({type: TerritoryControlMapControlEmbed, description: 'Snapshot of the territory control at the point of capture'})
-    @Column(() => TerritoryControlMapControlEmbed)
-    mapControl: TerritoryControlMapControlEmbed;
+    @ApiProperty({type: OutfitWarsTerritoryResultEmbed, description: 'Snapshot of the territory control at the point of capture (outfitwars version)'})
+    @Column(() => OutfitWarsTerritoryResultEmbed)
+    mapControl: OutfitWarsTerritoryResultEmbed;
 }

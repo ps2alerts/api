@@ -1,21 +1,21 @@
 // @See modules/data/entities/instance/instance.facilitycontrol.entity.ts
-import {Faction} from '../../data/ps2alerts-constants/faction';
 import {IsBoolean, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import TerritoryControlMapControlEmbed from '../../data/entities/instance/territory.control.mapcontrol.embed';
+import {Team} from '../../../data/ps2alerts-constants/outfitwars/team';
+import OutfitwarsMapControlEmbed from '../../../data/entities/instance/outfitwars.mapcontrol.embed';
 
-export class UpdateFacilityControlDto {
+export class UpdateFacilityControlOutfitWarsDto {
     @IsNumber()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: Faction.NEW_CONGLOMERATE})
-    oldFaction: Faction;
+    @ApiModelProperty({example: Team.BLUE})
+    oldFaction: Team;
 
     @IsNumber()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: Faction.VANU_SOVEREIGNTY})
-    newFaction: Faction;
+    @ApiModelProperty({example: Team.RED})
+    newFaction: Team;
 
     @IsNumber()
     @IsNotEmpty()
@@ -43,5 +43,5 @@ export class UpdateFacilityControlDto {
     @IsObject()
     @IsOptional()
     @ApiModelProperty({example: null, default: null})
-    mapControl: TerritoryControlMapControlEmbed;
+    mapControl: OutfitwarsMapControlEmbed;
 }

@@ -4,11 +4,13 @@ import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, ObjectID, Index} from 'typeorm';
 import CombatStats from '../common/combat.stats.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_instance_faction_combats',
 })
-@Index(['instance'], {unique: true})
+@Index(['instance', 'ps2AlertsEventType'], {unique: true})
+@Index(['ps2AlertsEventType'])
 export default class InstanceFactionCombatAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -43,4 +45,14 @@ export default class InstanceFactionCombatAggregateEntity {
     @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
     @Column(() => FactionVersusFactionEmbed)
     factionKills: FactionVersusFactionEmbed;
+
+    @ApiProperty({
+        example: Ps2AlertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2AlertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

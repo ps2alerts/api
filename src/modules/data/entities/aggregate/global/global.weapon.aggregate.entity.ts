@@ -6,17 +6,19 @@ import {World, worldArray} from '../../../ps2alerts-constants/world';
 import ItemEmbed from '../common/item.embed';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
+import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
 
 @Entity({
     name: 'aggregate_global_weapons',
 })
-@Index(['world', 'weapon.id', 'bracket'], {unique: true})
+@Index(['world', 'weapon.id', 'bracket', 'ps2AlertsEventType'], {unique: true})
 @Index(['weapon.id'])
 @Index(['bracket'])
 @Index(['kills'])
 @Index(['teamKills'])
 @Index(['suicides'])
 @Index(['headshots'])
+@Index(['ps2AlertsEventType'])
 export default class GlobalWeaponAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -71,4 +73,14 @@ export default class GlobalWeaponAggregateEntity {
     @ApiProperty({type: FactionVersusFactionEmbed, description: 'Kills broken down by faction'})
     @Column(() => FactionVersusFactionEmbed)
     factionKills: FactionVersusFactionEmbed;
+
+    @ApiProperty({
+        example: Ps2AlertsEventType.LIVE_METAGAME,
+        description: 'PS2Alerts Event Type for the aggregate',
+    })
+    @Column({
+        type: 'number',
+        default: Ps2AlertsEventType.LIVE_METAGAME,
+    })
+    ps2AlertsEventType: Ps2AlertsEventType;
 }

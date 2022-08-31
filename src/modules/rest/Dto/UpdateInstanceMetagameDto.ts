@@ -1,9 +1,11 @@
 import {IsDateString, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
 import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import {Ps2alertsEventState} from '../../data/ps2alerts-constants/ps2alertsEventState';
-import Ps2AlertsInstanceResultInterface from '../../../interfaces/Ps2AlertsInstanceResultInterface';
+import {Ps2AlertsEventState} from '../../data/ps2alerts-constants/ps2AlertsEventState';
 import {Faction} from '../../data/ps2alerts-constants/faction';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
+import {
+    MetagameTerritoryControlResultInterface,
+} from '../../data/ps2alerts-constants/interfaces/MetagameTerritoryControlResultInterface';
 
 export class UpdateInstanceMetagameDto {
     @IsString()
@@ -15,8 +17,8 @@ export class UpdateInstanceMetagameDto {
     @IsNumber()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: Ps2alertsEventState.ENDED})
-    state: Ps2alertsEventState;
+    @ApiModelProperty({example: Ps2AlertsEventState.ENDED})
+    state: Ps2AlertsEventState;
 
     @IsNumber()
     @IsNotEmpty()
@@ -45,5 +47,5 @@ export class UpdateInstanceMetagameDto {
             perBasePercentage: 1.1627906976744187,
         },
     })
-    result: Ps2AlertsInstanceResultInterface;
+    result: MetagameTerritoryControlResultInterface;
 }

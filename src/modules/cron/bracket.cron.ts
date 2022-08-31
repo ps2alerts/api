@@ -2,7 +2,7 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {Cron, CronExpression} from '@nestjs/schedule';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
-import {Ps2alertsEventState} from '../data/ps2alerts-constants/ps2alertsEventState';
+import {Ps2AlertsEventState} from '../data/ps2alerts-constants/ps2AlertsEventState';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 import InstancePopulationAggregateEntity
     from '../data/entities/aggregate/instance/instance.population.aggregate.entity';
@@ -38,7 +38,7 @@ export class BracketCron {
 
         // Grab the current actives
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2alertsEventState.STARTED});
+        const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2AlertsEventState.STARTED});
 
         for await (const instance of actives) {
             // If Jaeger, skip and keep as 0 (N/A)
