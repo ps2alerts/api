@@ -5,7 +5,9 @@ import InstanceCombatHistoryAggregateEntity from '../../../../data/entities/aggr
 import Pagination from '../../../../../services/mongo/pagination';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
+import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
+import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
 
 @ApiTags('Instance Combat History Aggregates')
 @Controller('aggregates')
@@ -16,7 +18,7 @@ export default class RestInstanceCombatHistoryAggregateController {
 
     @Get('instance/:instance/combat-history')
     @ApiOperation({summary: 'Returns the InstanceCombatHistoryAggregateEntity for an instance'})
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The InstanceCombatHistoryAggregateEntity aggregate',
@@ -25,11 +27,12 @@ export default class RestInstanceCombatHistoryAggregateController {
     })
     async findMany(
         @Param('instance') instance: string,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceCombatHistoryAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceCombatHistoryAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
+        return this.mongoOperationsService.findMany(InstanceCombatHistoryAggregateEntity, {instance, ps2AlertsEventType}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }

@@ -2,16 +2,19 @@ import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import GlobalFactionCombatAggregateEntity from '../../../../data/entities/aggregate/global/global.faction.combat.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
-import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 import {WORLD_IMPLICIT_QUERY} from '../../common/rest.world.query';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {World} from '../../../../data/ps2alerts-constants/world';
 import Pagination from '../../../../../services/mongo/pagination';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 import {Bracket} from '../../../../data/ps2alerts-constants/bracket';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
-import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
+import {BracketPipe} from '../../../pipes/BracketPipe';
+import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
+import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
+import {AGGREGATE_GLOBAL_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {BRACKET_IMPLICIT_QUERY} from '../../common/rest.bracket.query';
+import {PS2ALERTS_EVENT_TYPE_QUERY} from '../../common/rest.ps2AlertsEventType.query';
 
 @ApiTags('Global Faction Combat Aggregates')
 @Controller('aggregates')
@@ -23,7 +26,7 @@ export default class RestGlobalFactionCombatAggregateController {
 
     @Get('global/faction')
     @ApiOperation({summary: 'Return a filtered list of GlobalFactionCombatAggregateEntity aggregates'})
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_GLOBAL_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of GlobalFactionCombatAggregateEntity aggregates',
@@ -32,7 +35,8 @@ export default class RestGlobalFactionCombatAggregateController {
     })
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
-            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
+            @Query('bracket', BracketPipe) bracket?: Bracket,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
@@ -40,18 +44,19 @@ export default class RestGlobalFactionCombatAggregateController {
     ): Promise<GlobalFactionCombatAggregateEntity[]> {
         const pagination = new Pagination({sortBy, order, page, pageSize}, true);
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const key = `/global/faction/W:${world}-B:${bracket}?P:${pagination.getKey()}`;
+        const key = `/global/faction/W:${world}-B:${bracket}-ET:${ps2AlertsEventType}?P:${pagination.getKey()}`;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
-            await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity, {world, bracket}, pagination),
+            await this.mongoOperationsService.findMany(GlobalFactionCombatAggregateEntity, {world, bracket, ps2AlertsEventType}, pagination),
             900);
     }
 
+    // This seems kinda pointless...
     @Get('global/faction/:world')
     @ApiOperation({summary: 'Returns a GlobalFactionCombatAggregateEntity aggregate with given world'})
-    @ApiImplicitQuery(WORLD_IMPLICIT_QUERY)
+    @ApiImplicitQueries([WORLD_IMPLICIT_QUERY, BRACKET_IMPLICIT_QUERY, PS2ALERTS_EVENT_TYPE_QUERY])
     @ApiResponse({
         status: 200,
         description: 'The GlobalFactionCombatAggregateEntity aggregate',
@@ -59,8 +64,9 @@ export default class RestGlobalFactionCombatAggregateController {
     })
     async findOne(
         @Param('world', OptionalIntPipe) world: World,
-            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
+            @Query('bracket', BracketPipe) bracket?: Bracket,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
     ): Promise<GlobalFactionCombatAggregateEntity> {
-        return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world, bracket});
+        return await this.mongoOperationsService.findOne(GlobalFactionCombatAggregateEntity, {world, bracket, ps2AlertsEventType});
     }
 }

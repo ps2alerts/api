@@ -4,8 +4,11 @@ import InstanceOutfitAggregateEntity from '../../../../data/entities/aggregate/i
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 import Pagination from '../../../../../services/mongo/pagination';
+import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
+import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
+import {INSTANCE_IMPLICIT_QUERY} from '../../common/rest.instance.query';
 
 @ApiTags('Instance Outfit Aggregates')
 @Controller('aggregates')
@@ -16,7 +19,7 @@ export default class RestInstanceOutfitAggregateController {
 
     @Get('instance/:instance/outfit')
     @ApiOperation({summary: 'Returns a list of InstanceOutfitAggregateEntity for an instance'})
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceOutfitAggregateEntity aggregates',
@@ -25,16 +28,18 @@ export default class RestInstanceOutfitAggregateController {
     })
     async findAll(
         @Param('instance') instance: string,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceOutfitAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
+        return this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance, ps2AlertsEventType}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('instance/:instance/outfit/:outfit')
     @ApiOperation({summary: 'Returns a InstanceOutfitAggregateEntity aggregate with given id within an instance'})
+    @ApiImplicitQueries([INSTANCE_IMPLICIT_QUERY])
     @ApiResponse({
         status: 200,
         description: 'The InstanceOutfitAggregateEntity aggregate',

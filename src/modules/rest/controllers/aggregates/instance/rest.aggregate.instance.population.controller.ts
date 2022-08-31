@@ -4,9 +4,11 @@ import InstancePopulationAggregateEntity from '../../../../data/entities/aggrega
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 import Pagination from '../../../../../services/mongo/pagination';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
+import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
 
 @ApiTags('Instance Population Aggregates')
 @Controller('aggregates')
@@ -18,7 +20,7 @@ export default class RestInstancePopulationAggregateController {
 
     @Get('instance/:instance/population')
     @ApiOperation({summary: 'Returns a list of InstancePopulationAggregateEntity for an instance'})
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of InstancePopulationAggregateEntity aggregates',
@@ -27,6 +29,7 @@ export default class RestInstancePopulationAggregateController {
     })
     async findAll(
         @Param('instance') instance: string,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
