@@ -89,7 +89,7 @@ export class OutfitWarsRankingsCron {
 
             documents.push({$set: {
                 timestamp,
-                round: getOutfitWarRound(timestamp),
+                round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,
                 world: outfitWarRanking.world_id,
                 outfitWarId: outfitWarRanking.outfit_war_id,
                 roundId: outfitWarRanking.round_id,
@@ -100,7 +100,7 @@ export class OutfitWarsRankingsCron {
             }});
 
             conditionals.push({
-                round: getOutfitWarRound(timestamp),
+                round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,
                 'outfit.id': outfit.id,
             });
         }
