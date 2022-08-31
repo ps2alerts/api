@@ -49,6 +49,7 @@ export class BracketCron {
 
             const now = new Date().getTime();
             const startCountingFrom = instance.timeStarted.getTime() + (60 * 5 * 1000);
+            const startDate = new Date(startCountingFrom);
 
             if (now < startCountingFrom) {
                 this.logger.debug(`Skipping bracket calculations for instance ${instance.instanceId}, pops still warming up`);
@@ -62,6 +63,7 @@ export class BracketCron {
                     [{
                         $match: {
                             instance: instance.instanceId,
+                            timestamp: {$gt: startDate},
                         },
                     }, {
                         $group: {
