@@ -18,6 +18,7 @@ deployments:
   one:
     index: "rest"
     enabled: true
+    replicas: 1
     containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     resources:
       cpu:
@@ -90,20 +91,20 @@ deployments:
       - name: INTERNAL_API_PASS
         value: "${{ secrets.INTERNAL_API_PASS }}"
     scaling:
-      enabled: true
-      min: 2
-      max: 10
+      enabled: false
+      min: 1
+      max: 1
       targetCpu: 75
     podDisruptionBudget:
       enabled: true
-      minAvailable: 2
+      minAvailable: 1
     strategy: # Best effort controlled rollout
       enabled: true
       maxSurge: 0
       maxUnavailable: 25%
   two:
     index: "aggregator"
-    enabled: true
+    enabled: false
     containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     resources:
       cpu:
@@ -177,12 +178,12 @@ deployments:
         value: "${{ secrets.INTERNAL_API_PASS }}"
     scaling:
       enabled: true
-      min: 1
+      min: 0
       max: 10
       targetCpu: 75
   three:
     index: "cron"
-    enabled: true
+    enabled: false
     containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     resources:
       cpu:
