@@ -13,6 +13,7 @@ import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventTyp
 })
 @Index(['world', 'character.id', 'bracket', 'ps2AlertsEventType'], {unique: true})
 @Index(['character.id'])
+@Index(['character.name'])
 @Index(['bracket'])
 @Index(['kills'])
 @Index(['deaths'])
