@@ -37,7 +37,7 @@
           DB_PORT: "27017"
           DB_USER: "root"
           DB_PASS: "foobar"
-          DB_NAME: "ps2alerts"
+          DB_NAME: "ps2alerts-testing"
           DB_DEBUG: "true"
           REDIS_HOST: "ps2alerts-redis"
           REDIS_PORT: "6379"
