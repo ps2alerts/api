@@ -4,6 +4,7 @@ import {
     Controller, Delete,
     Get, HttpCode,
     Inject,
+    Logger,
     Param, ParseIntPipe, Patch, Post,
     Query, UseGuards,
     UseInterceptors,
@@ -62,6 +63,7 @@ interface OutfitwarsFilterInterface {
 @ApiTags('Outfit Wars')
 @Controller('outfit-wars')
 export class RestOutfitwarsController {
+    private readonly logger = new Logger(RestOutfitwarsController.name);
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
         private readonly cacheService: RedisCacheService,
@@ -325,7 +327,7 @@ export class RestOutfitwarsController {
         return await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, filter, pagination);
     }
 
-    @Patch('ranking/{outfit}/{round}')
+    @Patch('ranking/:outfit/:round')
     @HttpCode(202)
     @ApiOperation({summary: 'INTERNAL: Update a ranking for an outfit by round'})
     @ApiCreatedResponse({description: 'Record updated'})
