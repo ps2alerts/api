@@ -106,7 +106,7 @@ export class OutfitWarsRankingsCron {
             }
 
             documents.push({
-                $set: {
+                $setOnInsert: {
                     startTime,
                     round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,
                     world: outfitWarRanking.world_id,
@@ -115,8 +115,6 @@ export class OutfitWarsRankingsCron {
                     outfit,
                     rankingParameters: outfitWarRanking.ranking_parameters,
                     order: outfitWarRanking.order,
-                },
-                $setOnInsert: {
                     timestamp,
                     instanceId: null,
                 }
