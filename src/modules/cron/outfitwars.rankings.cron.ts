@@ -28,7 +28,7 @@ export class OutfitWarsRankingsCron {
     ) {}
 
     // @Cron('0 8 * 8,9,10 0') // 8AM UTC on every Sunday in August - October
-    @Cron('*/5 * * * *') // Swap to this to get the data now
+    @Cron('*/2 * * * *') // Swap to this to get the data now
     async handleCron(): Promise<void> {
         this.logger.log('Running Outfit Wars Matches job');
 
@@ -42,18 +42,21 @@ export class OutfitWarsRankingsCron {
         const conditionals = [];
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-        const outfitRankings: LithaFalconOutfitWarDataInterface[] = (await this.httpService.get(lithafalconCensusUrl + lithafalconEndpoints.outfitWarRankings).toPromise()).data.outfit_war_list;
-        const matches: LithaFalconOutfitWarMatchResponseInterface = (await this.httpService.get(lithafalconCensusUrl + lithafalconEndpoints.outfitWarMatches).toPromise()).data;
+        const outfitRankings: LithaFalconOutfitWarDataInterface[] = (await this.httpService.get(`${lithafalconCensusUrl}${lithafalconEndpoints.outfitWarRankings}`).toPromise()).data.outfit_war_list;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const matches: LithaFalconOutfitWarMatchResponseInterface = (await this.httpService.get(`${lithafalconCensusUrl}${lithafalconEndpoints.outfitWarMatches}`).toPromise()).data;
         const timestamp = new Date();
 
         const outfitIdToMatchTime = new Map<string, Date>();
-        for(const match of matches.outfit_war_match_list) {
-            if(parseInt(match.world_id) === World.SOLTECH) {
+
+        for (const match of matches.outfit_war_match_list) {
+            if (parseInt(match.world_id, 10) === World.SOLTECH) {
                 // We cannot support SolTech due to API issues
                 continue;
             }
+
             // Date() expects a timestamp in ms, start_time is a timestamp in seconds
-            const matchTime = new Date(parseInt(match.start_time) * 1000)
+            const matchTime = new Date(parseInt(match.start_time, 10) * 1000);
             outfitIdToMatchTime.set(match.outfit_a_id, matchTime);
             outfitIdToMatchTime.set(match.outfit_b_id, matchTime);
         }
@@ -99,8 +102,10 @@ export class OutfitWarsRankingsCron {
             if (outfit === null) {
                 continue;
             }
+
             const startTime = outfitIdToMatchTime.get(outfit.id);
-            if(!startTime) {
+
+            if (!startTime) {
                 this.logger.error(`Missing start time for outfit ${outfit.id}, skipping!`);
                 continue;
             }
@@ -117,7 +122,7 @@ export class OutfitWarsRankingsCron {
                     order: outfitWarRanking.order,
                     timestamp,
                     instanceId: null,
-                }
+                },
             });
 
             conditionals.push({
@@ -163,7 +168,7 @@ export class OutfitWarsRankingsCron {
     } {
         const outfitWarRankingInterface = data.outfit_war_id_join_outfit_war_rounds.primary_round_id_join_outfit_war_ranking;
         const rankingParameters = outfitWarRankingInterface.ranking_parameters;
-        const outfitWarRanking = {
+        return {
             world_id: parseInt(data.world_id, 10),
             outfit_war_id: parseInt(data.outfit_war_id, 10),
             round_id: outfitWarRankingInterface.round_id,
@@ -179,6 +184,5 @@ export class OutfitWarsRankingsCron {
                 GlobalRank: parseInt(rankingParameters.GlobalRank, 10),
             },
         };
-        return outfitWarRanking;
     }
 }
