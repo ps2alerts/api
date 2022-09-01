@@ -89,6 +89,8 @@ deployments:
         value: "${{ secrets.INTERNAL_API_USER }}"
       - name: INTERNAL_API_PASS
         value: "${{ secrets.INTERNAL_API_PASS }}"
+      - name: CENSUS_SERVICE_ID
+        value: "${{ secrets.CENSUS_SERVICE_ID }}"
     scaling:
       enabled: true
       min: 2
@@ -175,6 +177,8 @@ deployments:
         value: "${{ secrets.INTERNAL_API_USER }}"
       - name: INTERNAL_API_PASS
         value: "${{ secrets.INTERNAL_API_PASS }}"
+      - name: CENSUS_SERVICE_ID
+        value: "${{ secrets.CENSUS_SERVICE_ID }}"
     scaling:
       enabled: true
       min: 1
@@ -254,6 +258,8 @@ deployments:
         value: "${{ secrets.INTERNAL_API_USER }}"
       - name: INTERNAL_API_PASS
         value: "${{ secrets.INTERNAL_API_PASS }}"
+      - name: CENSUS_SERVICE_ID
+        value: "${{ secrets.CENSUS_SERVICE_ID }}"
     nodeSelector:
       nodepool: perm-pool
     scaling:

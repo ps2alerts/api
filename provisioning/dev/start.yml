@@ -32,7 +32,6 @@
           NODE_ENV: "development"
           VERSION: "12345"
           HTTP_PORT: "3000"
-          CENSUS_SERVICE_ID: "{{ census_service_id }}"
           DB_HOST: "ps2alerts-db"
           DB_PORT: "27017"
           DB_USER: "root"
@@ -48,6 +47,7 @@
           REST_ENABLED: "true"
           INTERNAL_API_USER: "ps2alerts"
           INTERNAL_API_PASS: "foobar"
+          CENSUS_SERVICE_ID: "{{ census_service_id }}"
         labels:
           traefik.enable: "true"
           traefik.http.routers.ps2alerts_api_http.rule: "Host(`dev.api.ps2alerts.com`)"
