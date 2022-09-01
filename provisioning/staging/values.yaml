@@ -91,7 +91,7 @@ deployments:
   two:
     index: "aggregator"
     enabled: false
-    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-staging-{{ version }}"
     resources:
       cpu:
         limits: 450m
@@ -172,7 +172,7 @@ deployments:
   three:
     index: "cron"
     enabled: true
-    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-staging-{{ version }}"
     resources:
       cpu:
         limits: 450m
