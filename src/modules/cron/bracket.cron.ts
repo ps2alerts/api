@@ -64,6 +64,7 @@ export class BracketCron {
                         $match: {
                             instance: instance.instanceId,
                             timestamp: {$gt: startDate},
+                            total: {$gt: 0}, // To not count instances when aggregator has reset it's pops due to restarts
                         },
                     }, {
                         $group: {

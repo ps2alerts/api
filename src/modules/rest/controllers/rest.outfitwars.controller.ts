@@ -55,8 +55,8 @@ const IMPLICIT_QUERIES = [
 
 interface OutfitwarsFilterInterface {
     world?: World;
-    phase?: Phase;
-    round?: number;
+    'outfitwars.phase'?: Phase;
+    'outfitwars.round'?: number;
     'result.victor'?: Team | undefined;
 }
 
@@ -180,8 +180,8 @@ export class RestOutfitwarsController {
     ): Promise<InstanceOutfitWarsTerritoryEntity[]> {
         const filter: OutfitwarsFilterInterface = {
             world,
-            phase,
-            round,
+            'outfitwars.phase': phase,
+            'outfitwars.round': round,
             'result.victor': victor ?? undefined,
         };
 

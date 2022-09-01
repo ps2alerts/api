@@ -4,7 +4,7 @@ import GlobalCharacterAggregateEntity
     from '../../../../data/entities/aggregate/global/global.character.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {AGGREGATE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {AGGREGATE_GLOBAL_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {World} from '../../../../data/ps2alerts-constants/world';
 import Pagination from '../../../../../services/mongo/pagination';
@@ -15,11 +15,11 @@ import {BRACKET_IMPLICIT_QUERY} from '../../common/rest.bracket.query';
 import {PS2ALERTS_EVENT_TYPE_QUERY} from '../../common/rest.ps2AlertsEventType.query';
 import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
 import {BracketPipe} from '../../../pipes/BracketPipe';
-import {BaseAggregateController} from '../../BaseAggregateController';
+import {BaseGlobalAggregateController} from './BaseGlobalAggregateController';
 
 @ApiTags('Global Character Aggregates')
 @Controller('aggregates')
-export default class RestGlobalCharacterAggregateController extends BaseAggregateController {
+export default class RestGlobalCharacterAggregateController extends BaseGlobalAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
         private readonly cacheService: RedisCacheService,
@@ -29,7 +29,7 @@ export default class RestGlobalCharacterAggregateController extends BaseAggregat
 
     @Get('global/character')
     @ApiOperation({summary: 'Return a filtered list of GlobalCharacterAggregateEntity instances'})
-    @ApiImplicitQueries(AGGREGATE_COMMON_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_GLOBAL_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of matching GlobalCharacterAggregateEntity aggregates',
@@ -37,9 +37,9 @@ export default class RestGlobalCharacterAggregateController extends BaseAggregat
         isArray: true,
     })
     async findAll(
-        @Query('bracket', BracketPipe) bracket: Bracket,
-            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType: Ps2AlertsEventType,
-            @Query('world', OptionalIntPipe) world?: World,
+        @Query('world', OptionalIntPipe) world?: World,
+            @Query('bracket', BracketPipe) bracket?: Bracket,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,

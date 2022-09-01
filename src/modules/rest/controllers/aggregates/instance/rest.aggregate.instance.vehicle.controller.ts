@@ -5,8 +5,10 @@ import MongoOperationsService from '../../../../../services/mongo/mongo.operatio
 import {Vehicle} from '../../../../data/ps2alerts-constants/vehicle';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 import Pagination from '../../../../../services/mongo/pagination';
+import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
+import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
 
 @ApiTags('Instance Vehicle Aggregates')
 @Controller('aggregates')
@@ -17,20 +19,21 @@ export default class RestInstanceVehicleAggregateController {
 
     @Get('instance/:instance/vehicle')
     @ApiOperation({summary: 'Returns a list of InstanceVehicleAggregateEntity aggregates for an instance'})
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceVehicleAggregateEntity aggregates',
         type: InstanceVehicleAggregateEntity,
         isArray: true,
     })
-    async findAll(@Param('instance') instance: string,
-
-        @Query('sortBy') sortBy?: string,
-        @Query('order') order?: string,
-        @Query('page', OptionalIntPipe) page?: number,
-        @Query('pageSize', OptionalIntPipe) pageSize?: number): Promise<InstanceVehicleAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceVehicleAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
+    async findAll(
+        @Param('instance') instance: string,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number): Promise<InstanceVehicleAggregateEntity[]> {
+        return this.mongoOperationsService.findMany(InstanceVehicleAggregateEntity, {instance, ps2AlertsEventType}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     @Get('instance/:instance/vehicle/:vehicle')

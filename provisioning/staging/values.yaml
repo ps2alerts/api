@@ -44,7 +44,7 @@ deployments:
         initialDelaySeconds: 30
     env:
       - name: NODE_ENV
-        value: "production"
+        value: "staging"
       - name: VERSION
         value: "{{ version }}"
       - name: DB_USER
@@ -56,7 +56,7 @@ deployments:
       - name: DB_PORT
         value: '"27017"'
       - name: DB_NAME
-        value: "ps2alerts"
+        value: "ps2alerts-staging"
       - name: DB_DEBUG
         value: '"false"'
       - name: DB_POOL_SIZE
@@ -79,6 +79,8 @@ deployments:
         value: "${{ secrets.INTERNAL_API_USER }}"
       - name: INTERNAL_API_PASS
         value: "${{ secrets.INTERNAL_API_PASS }}"
+      - name: CENSUS_SERVICE_ID
+        value: "${{ secrets.CENSUS_SERVICE_ID }}"
 #    nodeSelector:
 #      nodepool: perm-pool
     scaling:
@@ -86,3 +88,152 @@ deployments:
       min: 1
       max: 2
       targetCpu: 75
+  two:
+    index: "aggregator"
+    enabled: false
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-staging-{{ version }}"
+    resources:
+      cpu:
+        limits: 450m
+        requests: 150m
+      mem:
+        limits: 256Mi
+        requests: 128Mi
+    probes:
+      startupProbe:
+        enabled: true
+        type: httpGet
+        httpGetPath: /healthcheck
+        initialDelaySeconds: 10
+      readinessProbe:
+        enabled: true
+        type: httpGet
+        httpGetPath: /healthcheck
+        initialDelaySeconds: 15
+      livenessProbe:
+        enabled: true
+        type: httpGet
+        httpGetPath: /healthcheck
+        initialDelaySeconds: 15
+    env:
+      - name: NODE_ENV
+        value: "staging"
+      - name: VERSION
+        value: "{{ version }}"
+      - name: DB_USER
+        value: "${{ secrets.DB_USER }}"
+      - name: DB_PASS
+        value: "${{ secrets.DB_PASS_NEW }}"
+      - name: DB_HOST
+        value: "ps2alerts-db"
+      - name: DB_PORT
+        value: '"27017"'
+      - name: DB_NAME
+        value: "ps2alerts-staging"
+      - name: DB_DEBUG
+        value: '"false"'
+      - name: DB_POOL_SIZE
+        value: '"50"'
+      - name: RABBITMQ_HOST
+        value: "ps2alerts-rabbitmq"
+      - name: RABBITMQ_USER
+        value: "ps2alerts"
+      - name: RABBITMQ_PASS
+        value: "${{ secrets.RABBITMQ_PS2ALERTS_PASS }}"
+      - name: RABBITMQ_VHOST
+        value: "/ps2alerts"
+      - name: RABBITMQ_QUEUE
+        value: "api-queue-staging"
+      - name: RABBITMQ_PREFETCH
+        value: '"100"'
+      - name: REDIS_HOST
+        value: "ps2alerts-redis-master"
+      - name: REDIS_PASS
+        value: "${{ secrets.REDIS_PASS }}"
+      - name: REDIS_DB
+        value: '"11"'
+      - name: AGGREGATOR_ENABLED
+        value: '"true"'
+      - name: CRON_ENABLED
+        value: '"false"'
+      - name: REST_ENABLED
+        value: '"false"'
+      - name: INTERNAL_API_USER
+        value: "${{ secrets.INTERNAL_API_USER }}"
+      - name: INTERNAL_API_PASS
+        value: "${{ secrets.INTERNAL_API_PASS }}"
+      - name: CENSUS_SERVICE_ID
+        value: "${{ secrets.CENSUS_SERVICE_ID }}"
+    scaling:
+      enabled: true
+      min: 1
+      max: 10
+      targetCpu: 75
+  three:
+    index: "cron"
+    enabled: true
+    containerImage: "maelstromeous/ps2alerts:ps2alerts-api-staging-{{ version }}"
+    resources:
+      cpu:
+        limits: 450m
+        requests: 150m
+      mem:
+        limits: 256Mi
+        requests: 128Mi
+    probes:
+      startupProbe:
+        enabled: true
+        type: httpGet
+        httpGetPath: /healthcheck
+        initialDelaySeconds: 10
+      readinessProbe:
+        enabled: true
+        type: httpGet
+        httpGetPath: /healthcheck
+        initialDelaySeconds: 15
+      livenessProbe:
+        enabled: true
+        type: httpGet
+        httpGetPath: /healthcheck
+        initialDelaySeconds: 15
+    env:
+      - name: NODE_ENV
+        value: "staging"
+      - name: VERSION
+        value: "{{ version }}"
+      - name: DB_USER
+        value: "${{ secrets.DB_USER }}"
+      - name: DB_PASS
+        value: "${{ secrets.DB_PASS_NEW }}"
+      - name: DB_HOST
+        value: "ps2alerts-db"
+      - name: DB_PORT
+        value: '"27017"'
+      - name: DB_NAME
+        value: "ps2alerts-staging"
+      - name: DB_DEBUG
+        value: '"false"'
+      - name: DB_POOL_SIZE
+        value: '"25"'
+      - name: REDIS_HOST
+        value: "ps2alerts-redis-master"
+      - name: REDIS_PASS
+        value: "${{ secrets.REDIS_PASS }}"
+      - name: REDIS_DB
+        value: '"11"'
+      - name: AGGREGATOR_ENABLED
+        value: '"false"'
+      - name: CRON_ENABLED
+        value: '"true"'
+      - name: REST_ENABLED
+        value: '"false"'
+      - name: INTERNAL_API_USER
+        value: "${{ secrets.INTERNAL_API_USER }}"
+      - name: INTERNAL_API_PASS
+        value: "${{ secrets.INTERNAL_API_PASS }}"
+      - name: CENSUS_SERVICE_ID
+        value: "${{ secrets.CENSUS_SERVICE_ID }}"
+    nodeSelector:
+      nodepool: perm-pool
+    scaling:
+      enabled: false

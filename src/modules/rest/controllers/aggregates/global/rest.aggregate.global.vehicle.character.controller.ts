@@ -6,21 +6,26 @@ import {Vehicle} from '../../../../data/ps2alerts-constants/vehicle';
 import {World} from '../../../../data/ps2alerts-constants/world';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {AGGREGATE_GLOBAL_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import Pagination from '../../../../../services/mongo/pagination';
 import {Bracket} from '../../../../data/ps2alerts-constants/bracket';
-import {MandatoryIntPipe} from '../../../pipes/MandatoryIntPipe';
+import {BaseGlobalAggregateController} from './BaseGlobalAggregateController';
+import {BracketPipe} from '../../../pipes/BracketPipe';
+import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
+import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
 
 @ApiTags('Global Vehicle Character Aggregates')
 @Controller('aggregates')
-export default class RestGlobalVehicleCharacterController {
+export default class RestGlobalVehicleCharacterController extends BaseGlobalAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
-    ) {}
+    ) {
+        super();
+    }
 
     @Get('global/vehicle/character')
     @ApiOperation({summary: 'Returns a list of GlobalVehicleCharacterAggregateEntity aggregates for a world'})
-    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_GLOBAL_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'A list of GlobalVehicleCharacterAggregateEntity aggregates',
@@ -29,18 +34,21 @@ export default class RestGlobalVehicleCharacterController {
     })
     async findAll(
         @Query('world', OptionalIntPipe) world?: World,
+            @Query('bracket', BracketPipe) bracket?: Bracket,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
+        bracket = this.correctBracket(bracket, ps2AlertsEventType);
+
+        return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, bracket, ps2AlertsEventType}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/vehicle/character/:character')
     @ApiOperation({summary: 'Returns GlobalVehicleCharacterAggregateEntity aggregate for a character'})
-    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_GLOBAL_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'GlobalVehicleCharacterAggregateEntity aggregate for character',
@@ -50,18 +58,21 @@ export default class RestGlobalVehicleCharacterController {
     async findOne(
         @Param('character') character: string,
             @Query('world', OptionalIntPipe) world?: World,
+            @Query('bracket', BracketPipe) bracket?: Bracket,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity[]> {
-        return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, character, bracket}, new Pagination({sortBy, order, page, pageSize}, true));
+        bracket = this.correctBracket(bracket, ps2AlertsEventType);
+
+        return await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {world, character, bracket, ps2AlertsEventType}, new Pagination({sortBy, order, page, pageSize}, true));
     }
 
     @Get('global/vehicle/character/:character/:vehicle')
     @ApiOperation({summary: 'Returns GlobalVehicleCharacterAggregateEntity aggregate for a character and a specific vehicle'})
-    @ApiImplicitQueries(COMMON_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_GLOBAL_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'GlobalVehicleCharacterAggregateEntity aggregate for character an vehicle',
@@ -72,14 +83,17 @@ export default class RestGlobalVehicleCharacterController {
         @Param('character') character: string,
             @Param('vehicle', ParseIntPipe) vehicle: Vehicle,
             @Query('world', OptionalIntPipe) world?: World,
+            @Query('bracket', BracketPipe) bracket?: Bracket,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
-            @Query('bracket', MandatoryIntPipe) bracket?: Bracket,
     ): Promise<GlobalVehicleCharacterAggregateEntity | GlobalVehicleCharacterAggregateEntity[]> {
+        bracket = this.correctBracket(bracket, ps2AlertsEventType);
+
         return world
-            ? await this.mongoOperationsService.findOne(GlobalVehicleCharacterAggregateEntity, {world, character, vehicle, bracket})
-            : await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {character, vehicle, bracket}, new Pagination({sortBy, order, page, pageSize}, false));
+            ? await this.mongoOperationsService.findOne(GlobalVehicleCharacterAggregateEntity, {world, character, vehicle, bracket, ps2AlertsEventType})
+            : await this.mongoOperationsService.findMany(GlobalVehicleCharacterAggregateEntity, {character, vehicle, bracket, ps2AlertsEventType}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 }

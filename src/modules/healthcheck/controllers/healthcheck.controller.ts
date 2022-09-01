@@ -56,7 +56,7 @@ export default class HealthcheckController {
                         noAck: this.config.get('rabbitmq.noAck'),
                         prefetchCount: this.config.get('rabbitmq.prefetchCount'),
                     },
-                    timeout: 2000,
+                    timeout: 5000,
                 }),
             );
         }

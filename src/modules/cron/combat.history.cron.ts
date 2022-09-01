@@ -8,6 +8,7 @@ import InstanceFactionCombatAggregateEntity
 import InstanceCombatHistoryAggregateEntity
     from '../data/entities/aggregate/instance/instance.combat.history.aggregate.entity';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
+import InstanceOutfitWarsTerritoryEntity from '../data/entities/instance/instance.outfitwars.territory.entity';
 
 @Injectable()
 export class CombatHistoryCron {
@@ -24,10 +25,12 @@ export class CombatHistoryCron {
         const documents = [];
 
         // Grab the current actives
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2AlertsEventState.STARTED});
+        const territoryActives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2AlertsEventState.STARTED});
+        const outfitWarsActives: InstanceOutfitWarsTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceOutfitWarsTerritoryEntity, {state: Ps2AlertsEventState.STARTED});
 
-        for await (const row of actives) {
+        const combinedActives = [...territoryActives, ...outfitWarsActives];
+
+        for await (const row of combinedActives) {
             // If instance is overdue, don't process
             if (Date.now() > (row.timeStarted.getTime() + row.duration)) {
                 this.logger.warn(`Instance [${row.instanceId}] is overdue, skipping combat history job`);

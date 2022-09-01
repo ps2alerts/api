@@ -5,8 +5,12 @@ import MongoOperationsService from '../../../../../services/mongo/mongo.operatio
 import {Loadout} from '../../../../data/ps2alerts-constants/loadout';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 import Pagination from '../../../../../services/mongo/pagination';
+import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
+import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
+import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
+import {INSTANCE_IMPLICIT_QUERY} from '../../common/rest.instance.query';
+import {PS2ALERTS_EVENT_TYPE_QUERY} from '../../common/rest.ps2AlertsEventType.query';
 
 @ApiTags('Instance Loadout Aggregates')
 @Controller('aggregates')
@@ -17,7 +21,7 @@ export default class RestInstanceLoadoutAggregateController {
 
     @Get('instance/:instance/loadout')
     @ApiOperation({summary: 'Returns a list of InstanceLoadoutAggregateEntity for an instance'})
-    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
+    @ApiImplicitQueries(AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of InstanceLoadoutAggregateEntity aggregates',
@@ -26,17 +30,19 @@ export default class RestInstanceLoadoutAggregateController {
     })
     async findAll(
         @Param('instance') instance: string,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceLoadoutAggregateEntity[]> {
-        return this.mongoOperationsService.findMany(InstanceLoadoutAggregateEntity, {instance}, new Pagination({sortBy, order, page, pageSize}, false));
+        return this.mongoOperationsService.findMany(InstanceLoadoutAggregateEntity, {instance, ps2AlertsEventType}, new Pagination({sortBy, order, page, pageSize}, false));
     }
 
     // Note we use loadout here because loadout is a NodeJS reserved name and TS gets confused
     @Get('instance/:instance/loadout/:loadout')
     @ApiOperation({summary: 'Returns a specific loadout of InstanceLoadoutAggregateEntity aggregates within an instance'})
+    @ApiImplicitQueries([INSTANCE_IMPLICIT_QUERY, PS2ALERTS_EVENT_TYPE_QUERY])
     @ApiResponse({
         status: 200,
         description: 'The InstanceLoadoutAggregateEntity aggregate',
@@ -45,7 +51,8 @@ export default class RestInstanceLoadoutAggregateController {
     async findOne(
         @Param('instance') instance: string,
             @Param('loadout', ParseIntPipe) loadout: Loadout,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
     ): Promise<InstanceLoadoutAggregateEntity> {
-        return await this.mongoOperationsService.findOne(InstanceLoadoutAggregateEntity, {instance, loadout});
+        return await this.mongoOperationsService.findOne(InstanceLoadoutAggregateEntity, {instance, loadout, ps2AlertsEventType});
     }
 }
