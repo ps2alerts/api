@@ -61,18 +61,6 @@ deployments:
         value: '"false"'
       - name: DB_POOL_SIZE
         value: '"25"'
-      - name: RABBITMQ_HOST
-        value: "ps2alerts-rabbitmq"
-      - name: RABBITMQ_USER
-        value: "ps2alerts"
-      - name: RABBITMQ_PASS
-        value: "${{ secrets.RABBITMQ_PS2ALERTS_PASS }}"
-      - name: RABBITMQ_VHOST
-        value: "/ps2alerts"
-      - name: RABBITMQ_QUEUE
-        value: "api-queue-production"
-      - name: RABBITMQ_PREFETCH
-        value: '"1000"'
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
@@ -160,7 +148,7 @@ deployments:
       - name: RABBITMQ_QUEUE
         value: "api-queue-production"
       - name: RABBITMQ_PREFETCH
-        value: '"500"'
+        value: '"100"'
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
@@ -230,18 +218,6 @@ deployments:
         value: '"false"'
       - name: DB_POOL_SIZE
         value: '"25"'
-      - name: RABBITMQ_HOST
-        value: "ps2alerts-rabbitmq"
-      - name: RABBITMQ_USER
-        value: "ps2alerts"
-      - name: RABBITMQ_PASS
-        value: "${{ secrets.RABBITMQ_PS2ALERTS_PASS }}"
-      - name: RABBITMQ_VHOST
-        value: "/ps2alerts"
-      - name: RABBITMQ_QUEUE
-        value: "api-queue-production"
-      - name: RABBITMQ_PREFETCH
-        value: '"1000"'
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS

@@ -145,7 +145,7 @@ deployments:
       - name: RABBITMQ_QUEUE
         value: "api-queue-staging"
       - name: RABBITMQ_PREFETCH
-        value: '"500"'
+        value: '"100"'
       - name: REDIS_HOST
         value: "ps2alerts-redis-master"
       - name: REDIS_PASS
