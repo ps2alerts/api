@@ -15,6 +15,7 @@ import {CensusEnvironment} from '../data/ps2alerts-constants/censusEnvironments'
 import {
     OutfitLeaderCharacterFactionJoinInterface,
 } from '../data/ps2alerts-constants/interfaces/census-responses/OutfitLeaderCharacterFactionJoinInterface';
+import LithaFalconOutfitWarMatchResponseInterface from '../data/ps2alerts-constants/interfaces/LithaFalconOutfitWarMatchResponseInterface';
 
 @Injectable()
 export class OutfitWarsRankingsCron {
@@ -41,8 +42,21 @@ export class OutfitWarsRankingsCron {
         const conditionals = [];
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-        const outfitRankings: LithaFalconOutfitWarDataInterface[] = (await this.httpService.get(lithafalconCensusUrl + lithafalconEndpoints.outfitWarMatches).toPromise()).data.outfit_war_list;
+        const outfitRankings: LithaFalconOutfitWarDataInterface[] = (await this.httpService.get(lithafalconCensusUrl + lithafalconEndpoints.outfitWarRankings).toPromise()).data.outfit_war_list;
+        const matches: LithaFalconOutfitWarMatchResponseInterface = (await this.httpService.get(lithafalconCensusUrl + lithafalconEndpoints.outfitWarMatches).toPromise()).data;
         const timestamp = new Date();
+
+        const outfitIdToMatchTime = new Map<string, Date>();
+        for(const match of matches.outfit_war_match_list) {
+            if(parseInt(match.world_id) === World.SOLTECH) {
+                // We cannot support SolTech due to API issues
+                continue;
+            }
+            // Date() expects a timestamp in ms, start_time is a timestamp in seconds
+            const matchTime = new Date(parseInt(match.start_time) * 1000)
+            outfitIdToMatchTime.set(match.outfit_a_id, matchTime);
+            outfitIdToMatchTime.set(match.outfit_b_id, matchTime);
+        }
 
         for (const outfitRankingInterface of outfitRankings) {
             const outfitWarRanking = this.parseLithaFalconRanking(outfitRankingInterface);
@@ -85,18 +99,28 @@ export class OutfitWarsRankingsCron {
             if (outfit === null) {
                 continue;
             }
+            const startTime = outfitIdToMatchTime.get(outfit.id);
+            if(!startTime) {
+                this.logger.error(`Missing start time for outfit ${outfit.id}, skipping!`);
+                continue;
+            }
 
-            documents.push({$set: {
-                timestamp,
-                round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,
-                world: outfitWarRanking.world_id,
-                outfitWarId: outfitWarRanking.outfit_war_id,
-                roundId: outfitWarRanking.round_id,
-                outfit,
-                rankingParameters: outfitWarRanking.ranking_parameters,
-                order: outfitWarRanking.order,
-                instanceId: null,
-            }});
+            documents.push({
+                $set: {
+                    startTime,
+                    round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,
+                    world: outfitWarRanking.world_id,
+                    outfitWarId: outfitWarRanking.outfit_war_id,
+                    roundId: outfitWarRanking.round_id,
+                    outfit,
+                    rankingParameters: outfitWarRanking.ranking_parameters,
+                    order: outfitWarRanking.order,
+                },
+                $setOnInsert: {
+                    timestamp,
+                    instanceId: null,
+                }
+            });
 
             conditionals.push({
                 round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,

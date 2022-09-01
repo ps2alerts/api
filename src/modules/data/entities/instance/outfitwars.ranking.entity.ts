@@ -20,6 +20,12 @@ export default class OutfitwarsRankingEntity {
     })
     timestamp: Date;
 
+    @ApiProperty({example: new Date(), description: 'Match start time in UTC'})
+    @Column({
+        type: 'date',
+    })
+    startTime: Date;
+
     @ApiProperty({example: 1, description: 'The round during which this ranking was created'})
     @Column({
         type: 'number',
