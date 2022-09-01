@@ -67,7 +67,6 @@ export class BracketCron {
                             vs: {$gt: 0}, // To not count instances when aggregator has reset it's pops due to restarts
                             nc: {$gt: 0},
                             tr: {$gt: 0},
-                            nso: {$gt: 0},
                         },
                     }, {
                         $group: {
