@@ -106,16 +106,24 @@ export class OutfitWarsRankingsCron {
             const startTime = outfitIdToMatchTime.get(outfit.id);
 
             if (!startTime) {
-                this.logger.error(`Missing start time for outfit ${outfit.id}, skipping!`);
+                this.logger.error(`Missing start time for outfit ${outfit.id} on world ${outfitWarRanking.world_id}, not inserting!`);
+                continue;
+            }
+
+            if(outfitWarRanking.ranking_parameters.Wins === undefined 
+                || outfitWarRanking.ranking_parameters.Losses === undefined 
+                || outfitWarRanking.ranking_parameters.TiebreakerPoints === undefined
+            ) {
+                this.logger.error(`Missing Wins or Losses or Tiebreaker points for outfit ${outfit.id} on world ${outfitWarRanking.world_id}, not inserting!`);
                 continue;
             }
 
             documents.push({
                 $set: {
                     rankingParameters: outfitWarRanking.ranking_parameters,
+                    startTime,
                 },
                 $setOnInsert: {
-                    startTime,
                     round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,
                     world: outfitWarRanking.world_id,
                     outfitWarId: outfitWarRanking.outfit_war_id,
