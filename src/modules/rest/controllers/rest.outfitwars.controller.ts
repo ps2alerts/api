@@ -173,7 +173,7 @@ export class RestOutfitwarsController {
             10);
     }
 
-    escapeRegex(text: string | undefined) {
+    escapeRegex(text: string | undefined): string {
         if(!text) {
             return '.*';
         }
