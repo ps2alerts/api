@@ -110,9 +110,9 @@ export class OutfitWarsRankingsCron {
                 continue;
             }
 
-            if (outfitWarRanking.ranking_parameters.Wins === undefined
-                || outfitWarRanking.ranking_parameters.Losses === undefined
-                || outfitWarRanking.ranking_parameters.TiebreakerPoints === undefined
+            if (Number.isNaN(outfitWarRanking.ranking_parameters.Wins)
+                || Number.isNaN(outfitWarRanking.ranking_parameters.Losses)
+                || Number.isNaN(outfitWarRanking.ranking_parameters.TiebreakerPoints)
             ) {
                 this.logger.error(`Missing Wins or Losses or Tiebreaker points for outfit ${outfit.id} on world ${outfitWarRanking.world_id}, not inserting!`);
                 continue;
