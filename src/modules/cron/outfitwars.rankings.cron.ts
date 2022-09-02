@@ -157,7 +157,7 @@ export class OutfitWarsRankingsCron {
         // This sets the fact that the cron has run, so if it hasn't been run it will be terminated.
         const key = '/crons/outfitwarsrankings';
         await this.cacheService.set(key, Date.now(), 60 * 65); // 1 hour 5 mins
-        this.logger.debug('Set outfit wars ranking cron run time');
+        this.logger.log('Set outfit wars ranking cron run time');
     }
 
     parseLithaFalconRanking(data: LithaFalconOutfitWarDataInterface): {

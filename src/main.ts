@@ -15,7 +15,7 @@ async function bootstrap(): Promise<void> {
             logger: process.env.NODE_ENV === 'development',
         }),
         {
-            logger: process.env.NODE_ENV === 'development' ? ['debug', 'warn', 'error'] : ['warn', 'error'],
+            logger: process.env.NODE_ENV === 'development' ? ['debug', 'log', 'warn', 'error'] : ['log', 'warn', 'error'],
         },
     );
 
