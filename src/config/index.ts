@@ -5,7 +5,7 @@ export const config = () => ({
     env: process.env.NODE_ENV,
 
     census: {
-        serviceId: process.env.CENSUS_SERVICE_ID
+        serviceId: process.env.CENSUS_SERVICE_ID,
     },
 
     database: {

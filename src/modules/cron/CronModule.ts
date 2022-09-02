@@ -14,7 +14,7 @@ import {ConfigService} from '@nestjs/config';
 import * as redisStore from 'cache-manager-ioredis';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import {XpmCron} from './xpm.cron';
-import { OutfitWarsRankingsCron } from './outfitwars.rankings.cron';
+import {OutfitWarsRankingsCron} from './outfitwars.rankings.cron';
 import OutfitwarsRankingEntity from '../data/entities/instance/outfitwars.ranking.entity';
 
 @Module({
