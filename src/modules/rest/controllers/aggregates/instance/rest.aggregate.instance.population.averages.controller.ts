@@ -6,7 +6,6 @@ import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator'
 import Pagination from '../../../../../services/mongo/pagination';
 import InstancePopulationAveragesAggregateEntity
     from '../../../../data/entities/aggregate/instance/instance.population.averages.aggregate.entity';
-import {INSTANCE_IMPLICIT_QUERY} from '../../common/rest.instance.query';
 import {PAGINATION_IMPLICIT_QUERIES} from '../../common/rest.pagination.queries';
 
 @ApiTags('Instance Population Average Aggregates')
@@ -18,7 +17,7 @@ export default class RestInstancePopulationAggregateAveragesController {
 
     @Get('instance/:instance/population/averages')
     @ApiOperation({summary: 'Returns a list of InstancePopulationAveragesAggregateEntity for an instance'})
-    @ApiImplicitQueries([INSTANCE_IMPLICIT_QUERY, ...PAGINATION_IMPLICIT_QUERIES])
+    @ApiImplicitQueries(PAGINATION_IMPLICIT_QUERIES)
     @ApiResponse({
         status: 200,
         description: 'The list of InstancePopulationAveragesAggregateEntity aggregates',
