@@ -119,10 +119,10 @@ export default class MongoOperationsService {
      * @param conditionals list of objects provided choosing which documents to update
      */
     public async upsertMany(entity: any, docs: any[], conditionals: any[]): Promise<boolean> {
-        if(docs.length !== conditionals.length) {
+        if (docs.length !== conditionals.length) {
             throw new Error('UpsertMany requires equal lengths of documents and conditionals!');
         }
-        
+
         docs = this.transform(docs);
         const operations: any[] = [];
 

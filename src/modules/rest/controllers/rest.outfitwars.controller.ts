@@ -44,8 +44,8 @@ import {UpdateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/UpdateFacili
 import OutfitwarsFacilityControlEntity from '../../data/entities/instance/outfitwars.facility.control.entity';
 import {CreateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/CreateFacilityControlOutfitWarsDto';
 import OutfitwarsRankingEntity from '../../data/entities/instance/outfitwars.ranking.entity';
-import { UpdateRankingOutfitWarsDto } from '../Dto/outfitwars/UpdateRankingOutfitWarsDto';
-import { Faction } from '../../data/ps2alerts-constants/faction';
+import {UpdateRankingOutfitWarsDto} from '../Dto/outfitwars/UpdateRankingOutfitWarsDto';
+import {Faction} from '../../data/ps2alerts-constants/faction';
 
 const IMPLICIT_QUERIES = [
     WORLD_IMPLICIT_QUERY,
@@ -55,8 +55,8 @@ const IMPLICIT_QUERIES = [
 ];
 
 interface RegexFilterInterface {
-    '$regex': string,
-    '$options'?: string | undefined
+    '$regex': string;
+    '$options'?: string | undefined;
 }
 
 interface OutfitwarsFilterInterface {
@@ -71,7 +71,7 @@ interface OutfitwarsFilterInterface {
         {'outfitwars.teams.blue.name': RegexFilterInterface },
         {'outfitwars.teams.red.tag': RegexFilterInterface },
         {'outfitwars.teams.red.name': RegexFilterInterface },
-    ]
+    ];
 }
 
 @ApiTags('Outfit Wars')
@@ -174,11 +174,12 @@ export class RestOutfitwarsController {
     }
 
     escapeRegex(text: string | undefined): string {
-        if(!text) {
+        if (!text) {
             return '.*';
         }
-        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-    };
+
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    }
 
     @Get('/list')
     @ApiOperation({summary: 'Return a paginated list of outfit wars instances, optionally requested by world, phase, round, victor, either team faction, or outfit tag/name'})
@@ -186,7 +187,7 @@ export class RestOutfitwarsController {
         name: 'redTeamFaction',
         required: false,
         type: Number,
-    }, 
+    },
     {
         name: 'blueTeamFaction',
         required: false,
@@ -216,7 +217,7 @@ export class RestOutfitwarsController {
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceOutfitWarsTerritoryEntity[]> {
-        const escapedNameOrTag = this.escapeRegex(outfitNameOrTag)
+        const escapedNameOrTag = this.escapeRegex(outfitNameOrTag);
         const filter: OutfitwarsFilterInterface = {
             world,
             'outfitwars.phase': phase,
@@ -224,12 +225,12 @@ export class RestOutfitwarsController {
             'result.victor': victor ?? undefined,
             'outfitwars.teams.red.faction': redTeamFaction ?? undefined,
             'outfitwars.teams.blue.faction': blueTeamFaction ?? undefined,
-            '$or': [
-                {'outfitwars.teams.blue.tag': { '$regex': escapedNameOrTag, '$options': 'i' } },
-                {'outfitwars.teams.blue.name': { '$regex': escapedNameOrTag, '$options': 'i'} },
-                {'outfitwars.teams.red.tag': { '$regex': escapedNameOrTag, '$options': 'i'} },
-                {'outfitwars.teams.red.name': { '$regex': escapedNameOrTag, '$options': 'i'} },
-            ]
+            $or: [
+                {'outfitwars.teams.blue.tag': {$regex: escapedNameOrTag, $options: 'i'}},
+                {'outfitwars.teams.blue.name': {$regex: escapedNameOrTag, $options: 'i'}},
+                {'outfitwars.teams.red.tag': {$regex: escapedNameOrTag, $options: 'i'}},
+                {'outfitwars.teams.red.name': {$regex: escapedNameOrTag, $options: 'i'}},
+            ],
         };
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -384,8 +385,8 @@ export class RestOutfitwarsController {
     @UseGuards(AuthGuard('basic'))
     async updateRanking(
         @Param('outfit') outfitId: string,
-        @Param('round', ParseIntPipe) round: number,
-        @Body() entity: UpdateRankingOutfitWarsDto,
+            @Param('round', ParseIntPipe) round: number,
+            @Body() entity: UpdateRankingOutfitWarsDto,
     ): Promise<boolean> {
         const filter = {'outfit.id': outfitId, round};
         const record: OutfitwarsRankingEntity = await this.mongoOperationsService.findOne(OutfitwarsRankingEntity, filter);
@@ -393,6 +394,6 @@ export class RestOutfitwarsController {
         const updatedRecord = Object.assign(record, entity);
 
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        return await this.mongoOperationsService.upsert(OutfitwarsRankingEntity, [{'$set':updatedRecord}], [{_id: updatedRecord._id}]);
+        return await this.mongoOperationsService.upsert(OutfitwarsRankingEntity, [{$set: updatedRecord}], [{_id: updatedRecord._id}]);
     }
 }

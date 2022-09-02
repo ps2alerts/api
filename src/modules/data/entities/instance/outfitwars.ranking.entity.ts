@@ -59,7 +59,7 @@ export default class OutfitwarsRankingEntity {
     @ApiProperty({example: 'outfitwars-1-10-25939', description: 'The instance corresponding to the match this outfit played in this round'})
     @Column({
         type: 'string',
-        nullable: true
+        nullable: true,
     })
     instanceId: string | null;
 
