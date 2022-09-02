@@ -97,7 +97,7 @@ deployments:
     containerImage: "maelstromeous/ps2alerts:ps2alerts-api-production-{{ version }}"
     resources:
       cpu:
-        limits: 500m
+        limits: 750m
         requests: 250m
       mem:
         limits: 256Mi
