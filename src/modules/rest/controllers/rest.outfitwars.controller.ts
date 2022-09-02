@@ -45,6 +45,7 @@ import OutfitwarsFacilityControlEntity from '../../data/entities/instance/outfit
 import {CreateFacilityControlOutfitWarsDto} from '../Dto/outfitwars/CreateFacilityControlOutfitWarsDto';
 import OutfitwarsRankingEntity from '../../data/entities/instance/outfitwars.ranking.entity';
 import { UpdateRankingOutfitWarsDto } from '../Dto/outfitwars/UpdateRankingOutfitWarsDto';
+import { Faction } from '../../data/ps2alerts-constants/faction';
 
 const IMPLICIT_QUERIES = [
     WORLD_IMPLICIT_QUERY,
@@ -53,11 +54,24 @@ const IMPLICIT_QUERIES = [
     ...OUTFITWARS_IMPLICIT_QUERIES,
 ];
 
+interface RegexFilterInterface {
+    '$regex': string,
+    '$options'?: string | undefined
+}
+
 interface OutfitwarsFilterInterface {
     world?: World;
     'outfitwars.phase'?: Phase;
     'outfitwars.round'?: number;
     'result.victor'?: Team | undefined;
+    'outfitwars.teams.red.faction'?: Faction | undefined;
+    'outfitwars.teams.blue.faction'?: Faction | undefined;
+    '$or': [
+        {'outfitwars.teams.blue.tag': RegexFilterInterface },
+        {'outfitwars.teams.blue.name': RegexFilterInterface },
+        {'outfitwars.teams.red.tag': RegexFilterInterface },
+        {'outfitwars.teams.red.name': RegexFilterInterface },
+    ]
 }
 
 @ApiTags('Outfit Wars')
@@ -159,9 +173,30 @@ export class RestOutfitwarsController {
             10);
     }
 
+    escapeRegex(text: string | undefined) {
+        if(!text) {
+            return '.*';
+        }
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    };
+
     @Get('/list')
-    @ApiOperation({summary: 'Return a paginated list of outfit wars instances, optionally requested by world, phase, round or victor'})
-    @ApiImplicitQueries(IMPLICIT_QUERIES)
+    @ApiOperation({summary: 'Return a paginated list of outfit wars instances, optionally requested by world, phase, round, victor, either team faction, or outfit tag/name'})
+    @ApiImplicitQueries([...IMPLICIT_QUERIES, {
+        name: 'redTeamFaction',
+        required: false,
+        type: Number,
+    }, 
+    {
+        name: 'blueTeamFaction',
+        required: false,
+        type: Number,
+    },
+    {
+        name: 'outfitNameOrTag',
+        required: false,
+        type: String,
+    }])
     @ApiResponse({
         status: 200,
         description: 'List of OutfitWars Instances',
@@ -173,16 +208,28 @@ export class RestOutfitwarsController {
             @Query('phase', OptionalIntPipe) phase?: Phase,
             @Query('round', OptionalIntPipe) round?: number,
             @Query('victor', OptionalIntPipe) victor?: Team,
+            @Query('redTeamFaction', OptionalIntPipe) redTeamFaction?: Faction,
+            @Query('blueTeamFaction', OptionalIntPipe) blueTeamFaction?: Faction,
+            @Query('outfitNameOrTag') outfitNameOrTag?: string,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
             @Query('page', OptionalIntPipe) page?: number,
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
     ): Promise<InstanceOutfitWarsTerritoryEntity[]> {
+        const escapedNameOrTag = this.escapeRegex(outfitNameOrTag)
         const filter: OutfitwarsFilterInterface = {
             world,
             'outfitwars.phase': phase,
             'outfitwars.round': round,
             'result.victor': victor ?? undefined,
+            'outfitwars.teams.red.faction': redTeamFaction ?? undefined,
+            'outfitwars.teams.blue.faction': blueTeamFaction ?? undefined,
+            '$or': [
+                {'outfitwars.teams.blue.tag': { '$regex': escapedNameOrTag, '$options': 'i' } },
+                {'outfitwars.teams.blue.name': { '$regex': escapedNameOrTag, '$options': 'i'} },
+                {'outfitwars.teams.red.tag': { '$regex': escapedNameOrTag, '$options': 'i'} },
+                {'outfitwars.teams.red.name': { '$regex': escapedNameOrTag, '$options': 'i'} },
+            ]
         };
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
