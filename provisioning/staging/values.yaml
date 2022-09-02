@@ -171,7 +171,7 @@ deployments:
       targetCpu: 75
   three:
     index: "cron"
-    enabled: true
+    enabled: false
     containerImage: "maelstromeous/ps2alerts:ps2alerts-api-staging-{{ version }}"
     resources:
       cpu:
