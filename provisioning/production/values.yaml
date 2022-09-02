@@ -81,7 +81,7 @@ deployments:
         value: "${{ secrets.CENSUS_SERVICE_ID }}"
     scaling:
       enabled: true
-      min: 2
+      min: 5
       max: 10
       targetCpu: 75
     podDisruptionBudget:
