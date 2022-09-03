@@ -391,7 +391,26 @@ export class RestOutfitwarsController {
         const filter = {'outfit.id': outfitId, round};
         const record: OutfitwarsRankingEntity = await this.mongoOperationsService.findOne(OutfitwarsRankingEntity, filter);
 
-        const updatedRecord = Object.assign(record, entity);
+        const updatedRecord = Object.assign(record, {});
+
+        if(entity.instanceId !== undefined) {
+            updatedRecord.instanceId = entity.instanceId;
+        }
+
+        if(entity.wins !== undefined && !Number.isNaN(entity.wins)) {
+            updatedRecord.rankingParameters.Wins = entity.wins;
+            this.logger.warn(`Fudging wins for outfit '${record.outfit.name}' on world ${record.world}`);
+        }
+
+        if(entity.losses !== undefined && !Number.isNaN(entity.losses)) {
+            updatedRecord.rankingParameters.Losses = entity.losses;
+            this.logger.warn(`Fudging losses for outfit '${record.outfit.name}' on world ${record.world}`);
+        }
+
+        if(entity.tiebreakerPoints !== undefined && !Number.isNaN(entity.tiebreakerPoints)) {
+            updatedRecord.rankingParameters.TiebreakerPoints = entity.tiebreakerPoints;
+            this.logger.warn(`Fudging tiebreaker points for outfit '${record.outfit.name}' on world ${record.world}`);
+        }
 
         // eslint-disable-next-line @typescript-eslint/naming-convention
         return await this.mongoOperationsService.upsert(OutfitwarsRankingEntity, [{$set: updatedRecord}], [{_id: updatedRecord._id}]);
