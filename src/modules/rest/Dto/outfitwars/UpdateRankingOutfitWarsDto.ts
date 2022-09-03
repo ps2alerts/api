@@ -8,9 +8,9 @@ export class UpdateRankingOutfitWarsDto {
 
     @IsOptional()
     @ApiModelProperty({
-        example: 1, 
+        example: 1,
         description: 'If fudging is needed due to bugs with data retrieval (Cobalt), updates the wins of a ranking for an outfit. If legitimate data exists in Falcon\'s API, it will overwrite this fudged data.',
-        required: false
+        required: false,
     })
     wins?: number | undefined;
 
@@ -18,7 +18,7 @@ export class UpdateRankingOutfitWarsDto {
     @ApiModelProperty({
         example: 0,
         description: 'Updates the losses of a ranking for an outfit.',
-        required: false
+        required: false,
     })
     losses?: number | undefined;
 
@@ -26,7 +26,7 @@ export class UpdateRankingOutfitWarsDto {
     @ApiModelProperty({
         example: 420,
         description: 'Updates the tiebreaker points of a ranking for an outfit.',
-        required: false
+        required: false,
     })
     tiebreakerPoints?: number | undefined;
 }
