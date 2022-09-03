@@ -114,8 +114,20 @@ export class OutfitWarsRankingsCron {
                 || Number.isNaN(outfitWarRanking.ranking_parameters.Losses)
                 || Number.isNaN(outfitWarRanking.ranking_parameters.TiebreakerPoints)
             ) {
-                this.logger.error(`Missing Wins or Losses or Tiebreaker points for outfit ${outfit.id} on world ${outfitWarRanking.world_id}, not inserting!`);
-                continue;
+                this.logger.error(`Missing Wins or Losses or Tiebreaker points for outfit ${outfit.name} on world ${outfitWarRanking.world_id}, checking for existing!`);
+                const result = await this.mongoOperationsService.findOne(
+                    OutfitwarsRankingEntity, {
+                        round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,
+                        'outfit.id': outfit.id,
+                    }).catch(() => {
+                    this.logger.error(`Ranking for round ${outfitWarRanking.ranking_parameters.MatchesPlayed + 1} for outfit ${outfit.name} not found, adding malformed document.`);
+                });
+
+                if (result) {
+                    // Do not update existing entity so we can fudge failed entries from Cobalt
+                    this.logger.error('Dropping malformed entry since we already have an entry for this outfit and round');
+                    continue;
+                }
             }
 
             documents.push({
