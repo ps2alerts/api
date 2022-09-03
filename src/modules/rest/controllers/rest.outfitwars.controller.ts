@@ -392,25 +392,27 @@ export class RestOutfitwarsController {
         const filter = {'outfit.id': outfitId, round};
         const record: OutfitwarsRankingEntity = await this.mongoOperationsService.findOne(OutfitwarsRankingEntity, filter);
 
-        let updatedRecord = Object.assign(record, { instanceId: entity.instanceId });
+        let updatedRecord = Object.assign(record, {instanceId: entity.instanceId});
 
-        if(entity.wins !== undefined && !Number.isNaN(entity.wins)) {
-            const updatedRankingParams = Object.assign(updatedRecord.rankingParameters, { Wins: entity.wins });
-            updatedRecord = Object.assign(updatedRecord, { rankingParameters: updatedRankingParams });
+        /* eslint-disable @typescript-eslint/naming-convention */
+        if (entity.wins !== undefined && !Number.isNaN(entity.wins)) {
+            const updatedRankingParams = Object.assign(updatedRecord.rankingParameters, {Wins: entity.wins});
+            updatedRecord = Object.assign(updatedRecord, {rankingParameters: updatedRankingParams});
             this.logger.warn(`Fudging wins for outfit '${record.outfit.name}' on world ${record.world}`);
         }
 
-        if(entity.losses !== undefined && !Number.isNaN(entity.losses)) {
-            const updatedRankingParams = Object.assign(updatedRecord.rankingParameters, { Losses: entity.losses });
-            updatedRecord = Object.assign(updatedRecord, { rankingParameters: updatedRankingParams });
+        if (entity.losses !== undefined && !Number.isNaN(entity.losses)) {
+            const updatedRankingParams = Object.assign(updatedRecord.rankingParameters, {Losses: entity.losses});
+            updatedRecord = Object.assign(updatedRecord, {rankingParameters: updatedRankingParams});
             this.logger.warn(`Fudging losses for outfit '${record.outfit.name}' on world ${record.world}`);
         }
 
-        if(entity.tiebreakerPoints !== undefined && !Number.isNaN(entity.tiebreakerPoints)) {
-            const updatedRankingParams = Object.assign(updatedRecord.rankingParameters, { TiebreakerPoints: entity.tiebreakerPoints });
-            updatedRecord = Object.assign(updatedRecord, { rankingParameters: updatedRankingParams });
+        if (entity.tiebreakerPoints !== undefined && !Number.isNaN(entity.tiebreakerPoints)) {
+            const updatedRankingParams = Object.assign(updatedRecord.rankingParameters, {TiebreakerPoints: entity.tiebreakerPoints});
+            updatedRecord = Object.assign(updatedRecord, {rankingParameters: updatedRankingParams});
             this.logger.warn(`Fudging tiebreaker points for outfit '${record.outfit.name}' on world ${record.world}`);
         }
+        /* eslint-enable @typescript-eslint/naming-convention */
 
         // eslint-disable-next-line @typescript-eslint/naming-convention
         return await this.mongoOperationsService.upsert(OutfitwarsRankingEntity, [{$set: updatedRecord}], [{_id: updatedRecord._id}]);
@@ -422,20 +424,25 @@ export class RestOutfitwarsController {
     @ApiOkResponse({type: Number, description: 'The current round for the server'})
     @ApiBadRequestResponse({schema: {example: {statusCode: 400, message: 'Invalid world', error: 'Bad Request'}}, description: 'Invalid world'})
     async currentRoundByWorld(
-        @Param('world', ParseIntPipe) world: World
-    ) {
-        if(!([1, 10, 13, 17].includes(world))) {
+        @Param('world', ParseIntPipe) world: World,
+    ): Promise<number> {
+        if (!([1, 10, 13, 17].includes(world))) {
             throw new BadRequestException('Invalid world');
         }
-        const rankings: OutfitwarsRankingEntity[]  = await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, {world});
+
+        const rankings: OutfitwarsRankingEntity[] = await this.mongoOperationsService.findMany(OutfitwarsRankingEntity, {world});
         const roundCounts = new Map<number, number>([[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0]]);
-        for(const ranking of rankings) {
+
+        for (const ranking of rankings) {
             const count = roundCounts.get(ranking.round);
-            if(count === undefined) {
+
+            if (count === undefined) {
                 continue;
             }
+
             roundCounts.set(ranking.round, count + 1);
         }
+
         const playoffRound2 = 6;
         // Playoffs round 2 will have 8 rankings since last round had 8 outfits in matches
         const playoffRound2OutfitRanks = 8;
@@ -443,13 +450,13 @@ export class RestOutfitwarsController {
         // Championships will have 4 rankings since last round had 4 outfits in matches
         const championshipOutfitRanks = 4;
         const rounds = Array.from(roundCounts.entries()).sort((a, b) => {
-            // Qualifiers and playoffs round 1 are pretty straight forward - everybody will have completed at least 4 rounds, 
-             //    so every outfit will have a playoffs round 1 ranking even if they don't play during those playoffs
-            if(a[0] < playoffRound2 && b[0] < playoffRound2) {
-                if(a[1] === b[1]) {
+            // Qualifiers and playoffs round 1 are pretty straight forward - everybody will have completed at least 4 rounds,
+            //    so every outfit will have a playoffs round 1 ranking even if they don't play during those playoffs
+            if (a[0] < playoffRound2 && b[0] < playoffRound2) {
+                if (a[1] === b[1]) {
                     // if the counts of the rounds are equal the greater round should be first
-                    return a[0] > b[0] 
-                        ? -1 
+                    return a[0] > b[0]
+                        ? -1
                         : 1;
                 } else {
                     // if they are not, then the round with the greater count should be first
@@ -457,32 +464,29 @@ export class RestOutfitwarsController {
                         ? -1
                         : 1;
                 }
-            }
-            // Playoffs round 2 will have 8 rankings since last round had 8 outfits in matches
-            else if(
-                a[0] === playoffRound2 && b[0] < playoffRound2 
+            } else if (
+                // Playoffs round 2 will have 8 rankings since last round had 8 outfits in matches
+                a[0] === playoffRound2 && b[0] < playoffRound2
                 || a[0] < playoffRound2 && b[0] === playoffRound2
             ) {
-                return a[0] === playoffRound2 
-                    ? (a[1] >= playoffRound2OutfitRanks ? -1 : 1) 
+                return a[0] === playoffRound2
+                    ? (a[1] >= playoffRound2OutfitRanks ? -1 : 1)
                     : (b[1] >= playoffRound2OutfitRanks ? 1 : -1);
-            }
-            // Championships will have 4 rankings since last round had 4 outfits in matches
-            else if(
-                a[0] === championship && b[0] < championship 
+            } else if (
+                // Championships will have 4 rankings since last round had 4 outfits in matches
+                a[0] === championship && b[0] < championship
                 || a[0] < championship && b[0] === championship
             ) {
-                return a[0] === championship 
-                    ? (a[1] >= championshipOutfitRanks ? -1 : 1) 
+                return a[0] === championship
+                    ? (a[1] >= championshipOutfitRanks ? -1 : 1)
+                    : (b[1] >= championshipOutfitRanks ? 1 : -1);
+            } else {
+                // One of the two rounds is the 'post championship round' with the results of the championship rounds
+                return a[0] > championship
+                    ? (a[1] >= championshipOutfitRanks ? -1 : 1)
                     : (b[1] >= championshipOutfitRanks ? 1 : -1);
             }
-            // One of the two rounds is the 'post championship round' with the results of the championship rounds
-            else {
-                return a[0] > championship 
-                    ? (a[1] >= championshipOutfitRanks ? -1 : 1) 
-                    : (b[1] >= championshipOutfitRanks ? 1 : -1);
-            }
-        })
+        });
         // The round we assign should be the round with the greatest weighting.
         return rounds[0][0];
     }
