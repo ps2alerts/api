@@ -58,12 +58,15 @@ export class OutfitWarsRankingsCron {
             // Date() expects a timestamp in ms, start_time is a timestamp in seconds
             const matchTime = new Date(parseInt(match.start_time, 10) * 1000);
             const outfitAOldMatch = outfitIdToMatchTime.get(match.outfit_a_id);
-            if(!outfitAOldMatch || outfitAOldMatch < matchTime) {
+
+            if (!outfitAOldMatch || outfitAOldMatch < matchTime) {
                 // Only overwrite the match time if its a future date
                 outfitIdToMatchTime.set(match.outfit_a_id, matchTime);
             }
+
             const outfitBOldMatch = outfitIdToMatchTime.get(match.outfit_b_id);
-            if(!outfitBOldMatch || outfitBOldMatch < matchTime) {
+
+            if (!outfitBOldMatch || outfitBOldMatch < matchTime) {
                 // Only overwrite the match time if its a future date
                 outfitIdToMatchTime.set(match.outfit_b_id, matchTime);
             }
