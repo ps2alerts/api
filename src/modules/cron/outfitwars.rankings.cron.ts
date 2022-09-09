@@ -141,13 +141,21 @@ export class OutfitWarsRankingsCron {
                 }
             }
 
+            let matchesPlayed = outfitWarRanking.ranking_parameters.MatchesPlayed;
+            if(outfitWarRanking.ranking_parameters.Wins + outfitWarRanking.ranking_parameters.Losses !== matchesPlayed) {
+                this.logger.warn("Matches played !== wins + losses");
+                matchesPlayed = outfitWarRanking.ranking_parameters.Wins + outfitWarRanking.ranking_parameters.Losses;
+            }
+
+            const rankingParameters = Object.assign(outfitWarRanking.ranking_parameters, {MatchesPlayed: matchesPlayed});
+
             documents.push({
                 $set: {
-                    rankingParameters: outfitWarRanking.ranking_parameters,
+                    rankingParameters,
                     startTime,
                 },
                 $setOnInsert: {
-                    round: outfitWarRanking.ranking_parameters.MatchesPlayed + 1,
+                    round: matchesPlayed + 1,
                     world: outfitWarRanking.world_id,
                     outfitWarId: outfitWarRanking.outfit_war_id,
                     roundId: outfitWarRanking.round_id,
