@@ -13,8 +13,7 @@ import OutfitwarsMetadataEmbed from './outfitwars.metadata.embed';
 @Entity({
     name: 'instance_outfitwars_2022',
 })
-@Index(['world', 'zone', 'zoneInstanceId'], {unique: true})
-@Index(['instanceId'])
+@Index(['world', 'instanceId'], {unique: true})
 @Index(['zoneInstanceId'])
 @Index(['zone'])
 @Index(['state'])
