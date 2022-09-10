@@ -64,6 +64,12 @@ export default class InstanceOutfitWarsTerritoryEntity {
     })
     zoneInstanceId: number;
 
+    @ApiProperty({example: '12345', description: 'An ID as reported to us from Census. This in combination with world gives us a unique identifier.'})
+    @Column({
+        type: 'number',
+    })
+    censusInstanceId: number;
+
     @ApiProperty({
         example: new Date(),
         description: 'Time the Outfit Wars instance started in UTC',
