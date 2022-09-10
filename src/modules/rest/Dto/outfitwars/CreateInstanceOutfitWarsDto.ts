@@ -42,6 +42,11 @@ export class CreateInstanceOutfitWarsDto {
     @ApiModelProperty({example: 12})
     zoneInstanceId: number;
 
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiModelProperty({example: 12345})
+    censusInstanceId: number;
+
     @IsDateString()
     @IsNotEmpty()
     @ApiModelProperty({example: '2022-04-24T19:03:12.367Z'})
