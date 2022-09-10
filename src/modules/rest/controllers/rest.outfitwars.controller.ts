@@ -426,7 +426,7 @@ export class RestOutfitwarsController {
     async currentRoundByWorld(
         @Param('world', ParseIntPipe) world: World,
     ): Promise<number> {
-        if (!([1, 10, 13, 17].includes(world))) {
+        if (!([World.CONNERY, World.MILLER, World.COBALT, World.EMERALD, World.SOLTECH].includes(world))) {
             throw new BadRequestException('Invalid world');
         }
 
