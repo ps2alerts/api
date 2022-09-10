@@ -7,7 +7,6 @@ import {lithafalconCensusUrl, lithafalconEndpoints} from '../data/ps2alerts-cons
 import LithaFalconOutfitWarDataInterface from '../data/ps2alerts-constants/interfaces/LithaFalconOutfitWarDataInterface';
 import GlobalOutfitAggregateEntity from '../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import OutfitwarsRankingEntity from '../data/entities/instance/outfitwars.ranking.entity';
-import {World} from '../data/ps2alerts-constants/world';
 import OutfitEmbed from '../data/entities/aggregate/common/outfit.embed';
 import {ConfigService} from '@nestjs/config';
 import getCensusBaseUrl from '../data/ps2alerts-constants/utils/census';
@@ -50,11 +49,6 @@ export class OutfitWarsRankingsCron {
         const outfitIdToMatchTime = new Map<string, Date>();
 
         for (const match of matches.outfit_war_match_list) {
-            if (parseInt(match.world_id, 10) === World.SOLTECH) {
-                // We cannot support SolTech due to API issues
-                continue;
-            }
-
             // Date() expects a timestamp in ms, start_time is a timestamp in seconds
             const matchTime = new Date(parseInt(match.start_time, 10) * 1000);
             const outfitAOldMatch = outfitIdToMatchTime.get(match.outfit_a_id);
@@ -74,11 +68,6 @@ export class OutfitWarsRankingsCron {
 
         for (const outfitRankingInterface of outfitRankings) {
             const outfitWarRanking = this.parseLithaFalconRanking(outfitRankingInterface);
-
-            if (outfitWarRanking.world_id === World.SOLTECH) {
-                // We cannot support SolTech due to API issues
-                continue;
-            }
 
             const outfit: OutfitEmbed | null = await this.mongoOperationsService.findOne<GlobalOutfitAggregateEntity>(
                 GlobalOutfitAggregateEntity, {
@@ -142,8 +131,9 @@ export class OutfitWarsRankingsCron {
             }
 
             let matchesPlayed = outfitWarRanking.ranking_parameters.MatchesPlayed;
-            if(outfitWarRanking.ranking_parameters.Wins + outfitWarRanking.ranking_parameters.Losses !== matchesPlayed) {
-                this.logger.warn("Matches played !== wins + losses");
+
+            if (outfitWarRanking.ranking_parameters.Wins + outfitWarRanking.ranking_parameters.Losses !== matchesPlayed) {
+                this.logger.warn('Matches played !== wins + losses');
                 matchesPlayed = outfitWarRanking.ranking_parameters.Wins + outfitWarRanking.ranking_parameters.Losses;
             }
 
