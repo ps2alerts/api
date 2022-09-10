@@ -7,6 +7,7 @@ import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import InstanceCharacterAggregateEntity from '../data/entities/aggregate/instance/instance.character.aggregate.entity';
 import InstanceOutfitAggregateEntity from '../data/entities/aggregate/instance/instance.outfit.aggregate.entity';
+import InstanceOutfitWarsTerritoryEntity from '../data/entities/instance/instance.outfitwars.territory.entity';
 
 @Injectable()
 export class XpmCron {
@@ -23,9 +24,12 @@ export class XpmCron {
 
         // Grab the current actives
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const actives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2AlertsEventState.STARTED, 'features.xpm': true});
+        const territoryActives: InstanceMetagameTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, {state: Ps2AlertsEventState.STARTED, 'features.xpm': true});
+        const outfitWarsActives: InstanceOutfitWarsTerritoryEntity[] = await this.mongoOperationsService.findMany(InstanceOutfitWarsTerritoryEntity, {state: Ps2AlertsEventState.STARTED});
 
-        for await (const instance of actives) {
+        const combinedActives = [...territoryActives, ...outfitWarsActives];
+
+        for await (const instance of combinedActives) {
             if (Date.now() > (instance.timeStarted.getTime() + instance.duration)) {
                 this.logger.warn(`Instance [${instance.instanceId}] is overdue, skipping XPM job`);
                 continue;
@@ -42,7 +46,7 @@ export class XpmCron {
         this.logger.debug('Set xpm cron run time');
     }
 
-    async characterMetrics(instance: InstanceMetagameTerritoryEntity, now: Date): Promise<void> {
+    async characterMetrics(instance: InstanceMetagameTerritoryEntity | InstanceOutfitWarsTerritoryEntity, now: Date): Promise<void> {
         this.logger.debug(`Updating Character XPMs for instance ${instance.instanceId}`);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const characters: InstanceCharacterAggregateEntity[] = await this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {instance: instance.instanceId});
@@ -85,7 +89,7 @@ export class XpmCron {
         }
     }
 
-    async outfitMetrics(instance: InstanceMetagameTerritoryEntity, now: Date): Promise<void> {
+    async outfitMetrics(instance: InstanceMetagameTerritoryEntity | InstanceOutfitWarsTerritoryEntity, now: Date): Promise<void> {
         this.logger.debug(`Updating Outfit XPMs for instance ${instance.instanceId}`);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const outfits: InstanceOutfitAggregateEntity[] = await this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {instance: instance.instanceId});
@@ -136,7 +140,7 @@ export class XpmCron {
         }
     }
 
-    public currentDuration(instance: InstanceMetagameTerritoryEntity, now: Date): number {
+    public currentDuration(instance: InstanceMetagameTerritoryEntity | InstanceOutfitWarsTerritoryEntity, now: Date): number {
         // Return current difference in seconds between start and now
         const nowUnix = now.getTime() / 1000;
         const timeStartUnix = instance.timeStarted.getTime() / 1000;
