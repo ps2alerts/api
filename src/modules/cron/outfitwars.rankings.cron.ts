@@ -142,8 +142,9 @@ export class OutfitWarsRankingsCron {
             }
 
             let matchesPlayed = outfitWarRanking.ranking_parameters.MatchesPlayed;
-            if(outfitWarRanking.ranking_parameters.Wins + outfitWarRanking.ranking_parameters.Losses !== matchesPlayed) {
-                this.logger.warn("Matches played !== wins + losses");
+
+            if (outfitWarRanking.ranking_parameters.Wins + outfitWarRanking.ranking_parameters.Losses !== matchesPlayed) {
+                this.logger.warn('Matches played !== wins + losses');
                 matchesPlayed = outfitWarRanking.ranking_parameters.Wins + outfitWarRanking.ranking_parameters.Losses;
             }
 
