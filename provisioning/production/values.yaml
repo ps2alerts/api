@@ -100,8 +100,8 @@ deployments:
         limits: 750m
         requests: 250m
       mem:
-        limits: 256Mi
-        requests: 128Mi
+        limits: 400Mi
+        requests: 200Mi
     probes:
       startupProbe:
         enabled: true
