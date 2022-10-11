@@ -7,6 +7,7 @@ import {AppModule} from './app.module';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import compression from 'fastify-compress';
 import {ValidationPipe} from '@nestjs/common';
+import {TypeOrmFilter} from './filters/type-orm.filter';
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -20,6 +21,8 @@ async function bootstrap(): Promise<void> {
     );
 
     const config = app.get(ConfigService);
+
+    app.useGlobalFilters(new TypeOrmFilter());
 
     app.enableCors(config.get('config'));
     void app.register(fastifyHelmet, {
