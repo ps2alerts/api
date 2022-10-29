@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {HttpService, Inject, Injectable, Logger} from '@nestjs/common';
-import {Cron} from '@nestjs/schedule';
+// import {Cron} from '@nestjs/schedule';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import {lithafalconCensusUrl, lithafalconEndpoints} from '../data/ps2alerts-constants/lithafalconEndpoints';
@@ -27,7 +27,7 @@ export class OutfitWarsRankingsCron {
     ) {}
 
     // @Cron('0 8 * 8,9,10 0') // 8AM UTC on every Sunday in August - October
-    @Cron('*/2 * * * *') // Swap to this to get the data now
+    // @Cron('*/2 * * * *') // Swap to this to get the data now
     async handleCron(): Promise<void> {
         this.logger.log('Running Outfit Wars Matches job');
 
