@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {HttpService, Inject, Injectable, Logger} from '@nestjs/common';
-// import {Cron} from '@nestjs/schedule';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
-import {lithafalconCensusUrl, lithafalconEndpoints} from '../data/ps2alerts-constants/lithafalconEndpoints';
 import LithaFalconOutfitWarDataInterface from '../data/ps2alerts-constants/interfaces/LithaFalconOutfitWarDataInterface';
-import GlobalOutfitAggregateEntity from '../data/entities/aggregate/global/global.outfit.aggregate.entity';
-import OutfitwarsRankingEntity from '../data/entities/instance/outfitwars.ranking.entity';
-import OutfitEmbed from '../data/entities/aggregate/common/outfit.embed';
 import {ConfigService} from '@nestjs/config';
-import getCensusBaseUrl from '../data/ps2alerts-constants/utils/census';
-import {CensusEnvironment} from '../data/ps2alerts-constants/censusEnvironments';
-import {
-    OutfitLeaderCharacterFactionJoinInterface,
-} from '../data/ps2alerts-constants/interfaces/census-responses/OutfitLeaderCharacterFactionJoinInterface';
-import LithaFalconOutfitWarMatchResponseInterface from '../data/ps2alerts-constants/interfaces/LithaFalconOutfitWarMatchResponseInterface';
+// import {Cron} from '@nestjs/schedule';
+// import {lithafalconCensusUrl, lithafalconEndpoints} from '../data/ps2alerts-constants/lithafalconEndpoints';
+// import GlobalOutfitAggregateEntity from '../data/entities/aggregate/global/global.outfit.aggregate.entity';
+// import OutfitwarsRankingEntity from '../data/entities/instance/outfitwars.ranking.entity';
+// import OutfitEmbed from '../data/entities/aggregate/common/outfit.embed';
+// import getCensusBaseUrl from '../data/ps2alerts-constants/utils/census';
+// import {CensusEnvironment} from '../data/ps2alerts-constants/censusEnvironments';
+// import {
+//     OutfitLeaderCharacterFactionJoinInterface,
+// } from '../data/ps2alerts-constants/interfaces/census-responses/OutfitLeaderCharacterFactionJoinInterface';
+// import LithaFalconOutfitWarMatchResponseInterface from '../data/ps2alerts-constants/interfaces/LithaFalconOutfitWarMatchResponseInterface';
 
 @Injectable()
 export class OutfitWarsRankingsCron {
@@ -30,7 +30,10 @@ export class OutfitWarsRankingsCron {
     // @Cron('*/2 * * * *') // Swap to this to get the data now
     async handleCron(): Promise<void> {
         this.logger.log('Running Outfit Wars Matches job');
+        this.logger.error('LithaFalcon outfit war ranking endpoint was removed 11/01/2022 - this job must be updated before running');
+        return;
 
+        /*
         const serviceId: string | undefined = this.config.get('census.serviceId');
 
         if (!serviceId) {
@@ -179,6 +182,7 @@ export class OutfitWarsRankingsCron {
         const key = '/crons/outfitwarsrankings';
         await this.cacheService.set(key, Date.now(), 60 * 65); // 1 hour 5 mins
         this.logger.log('Set outfit wars ranking cron run time');
+        */
     }
 
     parseLithaFalconRanking(data: LithaFalconOutfitWarDataInterface): {
