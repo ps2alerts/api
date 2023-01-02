@@ -51,41 +51,41 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            maelstromeous/ps2alerts:ps2alerts-api-production-${{ github.sha }}
-            maelstromeous/ps2alerts:ps2alerts-api-production-latest
+            maelstromeous/ps2alerts:api-production-${{ github.sha }}
+            maelstromeous/ps2alerts:api-production-latest
           build-args: |
             BUILD_SHA=${{ env.SHORT_SHA }}
             BUILT=${{ env.NOW }}
             VERSION=${{ steps.latesttag.outputs.tag }}
 
-  deploy-to-k8s:
-    needs: build-docker-images
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          submodules: true
-
-      - name: Find and replace version
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          find: "{{ version }}"
-          replace: "${{ github.sha }}"
-          include: provisioning/production/values.yaml
-
-      - name: Deploy Helm
-        uses: glopezep/helm@v1.7.1
-        with:
-          helm: helm3
-          release: ps2alerts-api-production
-          namespace: ps2alerts
-          chart: provisioning/helm/charts/microservice
-          secrets: ${{ toJSON(secrets) }}
-          token: ${{ github.token }}
-          value-files: provisioning/production/values.yaml
-          version: ${{ github.sha }}
-          # timeout: 120s # Apparently this isn't supported but it's in the docs? :shrug:
-        env:
-          KUBECONFIG_FILE: "${{ secrets.KUBE_CONFIG_RAW }}"
+#  deploy-to-k8s:
+#    needs: build-docker-images
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#          submodules: true
+#
+#      - name: Find and replace version
+#        uses: jacobtomlinson/gha-find-replace@v2
+#        with:
+#          find: "{{ version }}"
+#          replace: "${{ github.sha }}"
+#          include: provisioning/production/values.yaml
+#
+#      - name: Deploy Helm
+#        uses: glopezep/helm@v1.7.1
+#        with:
+#          helm: helm3
+#          release: ps2alerts-api-production
+#          namespace: ps2alerts
+#          chart: provisioning/helm/charts/microservice
+#          secrets: ${{ toJSON(secrets) }}
+#          token: ${{ github.token }}
+#          value-files: provisioning/production/values.yaml
+#          version: ${{ github.sha }}
+#          # timeout: 120s # Apparently this isn't supported but it's in the docs? :shrug:
+#        env:
+#          KUBECONFIG_FILE: "${{ secrets.KUBE_CONFIG_RAW }}"
