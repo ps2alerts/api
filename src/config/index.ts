@@ -19,7 +19,7 @@ export const config = () => ({
             synchronize: true,
             logging: true,
             poolSize: process.env.DB_POOL_SIZE ?? 50,
-            authSource: 'admin',
+            authSource: process.env.DB_AUTH_SOURCE ?? 'admin',
             useUnifiedTopology: false,
             useNewUrlParser: false,
         },
