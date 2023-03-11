@@ -128,14 +128,17 @@ export default class InstanceOutfitWarsTerritoryEntity {
     @Column(() => InstanceFeaturesEmbed)
     features: InstanceFeaturesEmbed;
 
-    @ApiProperty({
-        example: '1.0',
-        description: 'The map\'s version, which enables us to provide different map layouts and tiles for historical alerts',
-    })
+    @ApiProperty({example: '1.0', description: 'The map\'s version, which enables us to provide different map tiles for historical alerts'})
     @Column({
         type: 'string',
     })
     mapVersion: string;
+
+    @ApiProperty({example: '1.0', description: 'The lattice\'s version, which enables us to provide different lattice layouts for historical alerts'})
+    @Column({
+        type: 'string',
+    })
+    latticeVersion: string;
 
     @ApiProperty({description: 'Outfit Wars team metadata'})
     @Column(() => OutfitwarsMetadataEmbed)
