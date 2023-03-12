@@ -110,4 +110,8 @@ export class CreateInstanceMetagameDto {
     @IsNotEmpty()
     @ApiModelProperty({example: '1.0'})
     mapVersion: string;
+
+    @IsNotEmpty()
+    @ApiModelProperty({example: '1.0'})
+    latticeVersion: string;
 }
