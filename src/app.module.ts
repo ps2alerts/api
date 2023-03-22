@@ -8,6 +8,7 @@ import {MongoConfig} from './services/databases/mongo.config';
 import {ScheduleModule} from '@nestjs/schedule';
 import {CronModule} from './modules/cron/CronModule';
 import {HealthCheckModule} from './modules/healthcheck/HealthCheckModule';
+import {RedriverModule} from './modules/redriver/RedriverModule';
 
 const metadata = {
     imports: [
@@ -32,6 +33,7 @@ if (process.env.CRON_ENABLED === 'true') {
 
 if (process.env.REST_ENABLED === 'true') {
     metadata.imports.push(RestModule);
+    metadata.imports.push(RedriverModule);
 }
 
 @Module(metadata)
