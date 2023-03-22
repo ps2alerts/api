@@ -44,7 +44,7 @@ export default class RedriveRequestEntity {
     })
     world: World;
 
-    @ApiProperty({example: RedriveStatus.PENDING, description: 'Current status of the redrive'})
+    @ApiProperty({example: RedriveStatus.RUNNING, description: 'Current status of the redrive'})
     @Column({
         type: 'enum',
         enum: RedriveStatus,
@@ -52,9 +52,33 @@ export default class RedriveRequestEntity {
     })
     status: RedriveStatus;
 
-    @ApiProperty({example: World.MILLER, description: 'Instance ID where the migration currently is at'})
+    @ApiProperty({example: 2, description: 'Number of Alerts the redrive has processed'})
     @Column({
         type: 'number',
     })
-    instancePointer: number;
+    processed: number;
+
+    @ApiProperty({example: 100, description: 'Total number of Alerts to process'})
+    @Column({
+        type: 'number',
+    })
+    totalToProcess: number;
+
+    @ApiProperty({
+        example: new Date('2023-02-01T00:00:00.000Z'),
+        description: 'When the redrive started',
+    })
+    @Column({
+        type: 'date',
+    })
+    started: Date;
+
+    @ApiProperty({
+        example: new Date('2023-02-01T01:31:00.123Z'),
+        description: 'Last time the redrive was last updated',
+    })
+    @Column({
+        type: 'date',
+    })
+    updated: Date;
 }

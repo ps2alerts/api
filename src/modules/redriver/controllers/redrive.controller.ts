@@ -3,18 +3,18 @@ import {
     Inject,
     Post,
     UseGuards,
-    HttpStatus, Body, HttpCode,
+    HttpStatus, Body, HttpCode, Get,
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
     ApiCreatedResponse,
-    ApiOperation,
+    ApiOperation, ApiResponse,
     ApiSecurity,
     ApiTags, ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {AuthGuard} from '@nestjs/passport';
-import RedriveRequestEntity from '../../data/entities/redrive/redrive.request.entity';
+import RedriveRequestEntity, {RedriveStatus} from '../../data/entities/redrive/redrive.request.entity';
 import {RedriveRequestDto} from '../dto/RedriveRequestDto';
 import {ObjectID} from 'typeorm';
 
@@ -24,6 +24,20 @@ export default class RedriveController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
     ) {}
+
+    @Get('/running')
+    @ApiOperation({summary: 'Returns a list of all running redrives'})
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'The list of running redrives',
+        type: RedriveRequestEntity,
+        isArray: true,
+    })
+    async findInProgress(): Promise<RedriveRequestEntity[]> {
+        return await this.mongoOperationsService.findMany(RedriveRequestEntity, {
+            state: RedriveStatus.RUNNING,
+        });
+    }
 
     @Post('request')
     @HttpCode(HttpStatus.CREATED)
