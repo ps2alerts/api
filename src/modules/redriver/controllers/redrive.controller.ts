@@ -25,7 +25,7 @@ export default class RedriveController {
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
     ) {}
 
-    @Get('/running')
+    @Get('running')
     @ApiOperation({summary: 'Returns a list of all running redrives'})
     @ApiResponse({
         status: HttpStatus.OK,
