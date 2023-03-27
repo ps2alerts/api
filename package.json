@@ -43,7 +43,7 @@
     "@nestjs/typeorm": "^7.1.5",
     "@nestjs/websockets": "^7.6.7",
     "@types/cache-manager-ioredis": "^2.0.3",
-    "@types/cron": "^1.7.2",
+    "@types/cron": "^2.0.1",
     "amqp-connection-manager": "^3.2.2",
     "amqplib": "^0.6.0",
     "cache-manager": "^3.6.3",
