@@ -1,2 +1,5 @@
 **/node_modules/**/*
 *.js
+
+# Modules
+src/modules/data/ps2alerts-constants/**/*
