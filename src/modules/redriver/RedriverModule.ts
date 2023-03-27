@@ -5,6 +5,7 @@ import RedriveRequestEntity from '../data/entities/redrive/redrive.request.entit
 import RedriveController from './controllers/redrive.controller';
 import {AuthModule} from '../../auth/auth.module';
 import {APP_INTERCEPTOR} from '@nestjs/core';
+import {RedriveCron} from './cron/redrive.cron';
 
 @Module({
     controllers: [
@@ -20,6 +21,7 @@ import {APP_INTERCEPTOR} from '@nestjs/core';
     providers: [
         {provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor},
         MongoOperationsService,
+        RedriveCron,
     ],
 })
 export class RedriverModule {}
