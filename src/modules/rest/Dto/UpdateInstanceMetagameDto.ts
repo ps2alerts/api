@@ -1,5 +1,5 @@
 import {IsDateString, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString} from 'class-validator';
-import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+import {ApiProperty} from '@nestjs/swagger';
 import {Ps2AlertsEventState} from '../../data/ps2alerts-constants/ps2AlertsEventState';
 import {Faction} from '../../data/ps2alerts-constants/faction';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
@@ -11,31 +11,31 @@ export class UpdateInstanceMetagameDto {
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: '10-12345'})
+    @ApiProperty({example: '10-12345'})
     instanceId: string;
 
     @IsNumber()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: Ps2AlertsEventState.ENDED})
+    @ApiProperty({example: Ps2AlertsEventState.ENDED})
     state: Ps2AlertsEventState;
 
     @IsNumber()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: Bracket.PRIME})
+    @ApiProperty({example: Bracket.PRIME})
     bracket: Bracket;
 
     @IsDateString()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: '2022-03-27T01:00:10.463Z'})
+    @ApiProperty({example: '2022-03-27T01:00:10.463Z'})
     timeEnded: Date;
 
     @IsObject()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({
+    @ApiProperty({
         example: {
             vs: 30,
             nc: 27,

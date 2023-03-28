@@ -6,7 +6,7 @@ import {
     IsOptional,
     IsString,
 } from 'class-validator';
-import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+import {ApiProperty} from '@nestjs/swagger';
 import {World} from '../../../data/ps2alerts-constants/world';
 import {Zone} from '../../../data/ps2alerts-constants/zone';
 import {Ps2AlertsEventState} from '../../../data/ps2alerts-constants/ps2AlertsEventState';
@@ -23,44 +23,44 @@ import OutfitwarsMetadataEmbed from '../../../data/entities/instance/outfitwars.
 export class CreateInstanceOutfitWarsDto {
     @IsString()
     @IsNotEmpty()
-    @ApiModelProperty({example: 'outfitwars-17-10-123'})
+    @ApiProperty({example: 'outfitwars-17-10-123'})
     instanceId: string;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: World.EMERALD})
+    @ApiProperty({example: World.EMERALD})
     world: World;
 
     @IsNumber()
     @IsNotEmpty()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    @ApiModelProperty({example: Zone.NEXUS})
+    @ApiProperty({example: Zone.NEXUS})
     zone: Zone.NEXUS;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 12})
+    @ApiProperty({example: 12})
     zoneInstanceId: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 12345})
+    @ApiProperty({example: 12345})
     censusInstanceId: number;
 
     @IsDateString()
     @IsNotEmpty()
-    @ApiModelProperty({example: '2022-04-24T19:03:12.367Z'})
+    @ApiProperty({example: '2022-04-24T19:03:12.367Z'})
     timeStarted: string;
 
     @IsDateString()
     @IsOptional()
-    @ApiModelProperty({example: null, default: null})
+    @ApiProperty({example: null, default: null})
     timeEnded: string | null;
 
     @IsObject()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({
+    @ApiProperty({
         example: {
             blue: 55,
             red: 45,
@@ -74,32 +74,32 @@ export class CreateInstanceOutfitWarsDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 27000000, default: 27000000})
+    @ApiProperty({example: 27000000, default: 27000000})
     duration: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: Ps2AlertsEventState.STARTED})
+    @ApiProperty({example: Ps2AlertsEventState.STARTED})
     state: Ps2AlertsEventState;
 
     @IsNumber()
     @IsNotEmpty()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    @ApiModelProperty({example: Ps2AlertsEventType.OUTFIT_WARS_AUG_2022})
+    @ApiProperty({example: Ps2AlertsEventType.OUTFIT_WARS_AUG_2022})
     ps2AlertsEventType: Ps2AlertsEventType.OUTFIT_WARS_AUG_2022;
 
     @IsObject()
     @IsNotEmpty()
-    @ApiModelProperty({example: {phase: Phase.QUALIFIERS, round: 3, teams: null}})
+    @ApiProperty({example: {phase: Phase.QUALIFIERS, round: 3, teams: null}})
     outfitwars: OutfitwarsMetadataEmbed;
 
     @IsObject()
     @IsNotEmpty()
-    @ApiModelProperty({example: {captureHistory: true, xpm: true}})
+    @ApiProperty({example: {captureHistory: true, xpm: true}})
     features: PS2AlertsInstanceFeaturesInterface;
 
     @IsNotEmpty()
-    @ApiModelProperty({example: '1.0'})
+    @ApiProperty({example: '1.0'})
     mapVersion: string;
     //
     // @ApiProperty({description: 'Victory data for the match'})

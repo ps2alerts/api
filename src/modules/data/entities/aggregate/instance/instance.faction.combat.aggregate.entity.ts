@@ -14,7 +14,7 @@ import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventTyp
 export default class InstanceFactionCombatAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
-    _id: ObjectID;
+    _id?: ObjectID;
 
     @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination'})
     @Column({

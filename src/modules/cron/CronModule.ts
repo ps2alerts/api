@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {CacheModule, HttpModule, Module} from '@nestjs/common';
+import {CacheModule, Module} from '@nestjs/common';
+import {HttpModule} from '@nestjs/axios';
 import {CombatHistoryCron} from './combat.history.cron';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import {TypeOrmModule} from '@nestjs/typeorm';

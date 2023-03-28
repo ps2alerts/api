@@ -5,7 +5,7 @@ import {
     IsObject,
     IsOptional,
 } from 'class-validator';
-import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+import {ApiProperty} from '@nestjs/swagger';
 import {Ps2AlertsEventState} from '../../../data/ps2alerts-constants/ps2AlertsEventState';
 import {
     OutfitwarsTerritoryResultInterface,
@@ -17,13 +17,13 @@ export class UpdateInstanceOutfitWarsDto {
     @IsDateString()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: '2022-03-27T01:00:10.463Z'})
+    @ApiProperty({example: '2022-03-27T01:00:10.463Z'})
     timeEnded: Date;
 
     @IsObject()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({
+    @ApiProperty({
         example: {
             blue: 55,
             red: 45,
@@ -38,13 +38,13 @@ export class UpdateInstanceOutfitWarsDto {
     @IsNumber()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({example: Ps2AlertsEventState.ENDED})
+    @ApiProperty({example: Ps2AlertsEventState.ENDED})
     state: Ps2AlertsEventState;
 
     @IsObject()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({
+    @ApiProperty({
         example: {
             teams: {
                 blue: {

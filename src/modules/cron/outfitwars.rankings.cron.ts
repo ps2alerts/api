@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {HttpService, Inject, Injectable, Logger} from '@nestjs/common';
+import {Inject, Injectable, Logger} from '@nestjs/common';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import LithaFalconOutfitWarDataInterface from '../data/ps2alerts-constants/interfaces/LithaFalconOutfitWarDataInterface';
 import {ConfigService} from '@nestjs/config';
+import {HttpModule} from '@nestjs/axios';
 // import {Cron} from '@nestjs/schedule';
 // import {lithafalconCensusUrl, lithafalconEndpoints} from '../data/ps2alerts-constants/lithafalconEndpoints';
 // import GlobalOutfitAggregateEntity from '../data/entities/aggregate/global/global.outfit.aggregate.entity';
@@ -21,7 +22,7 @@ export class OutfitWarsRankingsCron {
     private readonly logger = new Logger(OutfitWarsRankingsCron.name);
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
-        private readonly httpService: HttpService,
+        private readonly httpService: HttpModule,
         private readonly cacheService: RedisCacheService,
         private readonly config: ConfigService,
     ) {}

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-assignment */
-import {CollectionAggregationOptions, MongoEntityManager, ObjectID} from 'typeorm';
+import {CollectionAggregationOptions, MongoEntityManager, ObjectID, ObjectLiteral} from 'typeorm';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
 import Pagination from './pagination';
@@ -19,7 +19,7 @@ export default class MongoOperationsService {
      * @param filter object provided to filter entities
      * @param pagination object handles pagination / sorting
      */
-    public async findOne<T>(entity: any, filter?: any, pagination?: Pagination): Promise<T> {
+    public async findOne<T extends ObjectLiteral>(entity: any, filter?: any, pagination?: Pagination): Promise<T> {
         if (filter) {
             return await this.em.findOneOrFail(
                 entity,
@@ -27,7 +27,7 @@ export default class MongoOperationsService {
             );
         }
 
-        return this.em.findOneOrFail(entity);
+        return this.em.findOneOrFail(entity, {});
     }
 
     /**
@@ -51,7 +51,7 @@ export default class MongoOperationsService {
             if (result.insertedCount > 0) {
                 return result.insertedId;
             }
-        } catch (error) {
+        } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
@@ -71,7 +71,7 @@ export default class MongoOperationsService {
             if (result.insertedCount > 0) {
                 return result.insertedIds;
             }
-        } catch (error) {
+        } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
@@ -100,7 +100,7 @@ export default class MongoOperationsService {
         try {
             const result = await this.em.bulkWrite(entity, operations, {ordered: true});
             return result.upsertedCount ? result.upsertedCount > 0 : result.modifiedCount ? result.modifiedCount > 0 : false;
-        } catch (error) {
+        } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
@@ -140,7 +140,7 @@ export default class MongoOperationsService {
         try {
             const result = await this.em.bulkWrite(entity, operations, {ordered: true});
             return result.upsertedCount ? result.upsertedCount > 0 : result.modifiedCount ? result.modifiedCount > 0 : false;
-        } catch (error) {
+        } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
@@ -156,7 +156,7 @@ export default class MongoOperationsService {
             const result = await this.em.deleteOne(entity, conditional);
 
             return !!result.result.ok;
-        } catch (error) {
+        } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
             throw new Error(`Delete failed! E:${error.message}`);
         }
@@ -165,7 +165,7 @@ export default class MongoOperationsService {
     public aggregate <T>(entity: any, pipeline: any, options?: CollectionAggregationOptions): Promise<T[]> {
         try {
             return this.em.aggregate(entity, pipeline, options).toArray();
-        } catch (error) {
+        } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
             throw new Error(`Aggregate search failed! E: ${error.message}`);
         }
@@ -175,7 +175,7 @@ export default class MongoOperationsService {
     private static createFindOptions(filter?: {[k: string]: any}, pagination?: Pagination): object {
         let findOptions: {[k: string]: any} = {};
 
-        if (filter && filter !== {}) {
+        if (filter) {
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             Object.keys(filter).forEach((key) => (filter[key] === undefined ? delete filter[key] : {}));
             findOptions.where = filter;

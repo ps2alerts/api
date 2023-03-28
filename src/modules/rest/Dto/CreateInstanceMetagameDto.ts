@@ -6,7 +6,7 @@ import {
     IsOptional,
     IsString,
 } from 'class-validator';
-import {ApiModelProperty} from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+import {ApiProperty} from '@nestjs/swagger';
 import {World} from '../../data/ps2alerts-constants/world';
 import {Zone} from '../../data/ps2alerts-constants/zone';
 import {MetagameEventType} from '../../data/ps2alerts-constants/metagameEventType';
@@ -23,22 +23,22 @@ import {Ps2AlertsEventType} from '../../data/ps2alerts-constants/ps2AlertsEventT
 export class CreateInstanceMetagameDto {
     @IsString()
     @IsNotEmpty()
-    @ApiModelProperty({example: '10-12345'})
+    @ApiProperty({example: '10-12345'})
     instanceId: string;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: World.MILLER})
+    @ApiProperty({example: World.MILLER})
     world: World;
 
     @IsDateString()
     @IsNotEmpty()
-    @ApiModelProperty({example: '2022-04-24T19:03:12.367Z'})
+    @ApiProperty({example: '2022-04-24T19:03:12.367Z'})
     timeStarted: string;
 
     @IsDateString()
     @IsOptional()
-    @ApiModelProperty({
+    @ApiProperty({
         example: null,
         default: null,
     })
@@ -47,7 +47,7 @@ export class CreateInstanceMetagameDto {
     @IsObject()
     @IsNotEmpty()
     @IsOptional()
-    @ApiModelProperty({
+    @ApiProperty({
         example: {
             vs: 30,
             nc: 27,
@@ -63,32 +63,32 @@ export class CreateInstanceMetagameDto {
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: Zone.INDAR})
+    @ApiProperty({example: Zone.INDAR})
     zone: Zone;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 12345})
+    @ApiProperty({example: 12345})
     censusInstanceId: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: MetagameEventType.AMERISH_ENLIGHTENMENT})
+    @ApiProperty({example: MetagameEventType.AMERISH_ENLIGHTENMENT})
     censusMetagameEventType: MetagameEventType;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: 1800})
+    @ApiProperty({example: 1800})
     duration: number;
 
     @IsNumber()
     @IsNotEmpty()
-    @ApiModelProperty({example: Ps2AlertsEventState.STARTED})
+    @ApiProperty({example: Ps2AlertsEventState.STARTED})
     state: Ps2AlertsEventState;
 
     @IsNumber()
     @IsOptional()
-    @ApiModelProperty({
+    @ApiProperty({
         example: Ps2AlertsEventType.LIVE_METAGAME,
         default: Ps2AlertsEventType.LIVE_METAGAME,
     })
@@ -96,7 +96,7 @@ export class CreateInstanceMetagameDto {
 
     @IsNumber()
     @IsOptional()
-    @ApiModelProperty({
+    @ApiProperty({
         example: Bracket.UNKNOWN,
         default: Bracket.UNKNOWN,
     })
@@ -104,14 +104,14 @@ export class CreateInstanceMetagameDto {
 
     @IsObject()
     @IsNotEmpty()
-    @ApiModelProperty({example: {captureHistory: true, xpm: true}})
+    @ApiProperty({example: {captureHistory: true, xpm: true}})
     features: PS2AlertsInstanceFeaturesInterface;
 
     @IsNotEmpty()
-    @ApiModelProperty({example: '1.0'})
+    @ApiProperty({example: '1.0'})
     mapVersion: string;
 
     @IsNotEmpty()
-    @ApiModelProperty({example: '1.0'})
+    @ApiProperty({example: '1.0'})
     latticeVersion: string;
 }

@@ -13,10 +13,9 @@ export class MongoConfig implements TypeOrmOptionsFactory {
 
     public createTypeOrmOptions(): TypeOrmModuleOptions {
         const path = resolve(`${__dirname}/../../../dist`);
-        const config: TypeOrmModuleOptions = {
+        return {
             ...this.config.get('database.mongo'),
             entities: [`${path}/**/*.entity.js`],
         };
-        return config;
     }
 }

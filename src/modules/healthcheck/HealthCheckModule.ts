@@ -19,7 +19,6 @@ const metadata = {
         HealthcheckController,
     ],
     imports: [
-        ConfigService,
         TerminusModule,
         TypeOrmModule.forFeature([
             GlobalCharacterAggregateEntity,

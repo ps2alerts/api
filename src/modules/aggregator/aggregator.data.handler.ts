@@ -22,12 +22,11 @@ export default class AggregatorDataHandler {
                 entity,
                 data.docs,
             );
-        } catch (err) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const error: Error = err;
-
-            if (!error.message.includes('E11000')) {
-                this.logger.error(`Unable to create data for Aggregation! E: ${error.message}`);
+        } catch (err: any) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
+            if (err.message && !err.message.includes('E11000')) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+                this.logger.error(`Unable to create data for Aggregation! E: ${err.message}`);
             }
         }
 
@@ -42,12 +41,11 @@ export default class AggregatorDataHandler {
                 data.docs,
                 data.conditionals,
             );
-        } catch (err) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const error: Error = err;
-
-            if (!error.message.includes('E11000')) {
-                this.logger.error(`Unable to upsert data for Aggregation! E: ${error.message}`);
+        } catch (err: any) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            if (err.message && !err.message.includes('E11000')) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+                this.logger.error(`Unable to upsert data for Aggregation! E: ${err.message}`);
             }
         }
 
@@ -72,12 +70,11 @@ export default class AggregatorDataHandler {
                 data.docs,
                 data.conditionals,
             );
-        } catch (err) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const error: Error = err;
-
-            if (!error.message.includes('E11000')) {
-                throw new Error(`Unable to upsert data for Global Aggregation! E: ${error.message}`);
+        } catch (err: any) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
+            if (err.message && !err.message.includes('E11000')) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
+                throw new Error(`Unable to upsert data for Global Aggregation! E: ${err.message}`);
             }
         }
 
