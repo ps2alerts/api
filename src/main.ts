@@ -65,7 +65,7 @@ async function bootstrap(): Promise<void> {
     await app.register(compression, {encodings: ['gzip', 'deflate']});
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const port = config.get('http.port') ?? 3000;
+    const port: number = config.get('http.port') ?? 3000;
     app.useGlobalPipes(new ValidationPipe({whitelist: true, transform: true, disableErrorMessages: false}));
     await app.listen(port, '0.0.0.0');
     // eslint-disable-next-line no-console

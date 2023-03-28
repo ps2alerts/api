@@ -19,7 +19,7 @@ export class BasicStrategy extends PassportStrategy(Strategy) {
     validate(username: string, password: string): boolean {
         const internalApiAuthConfig: InternalApiAuthConfigInterface | null = this.config.get('internalApiAuth') ?? null;
 
-        if (!internalApiAuthConfig || !internalApiAuthConfig.password) {
+        if (!internalApiAuthConfig?.password) {
             throw new Error('Could not find internal API config!');
         }
 

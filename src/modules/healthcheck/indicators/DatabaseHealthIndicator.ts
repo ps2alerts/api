@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {Inject, Injectable} from '@nestjs/common';
 import {HealthCheckError, HealthIndicator, HealthIndicatorResult} from '@nestjs/terminus';
 import GlobalCharacterAggregateEntity from '../../data/entities/aggregate/global/global.character.aggregate.entity';
@@ -23,7 +24,7 @@ export class DatabaseHealthIndicator extends HealthIndicator {
             },
         );
 
-        if (!character || !character.character || character.character.name !== 'Maelstrome26') {
+        if (!character?.character || character.character.name !== 'Maelstrome26') {
             throw new HealthCheckError('database', this.getStatus('database', false, ['Character data did not match name correctly, or character did not return. Something is wrong!', character]));
         }
 

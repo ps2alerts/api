@@ -3,6 +3,14 @@ module.exports = {
     "es2020": true,
     "node": true
   },
+  "overrides": [{
+    "files": [
+        "src/modules/rest/controllers/**/*.ts",
+    ],
+    "rules": {
+      "@typescript-eslint/naming-convention": "off",
+    }
+  }],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "tsconfig.json"
@@ -138,20 +146,7 @@ module.exports = {
     "@typescript-eslint/default-param-last": "error",
     "@typescript-eslint/dot-notation": "error",
     "@typescript-eslint/func-call-spacing": "error",
-    "@typescript-eslint/indent": [
-      "error",
-      4,
-      {
-        "SwitchCase": 1,
-        "CallExpression": {
-          "arguments": "first"
-        },
-        "FunctionExpression": {
-          "parameters": "first"
-        },
-        "flatTernaryExpressions": true
-      }
-    ],
+    "@typescript-eslint/indent": 0,
     "@typescript-eslint/keyword-spacing": "error",
     "@typescript-eslint/lines-between-class-members": [
       "error",

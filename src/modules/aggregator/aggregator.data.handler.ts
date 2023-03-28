@@ -129,7 +129,7 @@ export default class AggregatorDataHandler {
         if (conditional.date) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Object.assign(conditional, {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument
                 date: new Date(conditional.date),
             });
         }
