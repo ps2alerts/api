@@ -36,7 +36,6 @@
     "@fastify/static": "^6.9.0",
     "@fastify/swagger": "^8.3.1",
     "@nestjs/axios": "^2.0.0",
-    "@nestjs/cli": "9.3.0",
     "@nestjs/common": "^9.3.12",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.3.12",
@@ -67,6 +66,7 @@
     "typeorm": "^0.3.12"
   },
   "devDependencies": {
+    "@nestjs/cli": "9.3.0",
     "@nestjs/schematics": "^9.0.4",
     "@nestjs/testing": "^9.3.12",
     "@types/jest": "26.0.20",
