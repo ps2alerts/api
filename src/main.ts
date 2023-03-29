@@ -7,6 +7,7 @@ import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import {ValidationPipe} from '@nestjs/common';
 import {TypeOrmFilter} from './filters/type-orm.filter';
 import compression from '@fastify/compress';
+import {fastifyHelmet} from '@fastify/helmet';
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -21,19 +22,23 @@ async function bootstrap(): Promise<void> {
 
     const config = app.get(ConfigService);
 
-    app.useGlobalFilters(new TypeOrmFilter());
-
+    // Fastify stuff
     app.enableCors(config.get('config'));
-    // void app.register(fastifyHelmet, {
-    //     contentSecurityPolicy: {
-    //         directives: {
-    //             defaultSrc: ['\'self\''],
-    //             styleSrc: ['\'self\'', '\'unsafe-inline\''],
-    //             imgSrc: ['\'self\'', 'data:', 'validator.swagger.io'],
-    //             scriptSrc: ['\'self\'', 'https: \'unsafe-inline\''],
-    //         },
-    //     },
-    // });
+    void app.register(fastifyHelmet, {
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ['\'self\''],
+                styleSrc: ['\'self\'', '\'unsafe-inline\''],
+                imgSrc: ['\'self\'', 'data:', 'validator.swagger.io'],
+                scriptSrc: ['\'self\'', 'https: \'unsafe-inline\''],
+            },
+        },
+    });
+    void app.register(compression, {encodings: ['gzip', 'deflate']});
+
+    // Type ORM stuff
+    app.useGlobalFilters(new TypeOrmFilter());
+    app.useGlobalPipes(new ValidationPipe({whitelist: true, transform: true, disableErrorMessages: false}));
 
     if (process.env.AGGREGATOR_ENABLED === 'true') {
         app.connectMicroservice<RmqOptions>({
@@ -62,14 +67,7 @@ async function bootstrap(): Promise<void> {
     // Connects to Rabbit etc
     void app.startAllMicroservices();
 
-    void app.register(compression, {encodings: ['gzip', 'deflate']});
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const port: number = config.get('http.port') ?? 3000;
-    app.useGlobalPipes(new ValidationPipe({whitelist: true, transform: true, disableErrorMessages: false}));
-    await app.listen(port, '0.0.0.0');
-    // eslint-disable-next-line no-console
-    console.log(`Application is running on: ${await app.getUrl()}`);
+    await app.listen(config.get('http.port') ?? 3000, '0.0.0.0');
 }
 
 void bootstrap();
