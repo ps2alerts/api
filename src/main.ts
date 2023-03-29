@@ -62,7 +62,7 @@ async function bootstrap(): Promise<void> {
     // Connects to Rabbit etc
     void app.startAllMicroservices();
 
-    await app.register(compression, {encodings: ['gzip', 'deflate']});
+    void app.register(compression, {encodings: ['gzip', 'deflate']});
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const port: number = config.get('http.port') ?? 3000;
