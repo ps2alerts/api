@@ -32,7 +32,7 @@ export default class RestCensusContinentPolyfillController {
             key,
             // eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-var-requires
             JSON.parse(this.readFile(path.resolve(__dirname, `../../../data/ps2alerts-constants/maps/regions-${zone}-${version}.json`))),
-            1200);
+            3600);
     }
 
     readFile(filePath: string): string {
