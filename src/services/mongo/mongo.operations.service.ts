@@ -47,10 +47,7 @@ export default class MongoOperationsService {
 
         try {
             const result = await this.em.insertOne(entity, doc);
-
-            if (result.insertedCount > 0) {
-                return result.insertedId;
-            }
+            return result.insertedId;
         } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
@@ -99,7 +96,13 @@ export default class MongoOperationsService {
 
         try {
             const result = await this.em.bulkWrite(entity, operations, {ordered: true});
-            return result.upsertedCount ? result.upsertedCount > 0 : result.modifiedCount ? result.modifiedCount > 0 : false;
+
+            return result.upsertedCount
+                ? result.upsertedCount > 0
+                : result.modifiedCount
+                    ? result.modifiedCount > 0
+                    : false;
+
         } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
