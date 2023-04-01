@@ -54,7 +54,7 @@
     "fastify-helmet": "^5.0.3",
     "fastify-rate-limit": "^5.9.0",
     "fastify-swagger": "^4.17.1",
-    "mongodb": "^3.6.3",
+    "mongodb": "^5.1.0",
     "nestjs-swagger-api-implicit-queries-decorator": "^1.0.0",
     "passport": "^0.6.0",
     "passport-http": "^0.3.0",
