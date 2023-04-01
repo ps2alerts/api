@@ -37,7 +37,7 @@
     "@nestjs/passport": "^8.2.2",
     "@nestjs/platform-fastify": "^7.6.13",
     "@nestjs/platform-ws": "^7.4.2",
-    "@nestjs/schedule": "^0.4.2",
+    "@nestjs/schedule": "^2.2.0",
     "@nestjs/swagger": "^4.7.15",
     "@nestjs/terminus": "^8.1.1",
     "@nestjs/typeorm": "^7.1.5",
