@@ -44,15 +44,28 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push production image
+      - name: Build and push production image (AMD64)
         uses: docker/build-push-action@v2
         with:
           file: provisioning/production/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: |
             maelstromeous/ps2alerts:api-production-${{ github.sha }}
             maelstromeous/ps2alerts:api-production-latest
+          build-args: |
+            BUILD_SHA=${{ env.SHORT_SHA }}
+            BUILT=${{ env.NOW }}
+            VERSION=${{ steps.latesttag.outputs.tag }}
+
+      - name: Build and push production image (ARM64)
+        uses: docker/build-push-action@v2
+        with:
+          file: provisioning/production/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: |
+            maelstromeous/ps2alerts:api-production-arm
           build-args: |
             BUILD_SHA=${{ env.SHORT_SHA }}
             BUILT=${{ env.NOW }}
