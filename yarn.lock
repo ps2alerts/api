@@ -1210,12 +1210,12 @@
     boxen "5.1.2"
     check-disk-space "3.3.1"
 
-"@nestjs/typeorm@^9.0.1":
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/@nestjs/typeorm/-/typeorm-9.0.1.tgz#f78bfc00e71731ea860288e4a03830107daf3d9c"
-  integrity sha512-A2BgLIPsMtmMI0bPKEf4bmzgFPsnvHqNBx3KkvaJ7hJrBQy0OqYOb+Rr06ifblKWDWS2tUPNrAFQbZjtk3PI+g==
+"@nestjs/typeorm@^10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/typeorm/-/typeorm-10.0.0.tgz#78e20d3413d59dd3dfee03260c904f0f4040b4e1"
+  integrity sha512-WQU4HCDTz4UavsFzvGUKDHqi0MO5K47yFoPXdmh+Z/hCNO7SHCMmV9jLiLukM8n5nKUqJ3jDqiljkWBcZPdCtA==
   dependencies:
-    uuid "8.3.2"
+    uuid "9.0.0"
 
 "@nestjs/websockets@^9.3.12":
   version "9.3.12"
@@ -5947,15 +5947,15 @@ uuid@3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
-uuid@8.3.2, uuid@^8.3.2:
-  version "8.3.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
-  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
-
 uuid@9.0.0, uuid@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
   integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"
