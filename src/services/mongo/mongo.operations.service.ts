@@ -174,6 +174,24 @@ export default class MongoOperationsService {
         }
     }
 
+    public async searchText<T>(entity: new () => T, searchTerm?: {field: string, term: string, options: string}, filter?: object, pagination?: Pagination): Promise<T[]> {
+        // Create a base filter with bracket = 0
+        const baseFilter: { [key: string]: any } = {bracket: 0};
+
+        // If a search term is provided, add a regex query for the specified field
+        if (searchTerm) {
+            baseFilter[searchTerm.field] = {$regex: `^${searchTerm.term}.*`, $options: searchTerm.options};
+        }
+
+        // If an additional filter is provided, add it to the base filter
+        if (filter) {
+            Object.assign(baseFilter, filter);
+        }
+
+        // Use the find() method with the filter and pagination options
+        return await this.em.find(entity, MongoOperationsService.createFindOptions(baseFilter, pagination));
+    }
+
     // eslint-disable-next-line @typescript-eslint/ban-types
     private static createFindOptions(filter?: {[k: string]: any}, pagination?: Pagination): object {
         let findOptions: {[k: string]: any} = {};

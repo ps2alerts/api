@@ -107,4 +107,18 @@ export default class GlobalOutfitAggregateEntity {
         default: Ps2AlertsEventType.LIVE_METAGAME,
     })
     ps2AlertsEventType: Ps2AlertsEventType;
+
+    @Exclude()
+    @ApiProperty({
+        example: 100,
+        description: 'Search score weighting',
+    })
+    searchScore?: number;
+
+    @Exclude()
+    @ApiProperty({
+        example: 'character',
+        description: 'Search result type',
+    })
+    searchResultType?: string;
 }
