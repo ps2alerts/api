@@ -35,7 +35,7 @@ export default class RestSearchController {
         @Query('type') @Optional() type?: string,
         @Query('sortBy') sortBy?: string,
         @Query('order') order?: string,
-    ): Promise<{results: Array<GlobalCharacterAggregateEntity | GlobalOutfitAggregateEntity>}> {
+    ): Promise<Array<GlobalCharacterAggregateEntity | GlobalOutfitAggregateEntity>> {
         let characterResults: GlobalCharacterAggregateEntity[] = [];
         let outfitResults: GlobalOutfitAggregateEntity[] = [];
 
@@ -137,10 +137,8 @@ export default class RestSearchController {
         // Sort by score
         characterResults.sort((a, b) => this.searchScores(a.searchScore, b.searchScore));
 
-        // combine both arrays
-        const results = [...characterResults, ...outfitResults].sort((a, b) => this.searchScores(a.searchScore, b.searchScore));
-
-        return {results};
+        // Combine both arrays and return combined array sorted by score
+        return [...characterResults, ...outfitResults].sort((a, b) => this.searchScores(a.searchScore, b.searchScore));
     }
 
     private searchScores(a: number | undefined, b: number | undefined): number {
