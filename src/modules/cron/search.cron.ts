@@ -22,7 +22,7 @@ export class SearchCron {
         private readonly cacheService: RedisCacheService,
     ) {}
 
-    @Cron(CronExpression.EVERY_5_SECONDS)
+    @Cron(CronExpression.EVERY_MINUTE)
     async handleCron(): Promise<void> {
         this.logger.log('Running Search sync job');
 
@@ -59,7 +59,7 @@ export class SearchCron {
             return;
         }
 
-        this.logger.log(`Found ${numberOfRecords} records to add to search cache`);
+        this.logger.log(`Found ${numberOfRecords} records to add to search character cache`);
 
         // Loop through all Character records until we have less than 1000 returned
         while (!endOfRecords) {
