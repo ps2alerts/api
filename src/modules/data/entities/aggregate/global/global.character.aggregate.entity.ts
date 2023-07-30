@@ -101,17 +101,10 @@ export default class GlobalCharacterAggregateEntity {
     })
     ps2AlertsEventType: Ps2AlertsEventType;
 
-    @Exclude()
-    @ApiProperty({
-        example: 100,
-        description: 'Search score weighting',
+    @ApiProperty({example: true, description: 'Denotes if this aggregate is indexed for searching'})
+    @Column({
+        type: 'boolean',
+        default: false,
     })
-    searchScore?: number;
-
-    @Exclude()
-    @ApiProperty({
-        example: 'character',
-        description: 'Search result type',
-    })
-    searchResultType?: string;
+    searchIndexed: boolean;
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-argument */
-import {CollectionAggregationOptions, MongoEntityManager, ObjectID, ObjectLiteral} from 'typeorm';
+import {CollectionAggregationOptions, FindOptionsWhere, MongoEntityManager, ObjectID, ObjectLiteral} from 'typeorm';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
 import Pagination from './pagination';
@@ -176,7 +176,7 @@ export default class MongoOperationsService {
 
     public async searchText<T>(entity: new () => T, searchTerm?: {field: string, term: string, options: string}, filter?: object, pagination?: Pagination): Promise<T[]> {
         // Create a base filter with bracket = 0
-        const baseFilter: { [key: string]: any } = {bracket: 0};
+        const baseFilter: { [key: string]: any } = {};
 
         // If a search term is provided, add a regex query for the specified field
         if (searchTerm) {
@@ -190,6 +190,11 @@ export default class MongoOperationsService {
 
         // Use the find() method with the filter and pagination options
         return await this.em.find(entity, MongoOperationsService.createFindOptions(baseFilter, pagination));
+    }
+
+    public async countDocuments<T>(entity: new () => T, filter: FindOptionsWhere<any>): Promise<number> {
+        const repository = this.em.getRepository(entity);
+        return repository.countBy(filter);
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-types

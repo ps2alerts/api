@@ -1,151 +1,99 @@
-import {Controller, Get, Inject, Optional, Query} from '@nestjs/common';
+import {Controller, Get, Inject, Query} from '@nestjs/common';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
-import {PAGINATION_IMPLICIT_QUERIES} from './common/rest.pagination.queries';
 import GlobalCharacterAggregateEntity from '../../data/entities/aggregate/global/global.character.aggregate.entity';
 import GlobalOutfitAggregateEntity from '../../data/entities/aggregate/global/global.outfit.aggregate.entity';
-import Pagination from '../../../services/mongo/pagination';
-import {SearchTermInterface} from '../../../interfaces/SearchTermInterface';
+import {Ps2AlertsEventType} from '../../data/ps2alerts-constants/ps2AlertsEventType';
+import {RedisCacheService} from '../../../services/cache/redis.cache.service';
+import {Bracket} from '../../data/ps2alerts-constants/bracket';
 
 @ApiTags('Search')
 @Controller('search')
 export default class RestSearchController {
+    private readonly environments = ['pc', 'ps4_eu', 'ps4_us'];
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
-    @Get()
-    @ApiOperation({summary: 'Searches GlobalCharacterAggregateEntity and GlobalOutfitAggregateEntity for a term'})
-    @ApiImplicitQueries([...PAGINATION_IMPLICIT_QUERIES, {
-        name: 'type',
-        required: false,
-        description: 'The type of the data to be searched, either "characters" or "outfits". If not specified, both types will be searched.',
-        type: String,
-        enum: ['characters', 'outfits'],
-    }])
+    @Get('characters')
+    @ApiOperation({summary: 'Searches GlobalCharacterAggregateEntity for a term'})
     @ApiResponse({
         status: 200,
-        description: 'The list of GlobalCharacterAggregateEntity and GlobalOutfitAggregateEntity for a search term',
+        description: 'The list of GlobalCharacterAggregateEntity for a search term',
+        type: Object,
+        isArray: true,
+    })
+    async searchCharacters(
+        @Query('searchTerm') searchTerm: string,
+    ): Promise<GlobalCharacterAggregateEntity[]> {
+        // Time for some voodoo
+        const characterIds: string[] = [];
+
+        // Loop through each environment and perform a prefix search via Redis using an insensitive version of the search term. This will return the names of the characters that match the search term.
+        for (const environment of this.environments) {
+            const nameListKey = `search:${environment}:character_index`;
+            const characterNames = await this.cacheService.searchDataInSortedSet(nameListKey, searchTerm.toLowerCase());
+
+            // Now we have the character names, we need to grab their IDs by performing a lookup by lowercase name in the database
+            for (const characterName of characterNames) {
+                characterIds.push(String(await this.cacheService.get(`search:${environment}:character_ids:${characterName}`)));
+            }
+        }
+
+        // Now we have a list of character IDs to grab, we now need to actually grab the characters from the database
+        return await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {
+            'character.id': {$in: characterIds},
+            bracket: Bracket.TOTAL,
+            ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME,
+        });
+    }
+
+    @Get('outfits')
+    @ApiOperation({summary: 'Searches GlobalOutfitAggregateEntity for a term'})
+    @ApiResponse({
+        status: 200,
+        description: 'The list of GlobalOutfitAggregateEntity for a search term',
         type: Object,
         isArray: false,
     })
-    async search(
+    async searchOutfits(
         @Query('searchTerm') searchTerm: string,
-        @Query('type') @Optional() type?: string,
-        @Query('sortBy') sortBy?: string,
-        @Query('order') order?: string,
-    ): Promise<Array<GlobalCharacterAggregateEntity | GlobalOutfitAggregateEntity>> {
-        let characterResults: GlobalCharacterAggregateEntity[] = [];
-        let outfitResults: GlobalOutfitAggregateEntity[] = [];
+    ): Promise<GlobalOutfitAggregateEntity[]> {
+        // Time for some extra voodoo
+        let outfitIds: string[] = [];
 
-        const pagination = new Pagination({sortBy, order, page: 0, pageSize: 10}, false);
+        // Loop through each environment and perform a prefix search via Redis using an insensitive version of the search term. This will return the names of the outfits that match the search term.
+        for (const environment of this.environments) {
+            const nameListKey = `search:${environment}:outfit_index`;
+            const tagListKey = `search:${environment}:outfit_tag_index`;
+            const outfitNames = await this.cacheService.searchDataInSortedSet(nameListKey, searchTerm.toLowerCase());
+            const outfitTags = await this.cacheService.searchDataInSortedSet(tagListKey, searchTerm.toLowerCase());
 
-        if (type === 'characters' || type === undefined) {
-            const characterSearchTerm: SearchTermInterface = {
-                field: 'character.name',
-                term: searchTerm,
-                options: 'i',
-            };
-            characterResults = await this.mongoOperationsService.searchText(
-                GlobalCharacterAggregateEntity,
-                characterSearchTerm,
-                {$and: [{bracket: 0}]},
-                pagination,
-            );
-        }
-
-        if (type === 'outfits' || type === undefined) {
-            const outfitNameSearchTerm: SearchTermInterface = {
-                field: 'outfit.name',
-                term: searchTerm,
-                options: 'i',
-            };
-            const outfitTagSearchTerm: SearchTermInterface = {
-                field: 'outfit.tag',
-                term: searchTerm,
-                options: 'i',
-            };
-
-            // First, search for outfits by tag
-            const outfitTagResults = await this.mongoOperationsService.searchText(
-                GlobalOutfitAggregateEntity,
-                outfitTagSearchTerm,
-                {$and: [{bracket: 0}]},
-                pagination,
-            );
-
-            const outfitNameResults = await this.mongoOperationsService.searchText(
-                GlobalOutfitAggregateEntity,
-                outfitNameSearchTerm,
-                {$and: [{bracket: 0}]},
-                pagination,
-            );
-
-            // Combine both arrays, ensuring that the tag results appear first
-            outfitResults = [...outfitTagResults, ...outfitNameResults];
-
-            // Deduplicate outfits based on name
-            const outfitsMap = new Map(outfitResults.map((outfit) => [outfit.outfit.name, outfit]));
-            outfitResults = Array.from(outfitsMap.values());
-        }
-
-        const searchTermLower = searchTerm.toLowerCase();
-
-        // For outfits
-        outfitResults.forEach((outfit) => {
-            let score = 0;
-
-            // Higher weight for exact matches on tag and name
-            if (outfit.outfit.tag?.toLowerCase() === searchTermLower || outfit.outfit.name.toLowerCase() === searchTermLower) {
-                score += 100;
-            } else {
-                // Lower weight for partial matches
-                const searchTermRegex = new RegExp(searchTerm, 'i');
-
-                if (outfit.outfit.tag?.match(searchTermRegex)) {
-                    score += 20;
-                } else if (outfit.outfit.name.match(searchTermRegex)) {
-                    score += 10;
-                }
+            // Now we have the character names, we need to grab their IDs by performing a lookup by lowercase name in the database
+            for (const outfitName of outfitNames) {
+                outfitIds.push(
+                    String(await this.cacheService.get(`search:${environment}:outfit_ids:${outfitName}`)),
+                );
             }
 
-            outfit.searchScore = score;
-            outfit.searchResultType = 'outfit'; // added type field
-        });
-
-        // For characters
-        characterResults.forEach((character) => {
-            let score = 0;
-
-            // Higher weight for exact matches
-            if (character.character.name.toLowerCase() === searchTermLower) {
-                score += 100;
-            } else {
-                // Lower weight for partial matches
-                const searchTermRegex = new RegExp(searchTerm, 'i');
-
-                if (character.character.name.match(searchTermRegex)) {
-                    score += 5;
-                }
+            // We also need to search on outfit tag for possible hits
+            for (const outfitTag of outfitTags) {
+                outfitIds.push(
+                    String(await this.cacheService.get(`search:${environment}:outfit_ids_tag:${outfitTag}`)),
+                );
             }
-
-            character.searchScore = score;
-            character.searchResultType = 'character'; // added type field
-        });
-
-        // Sort by score
-        characterResults.sort((a, b) => this.searchScores(a.searchScore, b.searchScore));
-
-        // Combine both arrays and return combined array sorted by score
-        return [...characterResults, ...outfitResults].sort((a, b) => this.searchScores(a.searchScore, b.searchScore));
-    }
-
-    private searchScores(a: number | undefined, b: number | undefined): number {
-        if (a && b) {
-            return b - a;
         }
 
-        return 0;
+        // Deduplicate the outfit IDs
+        const outfitIdsSet = new Set(outfitIds);
+        outfitIds = Array.from(outfitIdsSet);
+
+        // Now we have a list of character IDs to grab, we now need to actually grab the characters from the database
+        return await this.mongoOperationsService.findMany(GlobalOutfitAggregateEntity, {
+            'outfit.id': {$in: outfitIds},
+            bracket: Bracket.TOTAL,
+            ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME,
+        });
     }
 }
