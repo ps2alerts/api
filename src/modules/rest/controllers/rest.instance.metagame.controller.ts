@@ -37,7 +37,7 @@ import {RedisCacheService} from '../../../services/cache/redis.cache.service';
 import {AuthGuard} from '@nestjs/passport';
 import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
 import {CreateInstanceMetagameDto} from '../Dto/CreateInstanceMetagameDto';
-import {ObjectID} from 'typeorm';
+import {ObjectID, ObjectLiteral} from 'typeorm';
 import {ZONE_IMPLICIT_QUERY} from './common/rest.zone.query';
 import InstanceRetrievalService from '../../../services/instance.retrieval.service';
 
@@ -74,7 +74,7 @@ export class RestInstanceMetagameController {
         type: InstanceMetagameTerritoryEntity,
     })
     @UseInterceptors(ClassSerializerInterceptor)
-    async findOne(@Param('instance') instanceId: string): Promise<InstanceMetagameTerritoryEntity> {
+    async findOne(@Param('instance') instanceId: string): Promise<InstanceMetagameTerritoryEntity | ObjectLiteral> {
         return await this.instanceRetrievalService.findOne(instanceId);
     }
 
