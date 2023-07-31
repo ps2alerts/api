@@ -64,15 +64,14 @@ export default class RestGlobalVictoryAggregateController extends BaseGlobalAggr
             date: new Range('date', dateFrom, dateTo).build(),
         };
 
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const key = `/global/victories/W:${world}-Z:${zone}-B:${bracket}-ET:${ps2AlertsEventType}?DF:${dateFrom}-DT:${dateTo}`;
+        const key = `cache:endpoints:victories:W:${world ?? 0}-Z:${zone ?? 0}-B:${bracket ?? 0}-ET:${ps2AlertsEventType ?? 0}-DF:${dateFrom ? dateFrom.toString() : 0}-DT:${dateTo ? dateTo.toString() : 0}`;
         const pagination = new Pagination({sortBy: 'date', order: 'desc'});
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
             await this.mongoOperationsService.findMany(GlobalVictoryAggregate, filter, pagination),
-            60,
+            60 * 15,
         );
     }
 }

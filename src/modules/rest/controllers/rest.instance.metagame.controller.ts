@@ -37,8 +37,9 @@ import {RedisCacheService} from '../../../services/cache/redis.cache.service';
 import {AuthGuard} from '@nestjs/passport';
 import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
 import {CreateInstanceMetagameDto} from '../Dto/CreateInstanceMetagameDto';
-import {ObjectID} from 'typeorm';
+import {ObjectID, ObjectLiteral} from 'typeorm';
 import {ZONE_IMPLICIT_QUERY} from './common/rest.zone.query';
+import InstanceRetrievalService from '../../../services/instance.retrieval.service';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
@@ -62,6 +63,7 @@ export class RestInstanceMetagameController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
         private readonly cacheService: RedisCacheService,
+        private readonly instanceRetrievalService: InstanceRetrievalService,
     ) {}
 
     @Get('/:instance')
@@ -72,11 +74,8 @@ export class RestInstanceMetagameController {
         type: InstanceMetagameTerritoryEntity,
     })
     @UseInterceptors(ClassSerializerInterceptor)
-    async findOne(@Param('instance') instanceId: string): Promise<InstanceMetagameTerritoryEntity> {
-        return await this.mongoOperationsService.findOne(
-            InstanceMetagameTerritoryEntity,
-            {instanceId},
-        );
+    async findOne(@Param('instance') instanceId: string): Promise<InstanceMetagameTerritoryEntity | ObjectLiteral> {
+        return await this.instanceRetrievalService.findOne(instanceId);
     }
 
     @Post('')
@@ -184,7 +183,11 @@ export class RestInstanceMetagameController {
             'result.victor': victor ?? undefined,
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
+        const key = `cache:endpoints:instance-metagame:W-65${world ?? 0}-Z:${zone ?? 0}-TSF:${timeStartedFrom ? timeStartedFrom.toString() : 0}-TST:${timeStartedTo ? timeStartedTo.toString() : 0}-B:${bracket ?? 0}-V:${victor ?? 0}-P:${page ?? 0}-PS:${pageSize ?? 0}`;
+
+        return await this.cacheService.get(key) ?? await this.cacheService.set(
+            key,
+            await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false)),
+            60 * 15);
     }
 }

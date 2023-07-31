@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiHideProperty, ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, Index, ObjectID, ObjectLiteral} from 'typeorm';
 import CharacterEmbed from '../common/character.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 import XperminuteEmbed from '../common/xperminute.embed';
 import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
+import InstanceMetagameTerritoryEntity from '../../instance/instance.metagame.territory.entity';
 
 @Entity({
     name: 'aggregate_instance_characters',
@@ -102,4 +103,7 @@ export default class InstanceCharacterAggregateEntity {
         default: Ps2AlertsEventType.LIVE_METAGAME,
     })
     ps2AlertsEventType: Ps2AlertsEventType;
+
+    @ApiProperty({type: InstanceMetagameTerritoryEntity, description: 'Instance Metagame Territory'})
+    instanceDetails?: ObjectLiteral;
 }

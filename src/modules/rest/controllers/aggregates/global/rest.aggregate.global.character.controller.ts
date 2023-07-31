@@ -56,7 +56,7 @@ export default class RestGlobalCharacterAggregateController extends BaseGlobalAg
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
             await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world, bracket, ps2AlertsEventType}, pagination),
-            900);
+            60 * 15);
     }
 
     @Get('global/character/:character')
@@ -75,7 +75,7 @@ export default class RestGlobalCharacterAggregateController extends BaseGlobalAg
         bracket = this.correctBracket(bracket, ps2AlertsEventType);
 
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const key = `/global/character/${character}/B:${bracket}-ET:${ps2AlertsEventType}`;
+        const key = `cache:endpoints:character:${character}-B:${bracket}-ET:${ps2AlertsEventType}`;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.cacheService.get(key) ?? await this.cacheService.set(

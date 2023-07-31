@@ -6,16 +6,12 @@ export default class Pagination {
     public constructor(pageQuery: {sortBy?: string, order?: string, pageSize?: number, page?: number}, limited = false) {
         this.take = 100;
 
-        if (pageQuery.pageSize) {
-            if (pageQuery.pageSize < 1000) {
+        if (!limited) {
+            if (pageQuery.pageSize) {
                 this.take = pageQuery.pageSize;
             } else {
-                this.take = 1000;
+                this.take = undefined;
             }
-        }
-
-        if (!limited && !pageQuery.pageSize) {
-            this.take = undefined;
         }
 
         if (pageQuery.pageSize && pageQuery.page) {
