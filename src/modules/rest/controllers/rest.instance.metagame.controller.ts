@@ -184,7 +184,11 @@ export class RestInstanceMetagameController {
             'result.victor': victor ?? undefined,
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false));
+        const key = `cache:endpoints:instance-metagame:W-65${world ?? 0}-Z:${zone ?? 0}-TSF:${timeStartedFrom ? timeStartedFrom.toString() : 0}-TST:${timeStartedTo ? timeStartedTo.toString() : 0}-B:${bracket ?? 0}-V:${victor ?? 0}-P:${page ?? 0}-PS:${pageSize ?? 0}`;
+
+        return await this.cacheService.get(key) ?? await this.cacheService.set(
+            key,
+            await this.mongoOperationsService.findMany(InstanceMetagameTerritoryEntity, filter, new Pagination({sortBy, order, page, pageSize}, false)),
+            60 * 15);
     }
 }
