@@ -10,12 +10,14 @@ import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2Alerts
 import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import {PS2ALERTS_EVENT_TYPE_QUERY} from '../../common/rest.ps2AlertsEventType.query';
 import {INSTANCE_IMPLICIT_QUERY} from '../../common/rest.instance.query';
+import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 
 @ApiTags('Instance Character Aggregates')
 @Controller('aggregates')
 export default class RestInstanceCharacterAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
     ) {}
 
     @Get('instance/:instance/character')
@@ -69,6 +71,13 @@ export default class RestInstanceCharacterAggregateController {
             @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
 
     ): Promise<InstanceCharacterAggregateEntity[]> {
-        return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {'character.id': character, ps2AlertsEventType});
+        const key = `cache:instances:instanceCharacter-C:${character}-ET:${ps2AlertsEventType ?? 0}`;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.cacheService.get(key) ?? await this.cacheService.set(
+            key,
+            await this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {'character.id': character, ps2AlertsEventType}),
+            60 * 60,
+        );
     }
 }
