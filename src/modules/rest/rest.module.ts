@@ -60,6 +60,7 @@ import * as redisStore from 'cache-manager-ioredis';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import {AuthModule} from '../../auth/auth.module';
 import RestSearchController from './controllers/rest.search.controller';
+import InstanceRetrievalService from '../../services/instance.retrieval.service';
 
 /**
  * Handles incoming requests to the API via HTTP, CRUD environment.
@@ -143,6 +144,7 @@ import RestSearchController from './controllers/rest.search.controller';
         {provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor},
         MongoOperationsService,
         RedisCacheService,
+        InstanceRetrievalService,
     ],
 })
 export class RestModule {}

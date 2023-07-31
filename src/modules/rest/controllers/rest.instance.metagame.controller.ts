@@ -39,6 +39,7 @@ import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
 import {CreateInstanceMetagameDto} from '../Dto/CreateInstanceMetagameDto';
 import {ObjectID} from 'typeorm';
 import {ZONE_IMPLICIT_QUERY} from './common/rest.zone.query';
+import InstanceRetrievalService from '../../../services/instance.retrieval.service';
 
 const INSTANCE_IMPLICIT_QUERIES = [
     BRACKET_IMPLICIT_QUERY,
@@ -62,6 +63,7 @@ export class RestInstanceMetagameController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
         private readonly cacheService: RedisCacheService,
+        private readonly instanceRetrievalService: InstanceRetrievalService,
     ) {}
 
     @Get('/:instance')
@@ -73,10 +75,7 @@ export class RestInstanceMetagameController {
     })
     @UseInterceptors(ClassSerializerInterceptor)
     async findOne(@Param('instance') instanceId: string): Promise<InstanceMetagameTerritoryEntity> {
-        return await this.mongoOperationsService.findOne(
-            InstanceMetagameTerritoryEntity,
-            {instanceId},
-        );
+        return await this.instanceRetrievalService.findOne(instanceId);
     }
 
     @Post('')
