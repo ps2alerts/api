@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
-import {ApiProperty} from '@nestjs/swagger';
+import {ApiHideProperty, ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
 import CharacterEmbed from '../common/character.embed';
@@ -16,6 +16,7 @@ import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventTyp
 export default class InstanceCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
+    @ApiHideProperty()
     _id: ObjectID;
 
     @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination'})
