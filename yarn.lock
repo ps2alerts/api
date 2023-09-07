@@ -921,13 +921,13 @@
     fast-querystring "^1.0.0"
     fastify-plugin "^4.0.0"
 
-"@fastify/helmet@^10.1.0":
-  version "10.1.0"
-  resolved "https://registry.yarnpkg.com/@fastify/helmet/-/helmet-10.1.0.tgz#8b124c807d9528680e6dcef8ca3e2e614eb547e5"
-  integrity sha512-v7QJPYf1uVcCwzyHzkDGcHTqDPscXj/61JKxOdvczyDPAKTxSeb9Sc2OBActXaj7zUELiAdgnkKkzNwmCNzBLQ==
+"@fastify/helmet@^11.0.0":
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/@fastify/helmet/-/helmet-11.0.0.tgz#e38849750f8811614444ca89b963bae231f61464"
+  integrity sha512-YSFhJFR4Pk2azmTkX54f0Z/O7h5j4ruCQUlagf/Rw1P45u5/2u+F+I83DRyIKryM6prXl++X2yY0Ib0RXAlZ7Q==
   dependencies:
     fastify-plugin "^4.2.1"
-    helmet "^6.0.0"
+    helmet "^7.0.0"
 
 "@fastify/middie@8.1.0":
   version "8.1.0"
@@ -3592,10 +3592,10 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-helmet@^6.0.0:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/helmet/-/helmet-6.0.1.tgz#52ec353638b2e87f14fe079d142b368ac11e79a4"
-  integrity sha512-8wo+VdQhTMVBMCITYZaGTbE4lvlthelPYSvoyNvk4RECTmrVjMerp9RfUOQXZWLvCcAn1pKj7ZRxK4lI9Alrcw==
+helmet@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/helmet/-/helmet-7.0.0.tgz#ac3011ba82fa2467f58075afa58a49427ba6212d"
+  integrity sha512-MsIgYmdBh460ZZ8cJC81q4XJknjG567wzEmv46WOBblDb6TUd3z8/GhgmsM9pn8g2B80tAJ4m5/d3Bi1KrSUBQ==
 
 highlight.js@^10.7.1:
   version "10.7.3"
