@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
-import {ApiProperty} from '@nestjs/swagger';
+import {ApiHideProperty, ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
 import {Loadout, loadoutArray} from '../../../ps2alerts-constants/loadout';
 import {World, worldArray} from '../../../ps2alerts-constants/world';
@@ -18,6 +18,7 @@ import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventTyp
 export default class GlobalLoadoutAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
+    @ApiHideProperty()
     _id: ObjectID;
 
     @ApiProperty({enum: worldArray, example: 10, description: 'Server / World ID'})
