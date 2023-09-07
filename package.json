@@ -38,7 +38,7 @@
     "@fastify/static": "^6.9.0",
     "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.3.12",
-    "@nestjs/config": "^2.3.1",
+    "@nestjs/config": "^3.0.1",
     "@nestjs/core": "^9.3.12",
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/passport": "^9.0.3",
