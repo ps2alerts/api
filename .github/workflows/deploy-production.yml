@@ -45,7 +45,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push production image (AMD64)
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           file: provisioning/production/Dockerfile
           platforms: linux/amd64
@@ -59,7 +59,7 @@ jobs:
             VERSION=${{ steps.latesttag.outputs.tag }}
 
       - name: Build and push production image (ARM64)
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           file: provisioning/production/Dockerfile
           platforms: linux/arm64
