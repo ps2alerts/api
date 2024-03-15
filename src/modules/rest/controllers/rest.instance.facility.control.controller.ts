@@ -30,7 +30,7 @@ import {PAGINATION_IMPLICIT_QUERIES} from './common/rest.pagination.queries';
 import {OptionalBoolPipe} from '../pipes/OptionalBoolPipe';
 import {CreateFacilityControlDto} from '../Dto/CreateFacilityControlDto';
 import {AuthGuard} from '@nestjs/passport';
-import {ObjectID} from 'typeorm';
+import {ObjectId} from 'typeorm';
 import {UpdateFacilityControlDto} from '../Dto/UpdateFacilityControlDto';
 
 @ApiTags('Instance Facility Control Entries')
@@ -118,7 +118,7 @@ export default class RestInstanceFacilityControlController {
 
         const updatedRecord = Object.assign(record, entity);
 
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+        // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/no-unsafe-assignment
         await this.mongoOperationsService.upsert(InstanceFacilityControlEntity, [{$set: updatedRecord}], [{_id: updatedRecord._id}]);
     }
 
@@ -133,7 +133,7 @@ export default class RestInstanceFacilityControlController {
     @ApiBody({type: [CreateFacilityControlDto]})
     async createMany(
         @Body() entities: CreateFacilityControlDto[],
-    ): Promise<ObjectID[]> {
+    ): Promise<ObjectId[]> {
         return await this.mongoOperationsService.insertMany(InstanceFacilityControlEntity, entities);
     }
 }

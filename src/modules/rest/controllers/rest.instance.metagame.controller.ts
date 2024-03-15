@@ -37,7 +37,7 @@ import {RedisCacheService} from '../../../services/cache/redis.cache.service';
 import {AuthGuard} from '@nestjs/passport';
 import {UpdateInstanceMetagameDto} from '../Dto/UpdateInstanceMetagameDto';
 import {CreateInstanceMetagameDto} from '../Dto/CreateInstanceMetagameDto';
-import {ObjectID} from 'typeorm';
+import {ObjectId} from 'typeorm';
 import {ZONE_IMPLICIT_QUERY} from './common/rest.zone.query';
 
 const INSTANCE_IMPLICIT_QUERIES = [
@@ -89,7 +89,7 @@ export class RestInstanceMetagameController {
     @UseGuards(AuthGuard('basic'))
     async createOne(
         @Body() entity: CreateInstanceMetagameDto,
-    ): Promise<ObjectID> {
+    ): Promise<ObjectId> {
         return await this.mongoOperationsService.insertOne(InstanceMetagameTerritoryEntity, entity);
     }
 

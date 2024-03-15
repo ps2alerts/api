@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, Index, ObjectId} from 'typeorm';
 import {World, worldArray} from '../../ps2alerts-constants/world';
 import {Zone, zoneArray} from '../../ps2alerts-constants/zone';
 import {Ps2AlertsEventState, ps2AlertsEventStateArray} from '../../ps2alerts-constants/ps2AlertsEventState';
@@ -21,7 +21,7 @@ export default class InstanceOutfitWarsTerritoryEntity {
     @ObjectIdColumn()
     @Exclude()
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({
         example: 'outfitwars-17-10-123',

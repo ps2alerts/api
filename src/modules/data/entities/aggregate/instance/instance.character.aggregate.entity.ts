@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiHideProperty, ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, Index, ObjectId} from 'typeorm';
 import CharacterEmbed from '../common/character.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 import XperminuteEmbed from '../common/xperminute.embed';
@@ -17,7 +17,7 @@ export default class InstanceCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     @ApiHideProperty()
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination'})
     @Column({

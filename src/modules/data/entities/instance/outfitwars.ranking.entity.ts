@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, ObjectId} from 'typeorm';
 import OutfitEmbed from '../aggregate/common/outfit.embed';
 import OutfitwarsRankingParamsEmbed from './outfitwars.ranking.params.embed';
 import {World} from '../../ps2alerts-constants/world';
@@ -12,7 +12,7 @@ import {World} from '../../ps2alerts-constants/world';
 export default class OutfitwarsRankingEntity {
     @ObjectIdColumn()
     @Exclude()
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({example: new Date(), description: 'Time of ranking retrieval in UTC'})
     @Column({

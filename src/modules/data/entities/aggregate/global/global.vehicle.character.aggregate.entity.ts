@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiHideProperty, ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, Index, ObjectId} from 'typeorm';
 import VehicleStatsEmbed from '../common/vehicle.vs.vehicle.embed';
 import {World, worldArray} from '../../../ps2alerts-constants/world';
 import {Vehicle, vehicleArray} from '../../../ps2alerts-constants/vehicle';
@@ -19,7 +19,7 @@ export default class GlobalVehicleCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     @ApiHideProperty()
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({example: World.MILLER, enum: worldArray, description: 'World ID'})
     @Column({

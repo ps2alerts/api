@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiHideProperty, ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, Index, ObjectId} from 'typeorm';
 import {World, worldArray} from '../../../ps2alerts-constants/world';
 import CharacterEmbed from '../common/character.embed';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
@@ -26,7 +26,7 @@ export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     @ApiHideProperty()
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({enum: worldArray, example: 10, description: 'Server / World ID'})
     @Column({

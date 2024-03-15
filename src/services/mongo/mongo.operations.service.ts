@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-argument */
-import {CollectionAggregationOptions, MongoEntityManager, ObjectID, ObjectLiteral} from 'typeorm';
+import {CollectionOptions, MongoEntityManager, ObjectId, ObjectLiteral} from 'typeorm';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
 import Pagination from './pagination';
@@ -42,7 +42,7 @@ export default class MongoOperationsService {
         return await this.em.find(entity, MongoOperationsService.createFindOptions(filter, pagination));
     }
 
-    public async insertOne(entity: any, doc: any): Promise<ObjectID> {
+    public async insertOne(entity: any, doc: any): Promise<ObjectId> {
         doc = this.transform(doc);
 
         try {
@@ -59,15 +59,13 @@ export default class MongoOperationsService {
         throw new Error(`insertOne failed! No documents were inserted! ${JSON.stringify(doc)}`);
     }
 
-    public async insertMany(entity: any, docs: any[]): Promise<ObjectID[]> {
+    public async insertMany(entity: any, docs: any[]): Promise<ObjectId[]> {
         docs = this.transform(docs);
 
         try {
             const result = await this.em.insertMany(entity, docs);
 
-            if (result.insertedCount > 0) {
-                return result.insertedIds;
-            }
+            return Object.values(result.insertedIds);
         } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             if (!error.message.includes('E11000')) {
@@ -158,14 +156,14 @@ export default class MongoOperationsService {
         try {
             const result = await this.em.deleteOne(entity, conditional);
 
-            return !!result.result.ok;
+            return result.deletedCount > 0;
         } catch (error: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
             throw new Error(`Delete failed! E:${error.message}`);
         }
     }
 
-    public aggregate <T>(entity: any, pipeline: any, options?: CollectionAggregationOptions): Promise<T[]> {
+    public aggregate <T>(entity: any, pipeline: any, options?: CollectionOptions): Promise<T[]> {
         try {
             return this.em.aggregate(entity, pipeline, options).toArray();
         } catch (error: any) {
