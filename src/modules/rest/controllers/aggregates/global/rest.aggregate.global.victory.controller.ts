@@ -65,7 +65,7 @@ export default class RestGlobalVictoryAggregateController extends BaseGlobalAggr
         };
 
         const key = `cache:endpoints:victories:W:${world ?? 0}-Z:${zone ?? 0}-B:${bracket ?? 0}-ET:${ps2AlertsEventType ?? 0}-DF:${dateFrom ? dateFrom.toString() : 0}-DT:${dateTo ? dateTo.toString() : 0}`;
-        const pagination = new Pagination({sortBy: 'date', order: 'desc'});
+        const pagination = new Pagination({sortBy: 'date', order: 'asc'});
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.cacheService.get(key) ?? await this.cacheService.set(
