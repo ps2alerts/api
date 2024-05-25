@@ -1,4 +1,4 @@
-import {NestFactory} from '@nestjs/core';
+import {NestFactory, BaseExceptionFilter, HttpAdapterHost} from '@nestjs/core';
 import {FastifyAdapter, NestFastifyApplication} from '@nestjs/platform-fastify';
 import {RmqOptions, Transport} from '@nestjs/microservices';
 import {ConfigService} from '@nestjs/config';
@@ -8,6 +8,8 @@ import {ValidationPipe} from '@nestjs/common';
 import {TypeOrmFilter} from './filters/type-orm.filter';
 import compression from '@fastify/compress';
 import {fastifyHelmet} from '@fastify/helmet';
+import './instrument.js';
+import * as Sentry from '@sentry/node';
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -19,6 +21,10 @@ async function bootstrap(): Promise<void> {
             logger: process.env.NODE_ENV === 'development' ? ['debug', 'log', 'warn', 'error'] : ['log', 'warn', 'error'],
         },
     );
+
+    // Sentry stuff
+    const {httpAdapter} = app.get(HttpAdapterHost);
+    Sentry.setupNestErrorHandler(app, new BaseExceptionFilter(httpAdapter));
 
     const config = app.get(ConfigService);
 
