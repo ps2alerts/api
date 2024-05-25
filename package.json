@@ -1,6 +1,6 @@
 {
   "name": "ps2alerts-api",
-  "version": "4.6.0",
+  "version": "4.4.2",
   "description": "The API that powers PS2Alerts.com",
   "author": "",
   "private": true,
