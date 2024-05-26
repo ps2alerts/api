@@ -8,6 +8,7 @@ import {MongoConfig} from './services/databases/mongo.config';
 import {ScheduleModule} from '@nestjs/schedule';
 import {CronModule} from './modules/cron/CronModule';
 import {HealthCheckModule} from './modules/healthcheck/HealthCheckModule';
+import {PrometheusModule} from '@willsoto/nestjs-prometheus';
 
 const metadata = {
     imports: [
@@ -17,6 +18,8 @@ const metadata = {
             useClass: MongoConfig,
         }),
         HealthCheckModule,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+        PrometheusModule.register(),
     ],
     controllers: [DefaultController],
     providers: [],
