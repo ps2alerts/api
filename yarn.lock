@@ -921,13 +921,13 @@
     fast-querystring "^1.0.0"
     fastify-plugin "^4.0.0"
 
-"@fastify/helmet@^10.1.0":
-  version "10.1.0"
-  resolved "https://registry.yarnpkg.com/@fastify/helmet/-/helmet-10.1.0.tgz#8b124c807d9528680e6dcef8ca3e2e614eb547e5"
-  integrity sha512-v7QJPYf1uVcCwzyHzkDGcHTqDPscXj/61JKxOdvczyDPAKTxSeb9Sc2OBActXaj7zUELiAdgnkKkzNwmCNzBLQ==
+"@fastify/helmet@^13.0.2":
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/@fastify/helmet/-/helmet-13.0.2.tgz#c1b2e4dc28ddfb596121e311a0c9f318773b7f5b"
+  integrity sha512-tO1QMkOfNeCt9l4sG/FiWErH4QMm+RjHzbMTrgew1DYOQ2vb/6M1G2iNABBrD7Xq6dUk+HLzWW8u+rmmhQHifA==
   dependencies:
-    fastify-plugin "^4.2.1"
-    helmet "^6.0.0"
+    fastify-plugin "^5.0.0"
+    helmet "^8.0.0"
 
 "@fastify/middie@8.1.0":
   version "8.1.0"
@@ -3741,10 +3741,15 @@ fast-xml-parser@4.1.2:
   dependencies:
     strnum "^1.0.5"
 
-fastify-plugin@^4.0.0, fastify-plugin@^4.2.1:
+fastify-plugin@^4.0.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-4.5.0.tgz#8b853923a0bba6ab6921bb8f35b81224e6988d91"
   integrity sha512-79ak0JxddO0utAXAQ5ccKhvs6vX2MGyHHMMsmZkBANrq3hXc1CHzvNPHOcvTsVMEPl5I+NT+RO4YKMGehOfSIg==
+
+fastify-plugin@^5.0.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-5.1.0.tgz#7083e039d6418415f9a669f8c25e72fc5bf2d3e7"
+  integrity sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==
 
 fastify@4.15.0:
   version "4.15.0"
@@ -4145,10 +4150,10 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-helmet@^6.0.0:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/helmet/-/helmet-6.0.1.tgz#52ec353638b2e87f14fe079d142b368ac11e79a4"
-  integrity sha512-8wo+VdQhTMVBMCITYZaGTbE4lvlthelPYSvoyNvk4RECTmrVjMerp9RfUOQXZWLvCcAn1pKj7ZRxK4lI9Alrcw==
+helmet@^8.0.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/helmet/-/helmet-8.1.0.tgz#f96d23fedc89e9476ecb5198181009c804b8b38c"
+  integrity sha512-jOiHyAZsmnr8LqoPGmCjYAaiuWwjAPLgY8ZX2XrmHawt99/u1y6RgrZMTeoPfpUbV96HOalYgz1qzkRbw54Pmg==
 
 highlight.js@^10.7.1:
   version "10.7.3"
