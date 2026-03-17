@@ -42,7 +42,7 @@
     "@nestjs/core": "^9.3.12",
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/passport": "^9.0.3",
-    "@nestjs/platform-fastify": "^9.3.12",
+    "@nestjs/platform-fastify": "^11.1.17",
     "@nestjs/schedule": "^2.2.0",
     "@nestjs/swagger": "^6.2.1",
     "@nestjs/terminus": "^9.2.1",
