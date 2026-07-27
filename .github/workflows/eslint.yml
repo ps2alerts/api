@@ -2,9 +2,15 @@
 name: ESLint
 on:
   push:
+    branches: [dev]
   pull_request:
+
+permissions:
+  contents: read
+
 jobs:
   eslint:
+    name: ESLint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
