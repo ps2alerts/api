@@ -1901,9 +1901,9 @@
     "@types/express" "*"
 
 "@types/password@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@types/password/-/password-0.1.0.tgz#5b08bc27e9abd2a3a27cb8b3e66b8ef8500a287f"
-  integrity sha512-ctetf42cDeKGqmbQOMYQ13/PEx/uZlMcBBssxO7FPncXAmZ45escTc7wd1o2TF5lnhuzESrDy18OuIN+VpeTTQ==
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@types/password/-/password-0.1.2.tgz#7edcc84e470dab37085e739258c165b98a9be907"
+  integrity sha512-ZmHGJ2PoZo8v+aZbtLo0qmQBorTHI+TUOmoIdyy7xl7o5mV3UaIlJdlPxA3P+Wr+9pZvQlVwcz5wWc4RpESXLQ==
 
 "@types/pg-pool@2.0.4":
   version "2.0.4"
