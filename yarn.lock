@@ -2323,9 +2323,9 @@ ajv@^6.10.0, ajv@^6.12.4:
     uri-js "^4.2.2"
 
 amqp-connection-manager@^4.1.11:
-  version "4.1.12"
-  resolved "https://registry.yarnpkg.com/amqp-connection-manager/-/amqp-connection-manager-4.1.12.tgz#3592c0a21a12ce84a06f62ab44a688a3a27e8bcf"
-  integrity sha512-UuN2+FqS5QsFQDTIpZTm846p84Tyk1b3oB/WfxYii6uoVvWRnLBr96gmuHMEckanq0Fl7haTK+x3ikJ/S120gw==
+  version "4.1.15"
+  resolved "https://registry.yarnpkg.com/amqp-connection-manager/-/amqp-connection-manager-4.1.15.tgz#af1af653961c13674628d0b075eef7b95a209fe4"
+  integrity sha512-YGi8MuO2K4u0qC4b1qAKVIK8CdBJF+PpEZpHKxmrL3x61pU1sAb2SHzQl7ypoqr6oECIfVqtG9DGdOZxaUq1Wg==
   dependencies:
     promise-breaker "^6.0.0"
 
