@@ -2,7 +2,7 @@
 name: Typescript Compile
 on:
   push:
-    branches: [dev]
+    branches: [main]
   pull_request:
 
 permissions:
@@ -19,10 +19,10 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: Install node v16
-        uses: actions/setup-node@v3
+      - name: Install node v22
+        uses: actions/setup-node@v7
         with:
-          node-version: 16
+          node-version: 22
 
       - name: Install modules
         run: yarn install

@@ -2,19 +2,35 @@
 name: Build & Deploy Production
 on:
   push:
-    branches: [master]
+    branches: [main]
+  # Lets a deploy be re-run by hand after a failed webhook without an empty commit.
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+# Never cancel a deploy that is already publishing or calling the webhook; queue the
+# next one behind it. Cancelling mid-push can leave the -latest tag on a half-pushed manifest.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 jobs:
+  # The production image is FROM the base image, so rebuild the base first on every
+  # deploy. It is what keeps the OS and Node underneath patched instead of frozen at
+  # whatever the weekly job last pulled.
+  build-base-image:
+    uses: ./.github/workflows/build-base-image.yml
+    secrets: inherit
+
   build-docker-images:
+    needs: build-base-image
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [16]
+        node: [22]
 
     steps:
       - name: Checkout
@@ -53,6 +69,8 @@ jobs:
         with:
           file: provisioning/production/Dockerfile
           platforms: linux/amd64
+          # Always re-pull the base the job before this one just pushed, never a cached layer.
+          pull: true
           push: true
           tags: |
             maelstromeous/ps2alerts:api-production-${{ github.sha }}
@@ -67,6 +85,7 @@ jobs:
         with:
           file: provisioning/production/Dockerfile
           platforms: linux/arm64
+          pull: true
           push: true
           tags: |
             maelstromeous/ps2alerts:api-production-arm
@@ -75,35 +94,8 @@ jobs:
             BUILT=${{ env.NOW }}
             VERSION=${{ steps.latesttag.outputs.tag }}
 
-
-#  deploy-to-k8s:
-#    needs: build-docker-images
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 0
-#          submodules: true
-#
-#      - name: Find and replace version
-#        uses: jacobtomlinson/gha-find-replace@v2
-#        with:
-#          find: "{{ version }}"
-#          replace: "${{ github.sha }}"
-#          include: provisioning/production/values.yaml
-#
-#      - name: Deploy Helm
-#        uses: glopezep/helm@v1.7.1
-#        with:
-#          helm: helm3
-#          release: ps2alerts-api-production
-#          namespace: ps2alerts
-#          chart: provisioning/helm/charts/microservice
-#          secrets: ${{ toJSON(secrets) }}
-#          token: ${{ github.token }}
-#          value-files: provisioning/production/values.yaml
-#          version: ${{ github.sha }}
-#          # timeout: 120s # Apparently this isn't supported but it's in the docs? :shrug:
-#        env:
-#          KUBECONFIG_FILE: "${{ secrets.KUBE_CONFIG_RAW }}"
+  deploy:
+    name: Deploy
+    needs: build-docker-images
+    uses: ./.github/workflows/deploy-webhook.yml
+    secrets: inherit
