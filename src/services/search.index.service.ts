@@ -94,15 +94,6 @@ export default class SearchIndexService implements OnApplicationBootstrap {
 
     private async ensureIndexes(): Promise<void> {
         try {
-            for (const retired of RETIRED_INDEXES) {
-                const existing = await this.mongoOperationsService.em.collectionIndexes(retired.entity) as Array<{name: string}>;
-
-                if (existing.some((candidate) => candidate.name === retired.name)) {
-                    this.logger.log(`Dropping retired index ${retired.name}`);
-                    await this.mongoOperationsService.em.dropCollectionIndex(retired.entity, retired.name);
-                }
-            }
-
             for (const [key, index] of Object.entries(MANAGED_INDEXES) as Array<[ManagedIndexName, ManagedIndex]>) {
                 if (this.ready.has(key)) {
                     continue;
@@ -124,6 +115,16 @@ export default class SearchIndexService implements OnApplicationBootstrap {
                 }
 
                 this.ready.add(key);
+            }
+
+            // Only once every replacement exists: a failed build must leave the old index serving, and a rollback can still use it
+            for (const retired of RETIRED_INDEXES) {
+                const existing = await this.mongoOperationsService.em.collectionIndexes(retired.entity) as Array<{name: string}>;
+
+                if (existing.some((candidate) => candidate.name === retired.name)) {
+                    this.logger.log(`Dropping retired index ${retired.name}`);
+                    await this.mongoOperationsService.em.dropCollectionIndex(retired.entity, retired.name);
+                }
             }
         } catch (err) {
             // A transient failure (Mongo restarting, a clashing index being dropped) must not leave endpoints dead until the next deploy

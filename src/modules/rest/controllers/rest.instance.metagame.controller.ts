@@ -187,7 +187,7 @@ export class RestInstanceMetagameController {
             'result.victor': victor ?? undefined,
         };
 
-        const key = `cache:endpoints:instance-metagame:W-65${world ?? 0}-Z:${zone ?? 0}-TSF:${timeStartedFrom ? timeStartedFrom.toString() : 0}-TST:${timeStartedTo ? timeStartedTo.toString() : 0}-B:${bracket ?? 0}-V:${victor ?? 0}-P:${page ?? 0}-PS:${pageSize ?? 0}-SB:${sortBy ?? ''}-O:${order ?? ''}`;
+        const key = `cache:endpoints:instance-metagame:W-65${world ?? 0}-Z:${zone ?? 0}-TSF:${timeStartedFrom ? timeStartedFrom.toString() : 0}-TST:${timeStartedTo ? timeStartedTo.toString() : 0}-B:${bracket ?? 'any'}-V:${victor ?? 'any'}-P:${page ?? 0}-PS:${pageSize ?? 0}-SB:${sortBy ?? ''}-O:${order ?? ''}`;
 
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
