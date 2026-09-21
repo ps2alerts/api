@@ -13,6 +13,10 @@ export class RedisCacheService {
         return data;
     }
 
+    async del(key: string): Promise<void> {
+        await this.cache.del(key);
+    }
+
     async get<T>(key: string): Promise<T | null> {
         const data: T | null = await this.cache.get(key) ?? null;
         return data ?? null;

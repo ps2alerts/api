@@ -1,6 +1,7 @@
 import {Controller, Get, Inject, Param, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import InstanceCharacterAggregateEntity from '../../../../data/entities/aggregate/instance/instance.character.aggregate.entity';
+import InstanceCharacterAggregateEntity
+    from '../../../../data/entities/aggregate/instance/instance.character.aggregate.entity';
 import MongoOperationsService from '../../../../../services/mongo/mongo.operations.service';
 import {OptionalIntPipe} from '../../../pipes/OptionalIntPipe';
 import {ApiImplicitQueries} from 'nestjs-swagger-api-implicit-queries-decorator';
@@ -56,7 +57,7 @@ export default class RestInstanceCharacterAggregateController {
     }
 
     @Get('instance/character/:character')
-    @ApiOperation({summary: 'Finds all InstanceCharacterAggregateEntity for a character'})
+    @ApiOperation({summary: 'Finds all InstanceCharacterAggregateEntity for a character (profiles should use /profiles instead)'})
     @ApiImplicitQueries([PS2ALERTS_EVENT_TYPE_QUERY])
     @ApiResponse({
         status: 200,
@@ -64,11 +65,10 @@ export default class RestInstanceCharacterAggregateController {
         type: InstanceCharacterAggregateEntity,
         isArray: true,
     })
-    async findByCharacterId(
+    async findAllByCharacterId(
         @Param('character') character: string,
             @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
-
     ): Promise<InstanceCharacterAggregateEntity[]> {
-        return await this.mongoOperationsService.findOne(InstanceCharacterAggregateEntity, {'character.id': character, ps2AlertsEventType});
+        return await this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {'character.id': character, ps2AlertsEventType});
     }
 }

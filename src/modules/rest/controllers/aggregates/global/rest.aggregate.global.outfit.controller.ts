@@ -62,6 +62,7 @@ export default class RestGlobalOutfitAggregateController extends BaseGlobalAggre
         status: 200,
         description: 'The GlobalOutfitAggregateEntity aggregate(s)',
         type: GlobalOutfitAggregateEntity,
+        isArray: true,
     })
     async findOne(
         @Param('outfit') outfit: string,

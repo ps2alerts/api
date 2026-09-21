@@ -9,6 +9,7 @@ import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.comm
 import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
 import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
 import {INSTANCE_IMPLICIT_QUERY} from '../../common/rest.instance.query';
+import {PS2ALERTS_EVENT_TYPE_QUERY} from '../../common/rest.ps2AlertsEventType.query';
 
 @ApiTags('Instance Outfit Aggregates')
 @Controller('aggregates')
@@ -53,16 +54,18 @@ export default class RestInstanceOutfitAggregateController {
     }
 
     @Get('instance/outfit/:outfit')
-    @ApiOperation({summary: 'Returns a InstanceOutfitAggregateEntity aggregate for all instances'})
+    @ApiOperation({summary: 'Finds all InstanceOutfitAggregateEntity for a outfit (profiles should use /profiles instead)'})
+    @ApiImplicitQueries([PS2ALERTS_EVENT_TYPE_QUERY])
     @ApiResponse({
         status: 200,
-        description: 'The list of InstanceOutfitAggregateEntity aggregates by outfit ID',
+        description: 'The InstanceOutfitAggregateEntity aggregates by outfit ID',
         type: InstanceOutfitAggregateEntity,
         isArray: true,
     })
-    async findByOutfitId(
+    async findAllByOutfitId(
         @Param('outfit') outfit: string,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
     ): Promise<InstanceOutfitAggregateEntity[]> {
-        return this.mongoOperationsService.findOne(InstanceOutfitAggregateEntity, {'outfit.id': outfit});
+        return await this.mongoOperationsService.findMany(InstanceOutfitAggregateEntity, {'outfit.id': outfit, ps2AlertsEventType});
     }
 }

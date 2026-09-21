@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-argument */
-import {CollectionOptions, MongoEntityManager, ObjectId, ObjectLiteral} from 'typeorm';
+import {MongoEntityManager, ObjectId, ObjectLiteral} from 'typeorm';
+import {AggregateOptions} from 'typeorm/driver/mongodb/typings';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
 import Pagination from './pagination';
@@ -163,7 +164,7 @@ export default class MongoOperationsService {
         }
     }
 
-    public aggregate <T>(entity: any, pipeline: any, options?: CollectionOptions): Promise<T[]> {
+    public aggregate <T>(entity: any, pipeline: any, options?: AggregateOptions): Promise<T[]> {
         try {
             return this.em.aggregate(entity, pipeline, options).toArray();
         } catch (error: any) {
