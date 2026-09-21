@@ -3,11 +3,19 @@ import {Injectable, Logger, OnApplicationBootstrap} from '@nestjs/common';
 import MongoOperationsService from './mongo/mongo.operations.service';
 import GlobalCharacterAggregateEntity from '../modules/data/entities/aggregate/global/global.character.aggregate.entity';
 import GlobalOutfitAggregateEntity from '../modules/data/entities/aggregate/global/global.outfit.aggregate.entity';
+import InstanceCharacterAggregateEntity from '../modules/data/entities/aggregate/instance/instance.character.aggregate.entity';
+import InstanceOutfitAggregateEntity from '../modules/data/entities/aggregate/instance/instance.outfit.aggregate.entity';
 
 export const SEARCH_COLLATION = {locale: 'en', strength: 2};
 
+type IndexedEntity =
+    | typeof GlobalCharacterAggregateEntity
+    | typeof GlobalOutfitAggregateEntity
+    | typeof InstanceCharacterAggregateEntity
+    | typeof InstanceOutfitAggregateEntity;
+
 interface ManagedIndex {
-    entity: typeof GlobalCharacterAggregateEntity | typeof GlobalOutfitAggregateEntity;
+    entity: IndexedEntity;
     name: string;
     keys: Record<string, 1 | -1>;
     collation?: typeof SEARCH_COLLATION;
@@ -33,12 +41,31 @@ export const MANAGED_INDEXES = {
         keys: {bracket: 1, ps2AlertsEventType: 1, 'outfit.tag': 1},
         collation: SEARCH_COLLATION,
     },
+    // World sits in every profile index so a world-scoped count is a pure index scan
     outfitMembers: {
         entity: GlobalCharacterAggregateEntity,
-        name: 'profile_outfit_members',
-        keys: {bracket: 1, ps2AlertsEventType: 1, 'character.outfit.id': 1, kills: -1},
+        name: 'profile_outfit_members_v2',
+        keys: {bracket: 1, ps2AlertsEventType: 1, 'character.outfit.id': 1, world: 1, kills: -1},
+    },
+    // Alert history pages default to newest first; instance ids sort chronologically within a world
+    characterHistory: {
+        entity: InstanceCharacterAggregateEntity,
+        name: 'profile_character_history_v2',
+        keys: {'character.id': 1, ps2AlertsEventType: 1, 'character.world': 1, instance: -1},
+    },
+    outfitHistory: {
+        entity: InstanceOutfitAggregateEntity,
+        name: 'profile_outfit_history_v2',
+        keys: {'outfit.id': 1, ps2AlertsEventType: 1, 'outfit.world': 1, instance: -1},
     },
 } as const satisfies Record<string, ManagedIndex>;
+
+// Earlier shapes of the indexes above, dropped once found so they stop costing writes
+const RETIRED_INDEXES: Array<{entity: IndexedEntity, name: string}> = [
+    {entity: GlobalCharacterAggregateEntity, name: 'profile_outfit_members'},
+    {entity: InstanceCharacterAggregateEntity, name: 'profile_character_history'},
+    {entity: InstanceOutfitAggregateEntity, name: 'profile_outfit_history'},
+];
 
 export type ManagedIndexName = keyof typeof MANAGED_INDEXES;
 
@@ -67,6 +94,15 @@ export default class SearchIndexService implements OnApplicationBootstrap {
 
     private async ensureIndexes(): Promise<void> {
         try {
+            for (const retired of RETIRED_INDEXES) {
+                const existing = await this.mongoOperationsService.em.collectionIndexes(retired.entity) as Array<{name: string}>;
+
+                if (existing.some((candidate) => candidate.name === retired.name)) {
+                    this.logger.log(`Dropping retired index ${retired.name}`);
+                    await this.mongoOperationsService.em.dropCollectionIndex(retired.entity, retired.name);
+                }
+            }
+
             for (const [key, index] of Object.entries(MANAGED_INDEXES) as Array<[ManagedIndexName, ManagedIndex]>) {
                 if (this.ready.has(key)) {
                     continue;

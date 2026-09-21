@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/naming-convention,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-call */
 import {Inject, Injectable, NotFoundException} from '@nestjs/common';
 import MongoOperationsService from '../mongo/mongo.operations.service';
 import {RedisCacheService} from '../cache/redis.cache.service';
@@ -13,7 +13,9 @@ import GlobalVehicleCharacterAggregateEntity from '../../modules/data/entities/a
 import InstanceVehicleCharacterAggregateEntity from '../../modules/data/entities/aggregate/instance/instance.vehicle.character.aggregate.entity';
 import {
     FactionKills,
+    ProfileAlertRow,
     ProfileAlertsPage,
+    ProfileMemberRow,
     ProfileBracketTotals,
     ProfileMembersPage,
     ProfileVehicleRow,
@@ -99,125 +101,31 @@ export default class ProfileService {
     ) {}
 
     public async summary(query: ProfileQuery): Promise<ProfileSummary> {
-        return await this.cached(`summary:${this.keyOf(query)}`, async () => {
-            const globals: Array<Record<string, any>> = await this.mongoOperationsService.findMany(
-                this.globalEntity(query),
-                {[`${query.type}.id`]: query.id, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME, world: query.world},
-            );
-            const identity = globals.find((doc) => doc.bracket === Bracket.TOTAL) ?? globals[0];
-
-            if (!identity) {
-                throw new NotFoundException(`No ${query.type} found with ID ${query.id}`);
-            }
-
-            const faction = Number(identity[query.type].faction);
-            const grouped: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(
-                this.instanceEntity(query),
-                [
-                    ...this.matchAndJoin(query, identity.world),
-                    {
-                        $group: {
-                            _id: '$details.bracket',
-                            ...this.sumFields(query.type, faction),
-                            firstAlert: {$min: '$details.timeStarted'},
-                            lastAlert: {$max: '$details.timeStarted'},
-                            firstTrackedAlert: {$min: {$cond: [this.isFinite(`$xPerMinutes.${XPM_FIELDS[query.type].kpm}`), '$details.timeStarted', null]}},
-                        },
-                    },
-                ],
-            );
-
-            const brackets: Record<number, ProfileBracketTotals> = {};
-            const totals = this.emptyTotals(Bracket.TOTAL);
-            let firstAlert: Date | null = null;
-            let lastAlert: Date | null = null;
-            let firstTrackedAlert: Date | null = null;
-
-            grouped.forEach((row) => {
-                const bracket = Number(row._id);
-                const entry = this.rowToTotals(row, bracket);
-
-                if (PROFILE_BRACKETS.includes(bracket)) {
-                    brackets[bracket] = entry;
-                }
-
-                this.addTotals(totals, entry);
-                firstAlert = !firstAlert || row.firstAlert < firstAlert ? row.firstAlert : firstAlert;
-                lastAlert = !lastAlert || row.lastAlert > lastAlert ? row.lastAlert : lastAlert;
-
-                if (row.firstTrackedAlert && (!firstTrackedAlert || row.firstTrackedAlert < firstTrackedAlert)) {
-                    firstTrackedAlert = row.firstTrackedAlert;
-                }
-            });
-
-            // All-time views take combat totals from the global aggregates, which also cover alerts that predate per-alert tracking
-            if (!query.days) {
-                globals.forEach((doc) => {
-                    const target = doc.bracket === Bracket.TOTAL ? totals : brackets[doc.bracket];
-
-                    if (target) {
-                        COMBAT_FIELDS.forEach((field) => {
-                            (target as unknown as Record<string, number>)[field] = Number(doc[field] ?? 0);
-                        });
-                        target.factionKills = this.factionKillsOf(doc.factionKills?.[FACTION_KEYS[faction]]);
-                    }
-                });
-            }
-
-            return {
-                type: query.type,
-                id: query.id,
-                world: identity.world,
-                days: query.days ?? null,
-                identity,
-                faction,
-                leader: query.type === 'outfit' ? await this.leaderOf(identity.outfit?.leader, identity.world) : undefined,
-                totals: this.finishTotals(totals),
-                brackets: Object.fromEntries(
-                    Object.entries(brackets).map(([bracket, entry]) => [bracket, this.finishTotals(entry)]),
-                ),
-                firstAlert,
-                lastAlert,
-                firstTrackedAlert,
-            };
-        });
+        return (await this.base(query)).summary;
     }
 
     public async timeline(query: ProfileQuery, granularity: TimelineGranularity): Promise<ProfileTimelineRow[]> {
-        return await this.cached(`timeline:${this.keyOf(query)}:${granularity}`, async () => {
-            const rows: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(
-                this.instanceEntity(query),
-                [
-                    ...this.matchAndJoin(query),
-                    {$match: {'details.state': Ps2AlertsEventState.ENDED}},
-                    {
-                        $group: {
-                            _id: {
-                                bucket: {$dateTrunc: {date: '$details.timeStarted', unit: granularity, startOfWeek: 'monday'}},
-                                bracket: '$details.bracket',
-                            },
-                            ...this.sumFields(query.type, null),
-                        },
-                    },
-                    {$sort: {'_id.bucket': 1, '_id.bracket': 1}},
-                ],
-            );
+        const daily = (await this.base(query)).daily;
 
-            return rows.map((row) => ({
-                bucket: row._id.bucket,
-                bracket: row._id.bracket,
-                alerts: row.alerts,
-                kills: row.kills,
-                deaths: row.deaths,
-                headshots: row.headshots,
-                teamKills: row.teamKills,
-                teamKilled: row.teamKilled,
-                suicides: row.suicides,
-                xpmAlerts: row.xpmAlerts,
-                kpmTotal: row.kpmTotal,
-                dpmTotal: row.dpmTotal,
-            }));
+        if (granularity === 'day') {
+            return daily;
+        }
+
+        // Fold the cached daily rows into the requested bucket size rather than scanning the alerts again
+        const buckets = new Map<string, ProfileTimelineRow>();
+
+        daily.forEach((row) => {
+            const bucket = this.bucketStart(new Date(row.bucket), granularity);
+            const key = `${bucket.toISOString()}:${row.bracket}`;
+            const entry = buckets.get(key) ?? {...row, bucket, alerts: 0, kills: 0, deaths: 0, headshots: 0, teamKills: 0, teamKilled: 0, suicides: 0, xpmAlerts: 0, kpmTotal: 0, dpmTotal: 0};
+
+            (['alerts', 'kills', 'deaths', 'headshots', 'teamKills', 'teamKilled', 'suicides', 'xpmAlerts', 'kpmTotal', 'dpmTotal'] as const).forEach((field) => {
+                entry[field] += row[field];
+            });
+            buckets.set(key, entry);
         });
+
+        return [...buckets.values()].sort((a, b) => a.bucket.getTime() - b.bucket.getTime() || a.bracket - b.bracket);
     }
 
     public async alerts(
@@ -232,25 +140,28 @@ export default class ProfileService {
         const sortField = ALERT_SORT_FIELDS[sortBy] ?? ALERT_SORT_FIELDS.instance;
         const direction = order === 'asc' ? 1 : -1;
 
+        query = await this.withWorld(query);
+
         return await this.cached(`alerts:${this.keyOf(query)}:${pageNumber}:${size}:${sortField}:${direction}`, async () => {
             // Instance ids sort chronologically within a world, which keeps the default order cheap
             const sort = {$sort: {[sortField]: direction, instance: -1}};
             const pageStages = [{$skip: (pageNumber - 1) * size}, {$limit: size}];
             const needsJoinFirst = sortField.startsWith('details.') || !!query.days;
 
-            // Joining only the page being returned is far cheaper than joining every alert first
+            // Joining only the page being returned is far cheaper than joining every alert first; the count comes
+            // from the index rather than a $facet, which would read every row
             const pipeline = needsJoinFirst
-                ? [...this.matchAndJoin(query), {$facet: {total: [{$count: 'count'}], items: [sort, ...pageStages, ALERT_PROJECTION]}}]
-                : [this.matchStage(query), {$facet: {total: [{$count: 'count'}], items: [sort, ...pageStages, ...this.joinStages(), ALERT_PROJECTION]}}];
+                ? [...this.matchAndJoin(query), sort, ...pageStages, ALERT_PROJECTION]
+                : [this.matchStage(query), sort, ...pageStages, ...this.joinStages(), ALERT_PROJECTION];
 
-            const [result]: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(this.instanceEntity(query), pipeline);
+            const [items, total] = await Promise.all([
+                this.mongoOperationsService.aggregate<ProfileAlertRow>(this.instanceEntity(query), pipeline),
+                needsJoinFirst
+                    ? this.mongoOperationsService.aggregate<Record<string, any>>(this.instanceEntity(query), [...this.matchAndJoin(query), {$count: 'count'}]).then((rows) => Number(rows[0]?.count ?? 0))
+                    : this.mongoOperationsService.em.count(this.instanceEntity(query), (this.matchStage(query) as {$match: Record<string, unknown>}).$match),
+            ]);
 
-            return {
-                items: result?.items ?? [],
-                total: result?.total?.[0]?.count ?? 0,
-                page: pageNumber,
-                pageSize: size,
-            };
+            return {items, total, page: pageNumber, pageSize: size};
         });
     }
 
@@ -269,6 +180,8 @@ export default class ProfileService {
         const direction = order === 'asc' ? 1 : -1;
         const term = search.trim().slice(0, 40).toLowerCase();
 
+        query = await this.withWorld(query);
+
         return await this.cached(`members:${query.id}:W${query.world ?? 0}:${pageNumber}:${size}:${sortField}:${direction}:${term}`, async () => {
             const match: Record<string, unknown> = {
                 bracket: Bracket.TOTAL,
@@ -285,30 +198,18 @@ export default class ProfileService {
                 match['character.name'] = {$regex: term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i'};
             }
 
-            const [result]: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(
-                GlobalCharacterAggregateEntity,
-                [
+            const [items, total] = await Promise.all([
+                this.mongoOperationsService.aggregate<ProfileMemberRow>(GlobalCharacterAggregateEntity, [
                     {$match: match},
-                    {
-                        $facet: {
-                            total: [{$count: 'count'}],
-                            items: [
-                                {$sort: {[sortField]: direction, 'character.id': 1}},
-                                {$skip: (pageNumber - 1) * size},
-                                {$limit: size},
-                                {$project: {_id: 0, character: 1, kills: 1, deaths: 1, headshots: 1, teamKills: 1, suicides: 1}},
-                            ],
-                        },
-                    },
-                ],
-            );
+                    {$sort: {[sortField]: direction, 'character.id': 1}},
+                    {$skip: (pageNumber - 1) * size},
+                    {$limit: size},
+                    {$project: {_id: 0, character: 1, kills: 1, deaths: 1, headshots: 1, teamKills: 1, suicides: 1}},
+                ]),
+                this.mongoOperationsService.em.count(GlobalCharacterAggregateEntity, match),
+            ]);
 
-            return {
-                items: result?.items ?? [],
-                total: result?.total?.[0]?.count ?? 0,
-                page: pageNumber,
-                pageSize: size,
-            };
+            return {items, total, page: pageNumber, pageSize: size};
         });
     }
 
@@ -360,6 +261,160 @@ export default class ProfileService {
 
             return parsed.sort((a, b) => (b.vehicleKills + b.infantryKills) - (a.vehicleKills + a.infantryKills));
         });
+    }
+
+    /**
+     * One scan of the subject's alerts produces both the summary and a per-day timeline, since reading the rows is the
+     * expensive part (an outfit can have tens of thousands) and every coarser timeline derives from the daily one.
+     */
+    private async base(query: ProfileQuery): Promise<{summary: ProfileSummary, daily: ProfileTimelineRow[]}> {
+        return await this.cached(`base:${this.keyOf(query)}`, async () => {
+            const globals: Array<Record<string, any>> = await this.mongoOperationsService.findMany(
+                this.globalEntity(query),
+                {[`${query.type}.id`]: query.id, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME, world: query.world},
+            );
+            const identity = globals.find((doc) => doc.bracket === Bracket.TOTAL) ?? globals[0];
+
+            if (!identity) {
+                throw new NotFoundException(`No ${query.type} found with ID ${query.id}`);
+            }
+
+            const faction = Number(identity[query.type].faction);
+            const [facets]: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(
+                this.instanceEntity(query),
+                [
+                    ...this.matchAndJoin(query, identity.world),
+                    {
+                        $facet: {
+                            brackets: [
+                                {
+                                    $group: {
+                                        _id: '$details.bracket',
+                                        ...this.sumFields(query.type, faction),
+                                        firstAlert: {$min: '$details.timeStarted'},
+                                        lastAlert: {$max: '$details.timeStarted'},
+                                        firstTrackedAlert: {$min: {$cond: [this.isFinite(`$xPerMinutes.${XPM_FIELDS[query.type].kpm}`), '$details.timeStarted', null]}},
+                                    },
+                                },
+                            ],
+                            daily: [
+                                {$match: {'details.state': Ps2AlertsEventState.ENDED}},
+                                {
+                                    $group: {
+                                        _id: {
+                                            bucket: {$dateTrunc: {date: '$details.timeStarted', unit: 'day'}},
+                                            bracket: '$details.bracket',
+                                        },
+                                        ...this.sumFields(query.type, null),
+                                    },
+                                },
+                                {$sort: {'_id.bucket': 1, '_id.bracket': 1}},
+                            ],
+                        },
+                    },
+                ],
+            );
+
+            const brackets: Record<number, ProfileBracketTotals> = {};
+            const totals = this.emptyTotals(Bracket.TOTAL);
+            let firstAlert: Date | null = null;
+            let lastAlert: Date | null = null;
+            let firstTrackedAlert: Date | null = null;
+
+            (facets?.brackets ?? []).forEach((row: Record<string, any>) => {
+                const bracket = Number(row._id);
+                const entry = this.rowToTotals(row, bracket);
+
+                if (PROFILE_BRACKETS.includes(bracket)) {
+                    brackets[bracket] = entry;
+                }
+
+                this.addTotals(totals, entry);
+                firstAlert = !firstAlert || row.firstAlert < firstAlert ? row.firstAlert : firstAlert;
+                lastAlert = !lastAlert || row.lastAlert > lastAlert ? row.lastAlert : lastAlert;
+
+                if (row.firstTrackedAlert && (!firstTrackedAlert || row.firstTrackedAlert < firstTrackedAlert)) {
+                    firstTrackedAlert = row.firstTrackedAlert;
+                }
+            });
+
+            // All-time views take combat totals from the global aggregates, which also cover alerts that predate per-alert tracking
+            if (!query.days) {
+                globals.forEach((doc) => {
+                    const target = doc.bracket === Bracket.TOTAL ? totals : brackets[doc.bracket];
+
+                    if (target) {
+                        COMBAT_FIELDS.forEach((field) => {
+                            (target as unknown as Record<string, number>)[field] = Number(doc[field] ?? 0);
+                        });
+                        target.factionKills = this.factionKillsOf(doc.factionKills?.[FACTION_KEYS[faction]]);
+                    }
+                });
+            }
+
+            const daily: ProfileTimelineRow[] = (facets?.daily ?? []).map((row: Record<string, any>) => ({
+                bucket: row._id.bucket,
+                bracket: row._id.bracket,
+                alerts: row.alerts,
+                kills: row.kills,
+                deaths: row.deaths,
+                headshots: row.headshots,
+                teamKills: row.teamKills,
+                teamKilled: row.teamKilled,
+                suicides: row.suicides,
+                xpmAlerts: row.xpmAlerts,
+                kpmTotal: row.kpmTotal,
+                dpmTotal: row.dpmTotal,
+            }));
+
+            return {
+                summary: {
+                    type: query.type,
+                    id: query.id,
+                    world: identity.world,
+                    days: query.days ?? null,
+                    identity,
+                    faction,
+                    leader: query.type === 'outfit' ? await this.leaderOf(identity.outfit?.leader, identity.world) : undefined,
+                    totals: this.finishTotals(totals),
+                    brackets: Object.fromEntries(
+                        Object.entries(brackets).map(([bracket, entry]) => [bracket, this.finishTotals(entry)]),
+                    ),
+                    firstAlert,
+                    lastAlert,
+                    firstTrackedAlert,
+                },
+                daily,
+            };
+        });
+    }
+
+    // UTC bucket boundaries, weeks starting Monday, matching $dateTrunc in the daily pass
+    private bucketStart(date: Date, granularity: TimelineGranularity): Date {
+        const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+
+        switch (granularity) {
+            case 'week':
+                d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+                return d;
+            case 'month':
+                d.setUTCDate(1);
+                return d;
+            case 'year':
+                d.setUTCMonth(0, 1);
+                return d;
+            default:
+                return d;
+        }
+    }
+
+    // A link without a world still needs one so every index is used with equality on it; the summary already resolved it
+    private async withWorld(query: ProfileQuery): Promise<ProfileQuery> {
+        if (query.world) {
+            return query;
+        }
+
+        return {...query, world: (await this.base({...query, days: undefined})).summary.world};
     }
 
     private async leaderOf(leaderId?: string, world?: number): Promise<ProfileSummary['leader']> {
