@@ -5,7 +5,7 @@ import InstanceMetagameTerritoryEntity from '../modules/data/entities/instance/i
 import {Ps2AlertsEventState} from '../modules/data/ps2alerts-constants/ps2AlertsEventState';
 import {ObjectLiteral} from 'typeorm';
 
-// This service purely grabs the instances out of the database and caches them in a consistent manner.
+// Grabs instances out of the database and caches the finished ones, which never change again.
 @Injectable()
 export default class InstanceRetrievalService {
     constructor(
@@ -27,11 +27,24 @@ export default class InstanceRetrievalService {
             {instanceId},
         );
 
-        // If alert is not complete yet, don't cache it
         if (instance.state !== Ps2AlertsEventState.ENDED) {
             return instance;
-        } else {
-            return await this.cacheService.set(key, instance, 60 * 60 * 24 * 7);
         }
+
+        return await this.cacheService.set(key, instance, 60 * 60 * 24 * 7);
+    }
+
+    // Attaches instanceDetails to each per-instance aggregate (e.g. a character's or outfit's alert history)
+    public async hydrate<T extends {instance: string, instanceDetails?: ObjectLiteral}>(aggregates: T[]): Promise<T[]> {
+        for (const aggregate of aggregates) {
+            try {
+                aggregate.instanceDetails = await this.findOne(aggregate.instance);
+            } catch (err) {
+                // Aggregates can outlive a purged instance; leave the details off rather than fail the whole list
+                aggregate.instanceDetails = undefined;
+            }
+        }
+
+        return aggregates;
     }
 }

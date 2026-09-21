@@ -11,6 +11,7 @@ import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2Alerts
 import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.common.queries';
 import {PS2ALERTS_EVENT_TYPE_QUERY} from '../../common/rest.ps2AlertsEventType.query';
 import {INSTANCE_IMPLICIT_QUERY} from '../../common/rest.instance.query';
+import {GET_DETAILS_QUERY} from '../../common/rest.getDetails.query';
 import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 import {OptionalBoolPipe} from '../../../pipes/OptionalBoolPipe';
 import InstanceRetrievalService from '../../../../../services/instance.retrieval.service';
@@ -63,7 +64,7 @@ export default class RestInstanceCharacterAggregateController {
 
     @Get('instance/character/:character')
     @ApiOperation({summary: 'Finds all InstanceCharacterAggregateEntity for a character'})
-    @ApiImplicitQueries([PS2ALERTS_EVENT_TYPE_QUERY])
+    @ApiImplicitQueries([PS2ALERTS_EVENT_TYPE_QUERY, GET_DETAILS_QUERY])
     @ApiResponse({
         status: 200,
         description: 'The InstanceCharacterAggregateEntity aggregates by character ID',
@@ -73,30 +74,25 @@ export default class RestInstanceCharacterAggregateController {
     async findAllByCharacterId(
         @Param('character') character: string,
             @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
-        @Query('getDetails', OptionalBoolPipe) getDetails?: boolean,
+            @Query('getDetails', OptionalBoolPipe) getDetails?: boolean,
     ): Promise<InstanceCharacterAggregateEntity[]> {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const key = `cache:instance:instanceCharacter:C:${character}-ET:${ps2AlertsEventType ?? 0}-getDetails:${(!!getDetails)}`;
+        const key = `cache:instance:instanceCharacter:C:${character}-ET:${ps2AlertsEventType ?? 0}-getDetails:${String(!!getDetails)}`;
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        const alertsInvolved: InstanceCharacterAggregateEntity[] = await this.cacheService.get(key) ?? await this.cacheService.set(
-            key,
-            await this.mongoOperationsService.findMany(InstanceCharacterAggregateEntity, {'character.id': character, ps2AlertsEventType}),
-            60 * 60,
+        const cached = await this.cacheService.get<InstanceCharacterAggregateEntity[]>(key);
+
+        if (cached) {
+            return cached;
+        }
+
+        const alerts: InstanceCharacterAggregateEntity[] = await this.mongoOperationsService.findMany(
+            InstanceCharacterAggregateEntity,
+            {'character.id': character, ps2AlertsEventType},
         );
 
-        // If getDetails is set, go off and hydrate the instances with said alerts
-        if (!getDetails) {
-            return alertsInvolved;
+        if (getDetails) {
+            await this.instanceRetrievalService.hydrate(alerts);
         }
 
-        for (const alert of alertsInvolved) {
-            // Grab the instance and inject it into the alert
-            alert.instanceDetails = await this.instanceRetrievalService.findOne(alert.instance);
-        }
-
-        await this.cacheService.set(key, alertsInvolved, 60 * 60);
-
-        return alertsInvolved;
+        return await this.cacheService.set(key, alerts, 60 * 15);
     }
 }

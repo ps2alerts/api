@@ -15,7 +15,7 @@ import {ConfigService} from '@nestjs/config';
 import * as redisStore from 'cache-manager-ioredis';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import {XpmCron} from './xpm.cron';
-import {SearchCron} from './search.cron';
+import {SearchIndexCron} from './search.index.cron';
 // import {OutfitWarsRankingsCron} from './outfitwars.rankings.cron';
 // import OutfitwarsRankingEntity from '../data/entities/instance/outfitwars.ranking.entity';
 
@@ -49,7 +49,7 @@ import {SearchCron} from './search.cron';
         BracketCron,
         // OutfitWarsRankingsCron,
         XpmCron,
-        SearchCron,
+        SearchIndexCron,
     ],
 })
 export class CronModule {}

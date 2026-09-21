@@ -9,12 +9,19 @@ import {AGGREGATE_INSTANCE_COMMON_IMPLICIT_QUERIES} from '../../common/rest.comm
 import {Ps2AlertsEventTypePipe} from '../../../pipes/Ps2AlertsEventTypePipe';
 import {Ps2AlertsEventType} from '../../../../data/ps2alerts-constants/ps2AlertsEventType';
 import {INSTANCE_IMPLICIT_QUERY} from '../../common/rest.instance.query';
+import {PS2ALERTS_EVENT_TYPE_QUERY} from '../../common/rest.ps2AlertsEventType.query';
+import {GET_DETAILS_QUERY} from '../../common/rest.getDetails.query';
+import {OptionalBoolPipe} from '../../../pipes/OptionalBoolPipe';
+import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import InstanceRetrievalService from '../../../../../services/instance.retrieval.service';
 
 @ApiTags('Instance Outfit Aggregates')
 @Controller('aggregates')
 export default class RestInstanceOutfitAggregateController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
+        private readonly cacheService: RedisCacheService,
+        private readonly instanceRetrievalService: InstanceRetrievalService,
     ) {}
 
     @Get('instance/:instance/outfit')
@@ -53,16 +60,36 @@ export default class RestInstanceOutfitAggregateController {
     }
 
     @Get('instance/outfit/:outfit')
-    @ApiOperation({summary: 'Returns a InstanceOutfitAggregateEntity aggregate for all instances'})
+    @ApiOperation({summary: 'Finds all InstanceOutfitAggregateEntity for an outfit'})
+    @ApiImplicitQueries([PS2ALERTS_EVENT_TYPE_QUERY, GET_DETAILS_QUERY])
     @ApiResponse({
         status: 200,
-        description: 'The list of InstanceOutfitAggregateEntity aggregates by outfit ID',
+        description: 'The InstanceOutfitAggregateEntity aggregates by outfit ID',
         type: InstanceOutfitAggregateEntity,
         isArray: true,
     })
-    async findByOutfitId(
+    async findAllByOutfitId(
         @Param('outfit') outfit: string,
+            @Query('ps2AlertsEventType', Ps2AlertsEventTypePipe) ps2AlertsEventType?: Ps2AlertsEventType,
+            @Query('getDetails', OptionalBoolPipe) getDetails?: boolean,
     ): Promise<InstanceOutfitAggregateEntity[]> {
-        return this.mongoOperationsService.findOne(InstanceOutfitAggregateEntity, {'outfit.id': outfit});
+        const key = `cache:instance:instanceOutfit:O:${outfit}-ET:${ps2AlertsEventType ?? 0}-getDetails:${String(!!getDetails)}`;
+
+        const cached = await this.cacheService.get<InstanceOutfitAggregateEntity[]>(key);
+
+        if (cached) {
+            return cached;
+        }
+
+        const alerts: InstanceOutfitAggregateEntity[] = await this.mongoOperationsService.findMany(
+            InstanceOutfitAggregateEntity,
+            {'outfit.id': outfit, ps2AlertsEventType},
+        );
+
+        if (getDetails) {
+            await this.instanceRetrievalService.hydrate(alerts);
+        }
+
+        return await this.cacheService.set(key, alerts, 60 * 15);
     }
 }

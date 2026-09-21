@@ -22,6 +22,8 @@ import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventTyp
 @Index(['headshots'])
 @Index(['captures'])
 @Index(['ps2AlertsEventType'])
+@Index(['searchName'])
+@Index(['searchTag'])
 export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -108,4 +110,15 @@ export default class GlobalOutfitAggregateEntity {
         default: Ps2AlertsEventType.LIVE_METAGAME,
     })
     ps2AlertsEventType: Ps2AlertsEventType;
+
+    // Lowercased outfit name / tag, maintained by SearchIndexCron for prefix searches
+    @ApiHideProperty()
+    @Exclude()
+    @Column({type: 'string', nullable: true})
+    searchName?: string;
+
+    @ApiHideProperty()
+    @Exclude()
+    @Column({type: 'string', nullable: true})
+    searchTag?: string;
 }

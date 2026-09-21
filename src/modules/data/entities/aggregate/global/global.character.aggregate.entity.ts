@@ -22,6 +22,7 @@ import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventTyp
 @Index(['suicides'])
 @Index(['headshots'])
 @Index(['ps2AlertsEventType'])
+@Index(['searchName'])
 export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -101,4 +102,10 @@ export default class GlobalCharacterAggregateEntity {
         default: Ps2AlertsEventType.LIVE_METAGAME,
     })
     ps2AlertsEventType: Ps2AlertsEventType;
+
+    // Lowercased character name, maintained by SearchIndexCron for prefix searches
+    @ApiHideProperty()
+    @Exclude()
+    @Column({type: 'string', nullable: true})
+    searchName?: string;
 }
