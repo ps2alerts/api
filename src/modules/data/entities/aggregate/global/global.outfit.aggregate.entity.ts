@@ -22,9 +22,6 @@ import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventTyp
 @Index(['headshots'])
 @Index(['captures'])
 @Index(['ps2AlertsEventType'])
-// Serve both the prefix searches (equality, equality, range + sort) and the backfill's "missing field" scans
-@Index(['bracket', 'ps2AlertsEventType', 'searchName'])
-@Index(['bracket', 'ps2AlertsEventType', 'searchTag'])
 export default class GlobalOutfitAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -112,14 +109,4 @@ export default class GlobalOutfitAggregateEntity {
     })
     ps2AlertsEventType: Ps2AlertsEventType;
 
-    // Lowercased outfit name / tag, maintained by SearchIndexCron for prefix searches
-    @ApiHideProperty()
-    @Exclude()
-    @Column({type: 'string', nullable: true})
-    searchName?: string;
-
-    @ApiHideProperty()
-    @Exclude()
-    @Column({type: 'string', nullable: true})
-    searchTag?: string;
 }

@@ -22,8 +22,6 @@ import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventTyp
 @Index(['suicides'])
 @Index(['headshots'])
 @Index(['ps2AlertsEventType'])
-// Serves both the prefix search (equality, equality, range + sort) and the backfill's "missing searchName" scan
-@Index(['bracket', 'ps2AlertsEventType', 'searchName'])
 export default class GlobalCharacterAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
@@ -104,9 +102,4 @@ export default class GlobalCharacterAggregateEntity {
     })
     ps2AlertsEventType: Ps2AlertsEventType;
 
-    // Lowercased character name, maintained by SearchIndexCron for prefix searches
-    @ApiHideProperty()
-    @Exclude()
-    @Column({type: 'string', nullable: true})
-    searchName?: string;
 }

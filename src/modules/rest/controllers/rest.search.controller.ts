@@ -1,14 +1,14 @@
-import {BadRequestException, Controller, Get, Inject, Query} from '@nestjs/common';
+import {BadRequestException, Controller, Get, Inject, Query, ServiceUnavailableException} from '@nestjs/common';
 import {ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {RedisCacheService} from '../../../services/cache/redis.cache.service';
+import SearchIndexService, {SEARCH_COLLATION, SEARCH_INDEXES} from '../../../services/search.index.service';
 import GlobalCharacterAggregateEntity from '../../data/entities/aggregate/global/global.character.aggregate.entity';
 import GlobalOutfitAggregateEntity from '../../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
 import {Ps2AlertsEventType} from '../../data/ps2alerts-constants/ps2AlertsEventType';
 import {World} from '../../data/ps2alerts-constants/world';
 import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
-import Pagination from '../../../services/mongo/pagination';
 
 const SEARCH_QUERIES = [
     {name: 'searchTerm', required: true, type: String, description: 'Case insensitive prefix, 2-40 characters'},
@@ -16,8 +16,11 @@ const SEARCH_QUERIES = [
     {name: 'pageSize', required: false, type: Number, description: 'Max results, default 20, capped at 50'},
 ];
 
-// Prefix search over the lowercased searchName / searchTag fields kept up to date by SearchIndexCron.
-// Results are sorted by the matched field, which naturally puts an exact match first; the website does the rest of the ranking.
+/**
+ * Prefix search straight against the names on the global aggregates. The collated indexes make a plain range query
+ * case-insensitive, so nothing is copied or maintained: an index range scan of at most `pageSize` keys per query.
+ * Results come back in collated name order, which puts an exact match first; the website does the rest of the ranking.
+ */
 @ApiTags('Search')
 @Controller('search')
 export default class RestSearchController {
@@ -30,6 +33,7 @@ export default class RestSearchController {
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
         private readonly cacheService: RedisCacheService,
+        private readonly searchIndexService: SearchIndexService,
     ) {}
 
     @Get('characters')
@@ -37,12 +41,8 @@ export default class RestSearchController {
     @ApiQuery(SEARCH_QUERIES[0])
     @ApiQuery(SEARCH_QUERIES[1])
     @ApiQuery(SEARCH_QUERIES[2])
-    @ApiResponse({
-        status: 200,
-        description: 'Matching GlobalCharacterAggregateEntity records (bracket total, live metagame)',
-        type: GlobalCharacterAggregateEntity,
-        isArray: true,
-    })
+    @ApiResponse({status: 200, description: 'Matching GlobalCharacterAggregateEntity records (bracket total, live metagame)', type: GlobalCharacterAggregateEntity, isArray: true})
+    @ApiResponse({status: 503, description: 'The search index is still being built'})
     async searchCharacters(
         @Query('searchTerm') searchTerm: string,
             @Query('world', OptionalIntPipe) world?: World,
@@ -58,7 +58,7 @@ export default class RestSearchController {
             return cached;
         }
 
-        const results = await this.prefixQuery<GlobalCharacterAggregateEntity>(GlobalCharacterAggregateEntity, 'searchName', term, limit, world);
+        const results = await this.prefixQuery<GlobalCharacterAggregateEntity>(GlobalCharacterAggregateEntity, SEARCH_INDEXES.characterName.field, term, limit, world);
 
         return await this.cacheService.set(key, results, this.cacheTtl);
     }
@@ -68,12 +68,8 @@ export default class RestSearchController {
     @ApiQuery(SEARCH_QUERIES[0])
     @ApiQuery(SEARCH_QUERIES[1])
     @ApiQuery(SEARCH_QUERIES[2])
-    @ApiResponse({
-        status: 200,
-        description: 'Matching GlobalOutfitAggregateEntity records (bracket total, live metagame), tag matches first',
-        type: GlobalOutfitAggregateEntity,
-        isArray: true,
-    })
+    @ApiResponse({status: 200, description: 'Matching GlobalOutfitAggregateEntity records (bracket total, live metagame), tag matches first', type: GlobalOutfitAggregateEntity, isArray: true})
+    @ApiResponse({status: 503, description: 'The search index is still being built'})
     async searchOutfits(
         @Query('searchTerm') searchTerm: string,
             @Query('world', OptionalIntPipe) world?: World,
@@ -90,18 +86,20 @@ export default class RestSearchController {
         }
 
         const [byTag, byName] = await Promise.all([
-            this.prefixQuery<GlobalOutfitAggregateEntity>(GlobalOutfitAggregateEntity, 'searchTag', term, limit, world),
-            this.prefixQuery<GlobalOutfitAggregateEntity>(GlobalOutfitAggregateEntity, 'searchName', term, limit, world),
+            this.prefixQuery<GlobalOutfitAggregateEntity>(GlobalOutfitAggregateEntity, SEARCH_INDEXES.outfitTag.field, term, limit, world),
+            this.prefixQuery<GlobalOutfitAggregateEntity>(GlobalOutfitAggregateEntity, SEARCH_INDEXES.outfitName.field, term, limit, world),
         ]);
 
-        // Tag hits lead, then name hits, without repeating an outfit matched on both
+        // Tag hits lead, then name hits. The same id can legitimately exist on more than one world, so dedupe on both.
         const seen = new Set<string>();
         const results = [...byTag, ...byName].filter((outfit) => {
-            if (seen.has(outfit.outfit.id)) {
+            const identity = `${outfit.outfit.id}:${outfit.world}`;
+
+            if (seen.has(identity)) {
                 return false;
             }
 
-            seen.add(outfit.outfit.id);
+            seen.add(identity);
             return true;
         }).slice(0, limit);
 
@@ -109,7 +107,7 @@ export default class RestSearchController {
     }
 
     private normaliseTerm(searchTerm?: string): string {
-        const term = (searchTerm ?? '').trim().toLowerCase();
+        const term = (searchTerm ?? '').trim();
 
         if (term.length < this.minLength || term.length > this.maxLength) {
             throw new BadRequestException(`searchTerm must be between ${this.minLength} and ${this.maxLength} characters`);
@@ -128,23 +126,35 @@ export default class RestSearchController {
 
     private async prefixQuery<T>(
         entity: typeof GlobalCharacterAggregateEntity | typeof GlobalOutfitAggregateEntity,
-        field: 'searchName' | 'searchTag',
+        field: string,
         term: string,
         limit: number,
         world?: World,
     ): Promise<T[]> {
-        // Anchored regex on an indexed field is an index range scan; escaping keeps user input from widening it
-        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        if (!this.searchIndexService.isReady()) {
+            throw new ServiceUnavailableException('Search is unavailable while its index is being built');
+        }
 
-        return await this.mongoOperationsService.findMany<T>(
+        // Under a strength-2 collation this range is case-insensitive and stays within the index; U+FFFF caps the prefix
+        const match: Record<string, unknown> = {
+            bracket: Bracket.TOTAL,
+            ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME,
+            [field]: {$gte: term, $lt: `${term}￿`},
+        };
+
+        if (world) {
+            match.world = world;
+        }
+
+        return await this.mongoOperationsService.aggregate<T>(
             entity,
-            {
-                [field]: {$regex: `^${escaped}`},
-                bracket: Bracket.TOTAL,
-                ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME,
-                world,
-            },
-            new Pagination({sortBy: field, order: 'asc', pageSize: limit}),
+            [
+                {$match: match},
+                {$sort: {[field]: 1}},
+                {$limit: limit},
+                {$project: {_id: 0}},
+            ],
+            {collation: SEARCH_COLLATION},
         );
     }
 }
