@@ -104,7 +104,9 @@ export class RestInstanceMetagameController {
         @Param('instance') instanceId: string,
             @Body() entity: UpdateInstanceMetagameDto,
     ): Promise<boolean> {
-        return await this.mongoOperationsService.upsert(InstanceMetagameTerritoryEntity, [{$set: entity}], [{instanceId}]);
+        const updated = await this.mongoOperationsService.upsert(InstanceMetagameTerritoryEntity, [{$set: entity}], [{instanceId}]);
+        await this.instanceRetrievalService.forget(instanceId);
+        return updated;
     }
 
     @Delete('/:instance')
@@ -116,7 +118,9 @@ export class RestInstanceMetagameController {
     async deleteOne(
         @Param('instance') instanceId: string,
     ): Promise<boolean> {
-        return await this.mongoOperationsService.deleteOne(InstanceMetagameTerritoryEntity, {instanceId});
+        const deleted = await this.mongoOperationsService.deleteOne(InstanceMetagameTerritoryEntity, {instanceId});
+        await this.instanceRetrievalService.forget(instanceId);
+        return deleted;
     }
 
     @Get('/active')
@@ -183,7 +187,7 @@ export class RestInstanceMetagameController {
             'result.victor': victor ?? undefined,
         };
 
-        const key = `cache:endpoints:instance-metagame:W-65${world ?? 0}-Z:${zone ?? 0}-TSF:${timeStartedFrom ? timeStartedFrom.toString() : 0}-TST:${timeStartedTo ? timeStartedTo.toString() : 0}-B:${bracket ?? 0}-V:${victor ?? 0}-P:${page ?? 0}-PS:${pageSize ?? 0}`;
+        const key = `cache:endpoints:instance-metagame:W-65${world ?? 0}-Z:${zone ?? 0}-TSF:${timeStartedFrom ? timeStartedFrom.toString() : 0}-TST:${timeStartedTo ? timeStartedTo.toString() : 0}-B:${bracket ?? 0}-V:${victor ?? 0}-P:${page ?? 0}-PS:${pageSize ?? 0}-SB:${sortBy ?? ''}-O:${order ?? ''}`;
 
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
