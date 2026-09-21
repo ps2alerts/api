@@ -21,6 +21,8 @@ export class SearchIndexCron {
     private readonly logger = new Logger(SearchIndexCron.name);
     private readonly batchSize = 5000;
     private readonly lockKey = 'locks:searchIndex';
+    // Short and refreshed per batch, so a crashed run frees the lock in minutes rather than blocking indexing for an hour
+    private readonly lockTtl = 120;
     private readonly healthKey = '/crons/search';
     private readonly healthTtl = 605;
 
@@ -36,7 +38,7 @@ export class SearchIndexCron {
             return;
         }
 
-        await this.cacheService.set(this.lockKey, Date.now(), 60 * 60);
+        await this.cacheService.set(this.lockKey, Date.now(), this.lockTtl);
 
         try {
             await this.backfill(GlobalCharacterAggregateEntity, 'searchName', (record) => record.character?.name);
@@ -121,5 +123,6 @@ export class SearchIndexCron {
     private async touchHealth(): Promise<void> {
         // @See CronHealthIndicator
         await this.cacheService.set(this.healthKey, Date.now(), this.healthTtl);
+        await this.cacheService.set(this.lockKey, Date.now(), this.lockTtl);
     }
 }
