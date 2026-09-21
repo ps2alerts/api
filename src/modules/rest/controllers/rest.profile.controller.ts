@@ -105,6 +105,7 @@ export default class RestProfileController {
     @ApiQuery({name: 'pageSize', required: false, type: Number, description: 'Default 20, max 100'})
     @ApiQuery({name: 'sortBy', required: false, type: String, description: 'kills, deaths, headshots, teamKills, suicides, character.name or character.adjustedBattleRank'})
     @ApiQuery({name: 'order', required: false, enum: ['asc', 'desc']})
+    @ApiQuery({name: 'search', required: false, type: String, description: 'Case-insensitive part of a character name'})
     @ApiResponse({status: 200, description: 'Items plus the total member count', type: Object})
     @ApiResponse({status: 503, description: 'The members index is still being built'})
     async members(
@@ -114,6 +115,7 @@ export default class RestProfileController {
             @Query('pageSize', OptionalIntPipe) pageSize?: number,
             @Query('sortBy') sortBy?: string,
             @Query('order') order?: string,
+            @Query('search') search?: string,
     ): Promise<ProfileMembersPage> {
         if (!this.searchIndexService.isReady(['outfitMembers'])) {
             throw new ServiceUnavailableException('Outfit members are unavailable while their index is being built');
@@ -125,6 +127,7 @@ export default class RestProfileController {
             pageSize ?? 20,
             sortBy ?? 'kills',
             order === 'asc' ? 'asc' : 'desc',
+            search ?? '',
         );
     }
 

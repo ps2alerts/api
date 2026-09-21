@@ -233,13 +233,15 @@ export default class ProfileService {
         pageSize: number,
         sortBy: string,
         order: 'asc' | 'desc',
+        search = '',
     ): Promise<ProfileMembersPage> {
         const size = Math.min(Math.max(pageSize || 20, 1), this.maxPageSize);
         const pageNumber = Math.max(page || 1, 1);
         const sortField = MEMBER_SORT_FIELDS.includes(sortBy) ? sortBy : 'kills';
         const direction = order === 'asc' ? 1 : -1;
+        const term = search.trim().slice(0, 40).toLowerCase();
 
-        return await this.cached(`members:${query.id}:W${query.world ?? 0}:${pageNumber}:${size}:${sortField}:${direction}`, async () => {
+        return await this.cached(`members:${query.id}:W${query.world ?? 0}:${pageNumber}:${size}:${sortField}:${direction}:${term}`, async () => {
             const match: Record<string, unknown> = {
                 bracket: Bracket.TOTAL,
                 ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME,
@@ -248,6 +250,11 @@ export default class ProfileService {
 
             if (query.world) {
                 match.world = query.world;
+            }
+
+            // A contains match over one outfit's members is a few thousand rows at most, so no index is needed for it
+            if (term) {
+                match['character.name'] = {$regex: term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i'};
             }
 
             const [result]: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(
