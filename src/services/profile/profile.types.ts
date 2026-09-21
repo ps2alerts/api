@@ -61,6 +61,8 @@ export interface ProfileSummary {
     brackets: Record<number, ProfileBracketTotals>;
     firstAlert: Date | null;
     lastAlert: Date | null;
+    // Per-minute tracking arrived mid-2022; alerts before this have no KPM/DPM
+    firstTrackedAlert: Date | null;
 }
 
 export interface ProfileTimelineRow {

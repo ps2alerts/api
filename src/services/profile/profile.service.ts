@@ -121,6 +121,7 @@ export default class ProfileService {
                             ...this.sumFields(query.type, faction),
                             firstAlert: {$min: '$details.timeStarted'},
                             lastAlert: {$max: '$details.timeStarted'},
+                            firstTrackedAlert: {$min: {$cond: [this.isFinite(`$xPerMinutes.${XPM_FIELDS[query.type].kpm}`), '$details.timeStarted', null]}},
                         },
                     },
                 ],
@@ -130,6 +131,7 @@ export default class ProfileService {
             const totals = this.emptyTotals(Bracket.TOTAL);
             let firstAlert: Date | null = null;
             let lastAlert: Date | null = null;
+            let firstTrackedAlert: Date | null = null;
 
             grouped.forEach((row) => {
                 const bracket = Number(row._id);
@@ -142,6 +144,10 @@ export default class ProfileService {
                 this.addTotals(totals, entry);
                 firstAlert = !firstAlert || row.firstAlert < firstAlert ? row.firstAlert : firstAlert;
                 lastAlert = !lastAlert || row.lastAlert > lastAlert ? row.lastAlert : lastAlert;
+
+                if (row.firstTrackedAlert && (!firstTrackedAlert || row.firstTrackedAlert < firstTrackedAlert)) {
+                    firstTrackedAlert = row.firstTrackedAlert;
+                }
             });
 
             // All-time views take combat totals from the global aggregates, which also cover alerts that predate per-alert tracking
@@ -172,6 +178,7 @@ export default class ProfileService {
                 ),
                 firstAlert,
                 lastAlert,
+                firstTrackedAlert,
             };
         });
     }
