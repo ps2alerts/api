@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiHideProperty, ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, ObjectID, Index} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, ObjectId, Index} from 'typeorm';
 import {World, worldArray} from '../../../ps2alerts-constants/world';
 import CombatStats from '../common/combat.stats.embed';
 import {Bracket, ps2alertsBracketArray} from '../../../ps2alerts-constants/bracket';
@@ -19,7 +19,7 @@ export default class GlobalFactionCombatAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     @ApiHideProperty()
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({enum: worldArray, example: 10, description: 'Server / World ID'})
     @Column({

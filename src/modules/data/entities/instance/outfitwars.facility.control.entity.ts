@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, Index, ObjectId} from 'typeorm';
 import {outfitWarsTeamArray, Team} from '../../ps2alerts-constants/outfitwars/team';
 import OutfitWarsTerritoryResultEmbed from '../aggregate/common/outfitwars.territory.result.embed';
 
@@ -12,7 +12,7 @@ import OutfitWarsTerritoryResultEmbed from '../aggregate/common/outfitwars.terri
 export default class OutfitwarsFacilityControlEntity {
     @ObjectIdColumn()
     @Exclude()
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({example: 'outfitwars-1-10-34709', description: 'Unique outfitwars identifier'})
     @Column({

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, Index, ObjectId} from 'typeorm';
 import {Faction, factionArray} from '../../ps2alerts-constants/faction';
 import TerritoryControlMapControlEmbed from './territory.control.mapcontrol.embed';
 
@@ -12,7 +12,7 @@ import TerritoryControlMapControlEmbed from './territory.control.mapcontrol.embe
 export default class InstanceFacilityControlEntity {
     @ObjectIdColumn()
     @Exclude()
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination'})
     @Column({

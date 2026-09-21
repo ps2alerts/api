@@ -30,7 +30,7 @@ import {Zone} from '../../data/ps2alerts-constants/zone';
 import {RESULT_VICTOR_QUERY} from './common/rest.result.victor.query';
 import {RedisCacheService} from '../../../services/cache/redis.cache.service';
 import {AuthGuard} from '@nestjs/passport';
-import {ObjectID} from 'typeorm';
+import {ObjectId} from 'typeorm';
 import InstanceOutfitWarsTerritoryEntity from '../../data/entities/instance/instance.outfitwars.territory.entity';
 import {Team} from '../../data/ps2alerts-constants/outfitwars/team';
 import {CreateInstanceOutfitWarsDto} from '../Dto/outfitwars/CreateInstanceOutfitWarsDto';
@@ -109,7 +109,7 @@ export class RestOutfitwarsController {
     @UseGuards(AuthGuard('basic'))
     async createOne(
         @Body() entity: CreateInstanceOutfitWarsDto,
-    ): Promise<ObjectID> {
+    ): Promise<ObjectId> {
         return await this.mongoOperationsService.insertOne(InstanceOutfitWarsTerritoryEntity, entity);
     }
 
@@ -316,7 +316,7 @@ export class RestOutfitwarsController {
 
         const updatedRecord = Object.assign(record, entity);
 
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+        // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/no-unsafe-assignment
         await this.mongoOperationsService.upsert(OutfitwarsFacilityControlEntity, [{$set: updatedRecord}], [{_id: updatedRecord._id}]);
     }
 
@@ -331,7 +331,7 @@ export class RestOutfitwarsController {
     @ApiBody({type: [CreateFacilityControlDto]})
     async createManyInstanceFacility(
         @Body() entities: CreateFacilityControlDto[],
-    ): Promise<ObjectID[]> {
+    ): Promise<ObjectId[]> {
         return await this.mongoOperationsService.insertMany(OutfitwarsFacilityControlEntity, entities);
     }
 
@@ -414,7 +414,7 @@ export class RestOutfitwarsController {
         }
         /* eslint-enable @typescript-eslint/naming-convention */
 
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+        // eslint-disable-next-line @typescript-eslint/naming-convention,@typescript-eslint/no-unsafe-assignment
         return await this.mongoOperationsService.upsert(OutfitwarsRankingEntity, [{$set: updatedRecord}], [{_id: updatedRecord._id}]);
     }
 

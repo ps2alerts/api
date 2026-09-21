@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
-import {Column, ObjectIdColumn, Entity, Index, ObjectID} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, Index, ObjectId} from 'typeorm';
 import {World, worldArray} from '../../ps2alerts-constants/world';
 import {Zone, zoneArray} from '../../ps2alerts-constants/zone';
 import {MetagameEventType, metagameEventTypeArray} from '../../ps2alerts-constants/metagameEventType';
@@ -22,7 +22,7 @@ export default class InstanceMetagameTerritoryEntity {
     @ObjectIdColumn()
     @Exclude()
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    _id: ObjectID;
+    _id: ObjectId;
 
     @ApiProperty({enum: worldArray, example: 10, description: 'Server / World ID'})
     @Column({

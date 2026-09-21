@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility,@typescript-eslint/naming-convention */
 import {ApiHideProperty, ApiProperty} from '@nestjs/swagger';
 import {Exclude} from 'class-transformer';
-import {Column, ObjectIdColumn, Entity, ObjectID, Index} from 'typeorm';
+import {Column, ObjectIdColumn, Entity, ObjectId, Index} from 'typeorm';
 import CombatStats from '../common/combat.stats.embed';
 import FactionVersusFactionEmbed from '../common/faction.versus.faction.embed';
 import {Ps2AlertsEventType} from '../../../ps2alerts-constants/ps2AlertsEventType';
@@ -15,7 +15,7 @@ export default class InstanceFactionCombatAggregateEntity {
     @ObjectIdColumn()
     @Exclude()
     @ApiHideProperty()
-    _id?: ObjectID;
+    _id?: ObjectId;
 
     @ApiProperty({example: '10-12345', description: 'The Server-CensusInstanceId combination'})
     @Column({

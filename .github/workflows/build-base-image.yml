@@ -5,6 +5,10 @@ on:
     # Runs 6am on Mondays (see https://crontab.guru)
     - cron: '0 6 * * 1'
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   build-docker-images:
     runs-on: ${{ matrix.os }}
@@ -16,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: true
