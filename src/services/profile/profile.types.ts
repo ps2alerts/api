@@ -13,6 +13,13 @@ export interface ProfileQuery {
     days?: number;
 }
 
+export interface FactionKills {
+    vs: number;
+    nc: number;
+    tr: number;
+    nso: number;
+}
+
 export interface ProfileBracketTotals {
     bracket: Bracket;
     alerts: number;
@@ -22,11 +29,22 @@ export interface ProfileBracketTotals {
     teamKills: number;
     teamKilled: number;
     suicides: number;
+    // Outfits only: facility captures and the average number of members taking part
+    captures: number;
+    participants: number;
     xpmAlerts: number;
+    // Per-minute averages over the alerts that have them (per participant for outfits)
     kpm: number;
     dpm: number;
+    tkpm: number;
+    spm: number;
+    hspm: number;
+    // Outfits only: kills and deaths per minute per participating member
+    ppKpm: number;
+    ppDpm: number;
     wins: number;
     decided: number;
+    factionKills: FactionKills;
 }
 
 export interface ProfileSummary {
@@ -37,6 +55,8 @@ export interface ProfileSummary {
     // The global TOTAL aggregate for the character or outfit, including the embedded identity
     identity: Record<string, unknown>;
     faction: Faction;
+    // Outfits only: the leader as last seen
+    leader?: {id: string, name: string, world: World} | null;
     totals: ProfileBracketTotals;
     brackets: Record<number, ProfileBracketTotals>;
     firstAlert: Date | null;
@@ -110,4 +130,15 @@ export interface ProfileMembersPage {
     total: number;
     page: number;
     pageSize: number;
+}
+
+export interface ProfileVehicleRow {
+    vehicle: number;
+    vehicleKills: number;
+    infantryKills: number;
+    deaths: number;
+    teamKills: number;
+    teamKilled: number;
+    roadkills: number;
+    suicides: number;
 }

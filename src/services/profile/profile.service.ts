@@ -9,18 +9,37 @@ import GlobalOutfitAggregateEntity from '../../modules/data/entities/aggregate/g
 import {Bracket} from '../../modules/data/ps2alerts-constants/bracket';
 import {Ps2AlertsEventType} from '../../modules/data/ps2alerts-constants/ps2AlertsEventType';
 import {Ps2AlertsEventState} from '../../modules/data/ps2alerts-constants/ps2AlertsEventState';
+import GlobalVehicleCharacterAggregateEntity from '../../modules/data/entities/aggregate/global/global.vehicle.character.aggregate.entity';
+import InstanceVehicleCharacterAggregateEntity from '../../modules/data/entities/aggregate/instance/instance.vehicle.character.aggregate.entity';
 import {
+    FactionKills,
     ProfileAlertsPage,
     ProfileBracketTotals,
     ProfileMembersPage,
+    ProfileVehicleRow,
     ProfileQuery,
     ProfileSummary,
     ProfileTimelineRow,
+    ProfileType,
     TimelineGranularity,
 } from './profile.types';
 
 const PROFILE_BRACKETS = [Bracket.DEAD, Bracket.LOW, Bracket.MEDIUM, Bracket.HIGH, Bracket.PRIME];
-const COMBAT_FIELDS = ['kills', 'deaths', 'headshots', 'teamKills', 'teamKilled', 'suicides'];
+const COMBAT_FIELDS = ['kills', 'deaths', 'headshots', 'teamKills', 'teamKilled', 'suicides', 'captures'];
+const FACTION_KEYS: Record<number, keyof FactionKills> = {1: 'vs', 2: 'nc', 3: 'tr', 4: 'nso'};
+// Outfits carry the per-minute set twice: the outfit's total and the average per participating member
+const XPM_FIELDS: Record<string, Record<string, string>> = {
+    character: {kpm: 'killsPerMinute', dpm: 'deathsPerMinute', tkpm: 'teamKillsPerMinute', spm: 'suicidesPerMinute', hspm: 'headshotsPerMinute'},
+    outfit: {
+        kpm: 'killsPerMinute',
+        dpm: 'deathsPerMinute',
+        tkpm: 'teamKillsPerMinute',
+        spm: 'suicidesPerMinute',
+        hspm: 'headshotsPerMinute',
+        ppKpm: 'killsPerMinutePerParticipant',
+        ppDpm: 'deathsPerMinutePerParticipant',
+    },
+};
 
 const ALERT_SORT_FIELDS: Record<string, string> = {
     instance: 'instance',
@@ -99,7 +118,7 @@ export default class ProfileService {
                     {
                         $group: {
                             _id: '$details.bracket',
-                            ...this.sumFields(faction),
+                            ...this.sumFields(query.type, faction),
                             firstAlert: {$min: '$details.timeStarted'},
                             lastAlert: {$max: '$details.timeStarted'},
                         },
@@ -134,6 +153,7 @@ export default class ProfileService {
                         COMBAT_FIELDS.forEach((field) => {
                             (target as unknown as Record<string, number>)[field] = Number(doc[field] ?? 0);
                         });
+                        target.factionKills = this.factionKillsOf(doc.factionKills?.[FACTION_KEYS[faction]]);
                     }
                 });
             }
@@ -145,6 +165,7 @@ export default class ProfileService {
                 days: query.days ?? null,
                 identity,
                 faction,
+                leader: query.type === 'outfit' ? await this.leaderOf(identity.outfit?.leader, identity.world) : undefined,
                 totals: this.finishTotals(totals),
                 brackets: Object.fromEntries(
                     Object.entries(brackets).map(([bracket, entry]) => [bracket, this.finishTotals(entry)]),
@@ -168,7 +189,7 @@ export default class ProfileService {
                                 bucket: {$dateTrunc: {date: '$details.timeStarted', unit: granularity, startOfWeek: 'monday'}},
                                 bracket: '$details.bracket',
                             },
-                            ...this.sumFields(null),
+                            ...this.sumFields(query.type, null),
                         },
                     },
                     {$sort: {'_id.bucket': 1, '_id.bracket': 1}},
@@ -284,12 +305,84 @@ export default class ProfileService {
         });
     }
 
+    // Per-vehicle combat for a character: the global aggregates all-time, or the per-alert ones under a days filter
+    public async vehicles(query: ProfileQuery): Promise<ProfileVehicleRow[]> {
+        return await this.cached(`vehicles:${this.keyOf(query)}`, async () => {
+            const sums = {
+                vehicleKills: {$sum: {$ifNull: ['$vehicles.kills', 0]}},
+                infantryKills: {$sum: {$ifNull: ['$infantry.kills', 0]}},
+                deaths: {$sum: {$add: [{$ifNull: ['$vehicles.deaths', 0]}, {$ifNull: ['$infantry.deaths', 0]}]}},
+                teamKills: {$sum: {$add: [{$ifNull: ['$vehicles.teamkills', 0]}, {$ifNull: ['$infantry.teamkills', 0]}]}},
+                teamKilled: {$sum: {$add: [{$ifNull: ['$vehicles.teamkilled', 0]}, {$ifNull: ['$infantry.teamkilled', 0]}]}},
+                roadkills: {$sum: {$ifNull: ['$roadkills', 0]}},
+                suicides: {$sum: {$ifNull: ['$suicides', 0]}},
+            };
+            const match: Record<string, unknown> = {character: query.id, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME};
+            let rows: Array<Record<string, any>>;
+
+            if (query.days) {
+                rows = await this.mongoOperationsService.aggregate(InstanceVehicleCharacterAggregateEntity, [
+                    {$match: match},
+                    ...this.joinStages(),
+                    {$match: {'details.timeStarted': {$gte: this.since(query.days)}}},
+                    {$group: {_id: '$vehicle', ...sums}},
+                ]);
+            } else {
+                match.bracket = Bracket.TOTAL;
+
+                if (query.world) {
+                    match.world = query.world;
+                }
+
+                rows = await this.mongoOperationsService.aggregate(GlobalVehicleCharacterAggregateEntity, [
+                    {$match: match},
+                    {$group: {_id: '$vehicle', ...sums}},
+                ]);
+            }
+
+            const parsed: ProfileVehicleRow[] = rows.map((row) => ({
+                vehicle: Number(row._id),
+                vehicleKills: Number(row.vehicleKills ?? 0),
+                infantryKills: Number(row.infantryKills ?? 0),
+                deaths: Number(row.deaths ?? 0),
+                teamKills: Number(row.teamKills ?? 0),
+                teamKilled: Number(row.teamKilled ?? 0),
+                roadkills: Number(row.roadkills ?? 0),
+                suicides: Number(row.suicides ?? 0),
+            }));
+
+            return parsed.sort((a, b) => (b.vehicleKills + b.infantryKills) - (a.vehicleKills + a.infantryKills));
+        });
+    }
+
+    private async leaderOf(leaderId?: string, world?: number): Promise<ProfileSummary['leader']> {
+        if (!leaderId || leaderId === '0') {
+            return null;
+        }
+
+        const docs: Array<Record<string, any>> = await this.mongoOperationsService.findMany(
+            GlobalCharacterAggregateEntity,
+            {'character.id': leaderId, bracket: Bracket.TOTAL, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME, world},
+        );
+        const leader = docs[0]?.character;
+
+        return leader ? {id: leader.id, name: leader.name, world: docs[0].world} : null;
+    }
+
+    private factionKillsOf(source?: Record<string, number>): FactionKills {
+        return {vs: source?.vs ?? 0, nc: source?.nc ?? 0, tr: source?.tr ?? 0, nso: source?.nso ?? 0};
+    }
+
+    private since(days: number): Date {
+        return new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    }
+
     // Match the subject's per-alert rows and attach the slice of the instance record the profiles need
     private matchAndJoin(query: ProfileQuery, world?: number): Array<Record<string, unknown>> {
         const stages = [this.matchStage(query, world), ...this.joinStages()];
 
         if (query.days) {
-            stages.push({$match: {'details.timeStarted': {$gte: new Date(Date.now() - query.days * 24 * 60 * 60 * 1000)}}});
+            stages.push({$match: {'details.timeStarted': {$gte: this.since(query.days)}}});
         }
 
         return stages;
@@ -324,14 +417,14 @@ export default class ProfileService {
         ];
     }
 
-    // Group accumulators; `faction` enables win counting, null skips it
-    private sumFields(faction: number | null): Record<string, unknown> {
+    // Group accumulators; `faction` enables win counting and the faction-kill split, null skips both
+    private sumFields(type: ProfileType, faction: number | null): Record<string, unknown> {
+        const xpm = XPM_FIELDS[type];
         const fields: Record<string, unknown> = {
             alerts: {$sum: 1},
+            participants: {$sum: {$ifNull: ['$participants', 0]}},
             // Per-minute figures only exist for alerts tracked since the feature launched, and a few are stored as NaN
-            xpmAlerts: {$sum: {$cond: [this.isFinite('$xPerMinutes.killsPerMinute'), 1, 0]}},
-            kpmTotal: {$sum: {$cond: [this.isFinite('$xPerMinutes.killsPerMinute'), '$xPerMinutes.killsPerMinute', 0]}},
-            dpmTotal: {$sum: {$cond: [this.isFinite('$xPerMinutes.deathsPerMinute'), '$xPerMinutes.deathsPerMinute', 0]}},
+            xpmAlerts: {$sum: {$cond: [this.isFinite(`$xPerMinutes.${xpm.kpm}`), 1, 0]}},
             // Victor 0 or null means nobody won; draws are flagged separately
             decided: {$sum: {$cond: [{$and: [{$gt: ['$details.result.victor', 0]}, {$ne: ['$details.result.draw', true]}]}, 1, 0]}},
             wins: {$sum: {$cond: [{$and: [{$ne: ['$details.result.draw', true]}, {$eq: ['$details.result.victor', faction ?? -1]}]}, 1, 0]}},
@@ -339,6 +432,15 @@ export default class ProfileService {
 
         COMBAT_FIELDS.forEach((field) => {
             fields[field] = {$sum: {$ifNull: [`$${field}`, 0]}};
+        });
+
+        Object.entries(xpm).forEach(([key, path]) => {
+            fields[`${key}Total`] = {$sum: {$cond: [this.isFinite(`$xPerMinutes.${path}`), `$xPerMinutes.${path}`, 0]}};
+        });
+
+        const factionKey = faction ? FACTION_KEYS[faction] : undefined;
+        ['vs', 'nc', 'tr', 'nso'].forEach((victim) => {
+            fields[`kills_${victim}`] = factionKey ? {$sum: {$ifNull: [`$factionKills.${factionKey}.${victim}`, 0]}} : {$sum: 0};
         });
 
         return fields;
@@ -359,32 +461,74 @@ export default class ProfileService {
             teamKills: row.teamKills ?? 0,
             teamKilled: row.teamKilled ?? 0,
             suicides: row.suicides ?? 0,
+            captures: row.captures ?? 0,
+            participants: row.participants ?? 0,
             xpmAlerts: row.xpmAlerts ?? 0,
             kpm: row.kpmTotal ?? 0,
             dpm: row.dpmTotal ?? 0,
+            tkpm: row.tkpmTotal ?? 0,
+            spm: row.spmTotal ?? 0,
+            hspm: row.hspmTotal ?? 0,
+            ppKpm: row.ppKpmTotal ?? 0,
+            ppDpm: row.ppDpmTotal ?? 0,
             wins: row.wins ?? 0,
             decided: row.decided ?? 0,
+            factionKills: {vs: row.kills_vs ?? 0, nc: row.kills_nc ?? 0, tr: row.kills_tr ?? 0, nso: row.kills_nso ?? 0},
         };
     }
 
     private emptyTotals(bracket: Bracket): ProfileBracketTotals {
-        return {bracket, alerts: 0, kills: 0, deaths: 0, headshots: 0, teamKills: 0, teamKilled: 0, suicides: 0, xpmAlerts: 0, kpm: 0, dpm: 0, wins: 0, decided: 0};
+        return {
+            bracket,
+            alerts: 0,
+            kills: 0,
+            deaths: 0,
+            headshots: 0,
+            teamKills: 0,
+            teamKilled: 0,
+            suicides: 0,
+            captures: 0,
+            participants: 0,
+            xpmAlerts: 0,
+            kpm: 0,
+            dpm: 0,
+            tkpm: 0,
+            spm: 0,
+            hspm: 0,
+            ppKpm: 0,
+            ppDpm: 0,
+            wins: 0,
+            decided: 0,
+            factionKills: {vs: 0, nc: 0, tr: 0, nso: 0},
+        };
     }
 
     private addTotals(target: ProfileBracketTotals, source: ProfileBracketTotals): void {
         (Object.keys(source) as Array<keyof ProfileBracketTotals>).forEach((key) => {
-            if (key !== 'bracket') {
+            if (key === 'factionKills') {
+                (Object.keys(source.factionKills) as Array<keyof FactionKills>).forEach((f) => {
+                    target.factionKills[f] += source.factionKills[f];
+                });
+            } else if (key !== 'bracket') {
                 target[key] += source[key];
             }
         });
     }
 
-    // kpm/dpm are summed per alert until here; turn them into averages
+    // Per-minute figures and participants are summed per alert until here; turn them into averages
     private finishTotals(entry: ProfileBracketTotals): ProfileBracketTotals {
+        const perXpm = (total: number): number => (entry.xpmAlerts > 0 ? total / entry.xpmAlerts : 0);
+
         return {
             ...entry,
-            kpm: entry.xpmAlerts > 0 ? entry.kpm / entry.xpmAlerts : 0,
-            dpm: entry.xpmAlerts > 0 ? entry.dpm / entry.xpmAlerts : 0,
+            participants: entry.alerts > 0 ? entry.participants / entry.alerts : 0,
+            kpm: perXpm(entry.kpm),
+            dpm: perXpm(entry.dpm),
+            tkpm: perXpm(entry.tkpm),
+            spm: perXpm(entry.spm),
+            hspm: perXpm(entry.hspm),
+            ppKpm: perXpm(entry.ppKpm),
+            ppDpm: perXpm(entry.ppDpm),
         };
     }
 

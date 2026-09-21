@@ -9,6 +9,7 @@ import {
     ProfileSummary,
     ProfileTimelineRow,
     ProfileType,
+    ProfileVehicleRow,
     TimelineGranularity,
 } from '../../../services/profile/profile.types';
 import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
@@ -96,6 +97,19 @@ export default class RestProfileController {
             sortBy ?? 'instance',
             order === 'asc' ? 'asc' : 'desc',
         );
+    }
+
+    @Get('character/:id/vehicles')
+    @ApiOperation({summary: 'Per-vehicle combat totals for a character'})
+    @ApiQuery(COMMON_QUERIES[0])
+    @ApiQuery(COMMON_QUERIES[1])
+    @ApiResponse({status: 200, description: 'One row per vehicle, busiest first', type: Object, isArray: true})
+    async vehicles(
+        @Param('id') id: string,
+            @Query('world', OptionalIntPipe) world?: World,
+            @Query('days', OptionalIntPipe) days?: number,
+    ): Promise<ProfileVehicleRow[]> {
+        return await this.profileService.vehicles(this.query('character', id, world, days));
     }
 
     @Get('outfit/:id/members')
