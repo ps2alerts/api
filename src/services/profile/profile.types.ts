@@ -87,3 +87,27 @@ export interface ProfileAlertsPage {
     page: number;
     pageSize: number;
 }
+
+export interface ProfileMemberRow {
+    character: {
+        id: string;
+        name: string;
+        faction: Faction;
+        world: World;
+        battleRank: number;
+        adjustedBattleRank?: number;
+        asp?: number;
+    };
+    kills: number;
+    deaths: number;
+    headshots: number;
+    teamKills: number;
+    suicides: number;
+}
+
+export interface ProfileMembersPage {
+    items: ProfileMemberRow[];
+    total: number;
+    page: number;
+    pageSize: number;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {Injectable, Logger, OnApplicationBootstrap} from '@nestjs/common';
 import MongoOperationsService from './mongo/mongo.operations.service';
 import GlobalCharacterAggregateEntity from '../modules/data/entities/aggregate/global/global.character.aggregate.entity';
@@ -5,32 +6,59 @@ import GlobalOutfitAggregateEntity from '../modules/data/entities/aggregate/glob
 
 export const SEARCH_COLLATION = {locale: 'en', strength: 2};
 
-interface SearchIndex {
+interface ManagedIndex {
     entity: typeof GlobalCharacterAggregateEntity | typeof GlobalOutfitAggregateEntity;
     name: string;
-    field: string;
+    keys: Record<string, 1 | -1>;
+    collation?: typeof SEARCH_COLLATION;
 }
 
-export const SEARCH_INDEXES: Record<'characterName' | 'outfitName' | 'outfitTag', SearchIndex> = {
-    characterName: {entity: GlobalCharacterAggregateEntity, name: 'search_character_name_ci', field: 'character.name'},
-    outfitName: {entity: GlobalOutfitAggregateEntity, name: 'search_outfit_name_ci', field: 'outfit.name'},
-    outfitTag: {entity: GlobalOutfitAggregateEntity, name: 'search_outfit_tag_ci', field: 'outfit.tag'},
-};
+// Indexes on the big global aggregates that must not be built inside TypeORM's synchronize, which blocks startup
+export const MANAGED_INDEXES = {
+    characterName: {
+        entity: GlobalCharacterAggregateEntity,
+        name: 'search_character_name_ci',
+        keys: {bracket: 1, ps2AlertsEventType: 1, 'character.name': 1},
+        collation: SEARCH_COLLATION,
+    },
+    outfitName: {
+        entity: GlobalOutfitAggregateEntity,
+        name: 'search_outfit_name_ci',
+        keys: {bracket: 1, ps2AlertsEventType: 1, 'outfit.name': 1},
+        collation: SEARCH_COLLATION,
+    },
+    outfitTag: {
+        entity: GlobalOutfitAggregateEntity,
+        name: 'search_outfit_tag_ci',
+        keys: {bracket: 1, ps2AlertsEventType: 1, 'outfit.tag': 1},
+        collation: SEARCH_COLLATION,
+    },
+    outfitMembers: {
+        entity: GlobalCharacterAggregateEntity,
+        name: 'profile_outfit_members',
+        keys: {bracket: 1, ps2AlertsEventType: 1, 'character.outfit.id': 1, kills: -1},
+    },
+} as const satisfies Record<string, ManagedIndex>;
+
+export type ManagedIndexName = keyof typeof MANAGED_INDEXES;
+
+export const SEARCH_INDEXES: ManagedIndexName[] = ['characterName', 'outfitName', 'outfitTag'];
 
 /**
- * Owns the case-insensitive (collated) indexes the search endpoints range-scan. TypeORM cannot declare collation,
- * so they are created here, in the background, so that a first deploy against millions of rows never blocks startup.
+ * Builds the indexes above in the background at startup, so a first deploy against millions of rows never blocks
+ * boot. Endpoints ask whether the index they range-scan exists and answer 503 until it does. TypeORM cannot declare
+ * collation, and it never drops indexes it did not create, so these are safe from synchronize either way.
  */
 @Injectable()
 export default class SearchIndexService implements OnApplicationBootstrap {
     private readonly logger = new Logger(SearchIndexService.name);
     private readonly retryMs = 60 * 1000;
-    private ready = false;
+    private readonly ready = new Set<ManagedIndexName>();
 
     constructor(private readonly mongoOperationsService: MongoOperationsService) {}
 
-    public isReady(): boolean {
-        return this.ready;
+    public isReady(names: ManagedIndexName[] = SEARCH_INDEXES): boolean {
+        return names.every((name) => this.ready.has(name));
     }
 
     onApplicationBootstrap(): void {
@@ -39,29 +67,31 @@ export default class SearchIndexService implements OnApplicationBootstrap {
 
     private async ensureIndexes(): Promise<void> {
         try {
-            for (const index of Object.values(SEARCH_INDEXES)) {
-                const existing = await this.mongoOperationsService.em.collectionIndexes(index.entity) as Array<{name: string}>;
-
-                if (existing.some((candidate) => candidate.name === index.name)) {
+            for (const [key, index] of Object.entries(MANAGED_INDEXES) as Array<[ManagedIndexName, ManagedIndex]>) {
+                if (this.ready.has(key)) {
                     continue;
                 }
 
-                this.logger.log(`Building search index ${index.name}, search stays unavailable until it finishes`);
-                const started = Date.now();
+                const existing = await this.mongoOperationsService.em.collectionIndexes(index.entity) as Array<{name: string}>;
 
-                await this.mongoOperationsService.em.createCollectionIndex(
-                    index.entity,
-                    {bracket: 1, ps2AlertsEventType: 1, [index.field]: 1},
-                    {name: index.name, collation: SEARCH_COLLATION},
-                );
+                if (!existing.some((candidate) => candidate.name === index.name)) {
+                    this.logger.log(`Building index ${index.name}, dependent endpoints stay unavailable until it finishes`);
+                    const started = Date.now();
 
-                this.logger.log(`Built ${index.name} in ${Date.now() - started}ms`);
+                    await this.mongoOperationsService.em.createCollectionIndex(
+                        index.entity,
+                        index.keys,
+                        {name: index.name, ...(index.collation ? {collation: index.collation} : {})},
+                    );
+
+                    this.logger.log(`Built ${index.name} in ${Date.now() - started}ms`);
+                }
+
+                this.ready.add(key);
             }
-
-            this.ready = true;
         } catch (err) {
-            // A transient failure (Mongo restarting, a clashing index being dropped) must not leave search dead until the next deploy
-            this.logger.error(`Search index build failed, retrying in ${this.retryMs / 1000}s: ${String(err)}`);
+            // A transient failure (Mongo restarting, a clashing index being dropped) must not leave endpoints dead until the next deploy
+            this.logger.error(`Index build failed, retrying in ${this.retryMs / 1000}s: ${String(err)}`);
             setTimeout(() => void this.ensureIndexes(), this.retryMs).unref();
         }
     }

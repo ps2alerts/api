@@ -12,6 +12,7 @@ import {Ps2AlertsEventState} from '../../modules/data/ps2alerts-constants/ps2Ale
 import {
     ProfileAlertsPage,
     ProfileBracketTotals,
+    ProfileMembersPage,
     ProfileQuery,
     ProfileSummary,
     ProfileTimelineRow,
@@ -33,6 +34,8 @@ const ALERT_SORT_FIELDS: Record<string, string> = {
     timeStarted: 'details.timeStarted',
     bracket: 'details.bracket',
 };
+
+const MEMBER_SORT_FIELDS = ['kills', 'deaths', 'headshots', 'teamKills', 'suicides', 'character.name', 'character.adjustedBattleRank'];
 
 const ALERT_PROJECTION = {
     $project: {
@@ -213,6 +216,57 @@ export default class ProfileService {
                 : [this.matchStage(query), {$facet: {total: [{$count: 'count'}], items: [sort, ...pageStages, ...this.joinStages(), ALERT_PROJECTION]}}];
 
             const [result]: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(this.instanceEntity(query), pipeline);
+
+            return {
+                items: result?.items ?? [],
+                total: result?.total?.[0]?.count ?? 0,
+                page: pageNumber,
+                pageSize: size,
+            };
+        });
+    }
+
+    // Characters whose last known outfit is this one, from the global aggregates (membership is a current fact, not per alert)
+    public async members(
+        query: ProfileQuery,
+        page: number,
+        pageSize: number,
+        sortBy: string,
+        order: 'asc' | 'desc',
+    ): Promise<ProfileMembersPage> {
+        const size = Math.min(Math.max(pageSize || 20, 1), this.maxPageSize);
+        const pageNumber = Math.max(page || 1, 1);
+        const sortField = MEMBER_SORT_FIELDS.includes(sortBy) ? sortBy : 'kills';
+        const direction = order === 'asc' ? 1 : -1;
+
+        return await this.cached(`members:${query.id}:W${query.world ?? 0}:${pageNumber}:${size}:${sortField}:${direction}`, async () => {
+            const match: Record<string, unknown> = {
+                bracket: Bracket.TOTAL,
+                ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME,
+                'character.outfit.id': query.id,
+            };
+
+            if (query.world) {
+                match.world = query.world;
+            }
+
+            const [result]: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(
+                GlobalCharacterAggregateEntity,
+                [
+                    {$match: match},
+                    {
+                        $facet: {
+                            total: [{$count: 'count'}],
+                            items: [
+                                {$sort: {[sortField]: direction, 'character.id': 1}},
+                                {$skip: (pageNumber - 1) * size},
+                                {$limit: size},
+                                {$project: {_id: 0, character: 1, kills: 1, deaths: 1, headshots: 1, teamKills: 1, suicides: 1}},
+                            ],
+                        },
+                    },
+                ],
+            );
 
             return {
                 items: result?.items ?? [],

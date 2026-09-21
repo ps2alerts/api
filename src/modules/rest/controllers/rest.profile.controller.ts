@@ -1,8 +1,10 @@
-import {BadRequestException, Controller, Get, Param, Query} from '@nestjs/common';
+import {BadRequestException, Controller, Get, Param, Query, ServiceUnavailableException} from '@nestjs/common';
 import {ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import ProfileService from '../../../services/profile/profile.service';
+import SearchIndexService from '../../../services/search.index.service';
 import {
     ProfileAlertsPage,
+    ProfileMembersPage,
     ProfileQuery,
     ProfileSummary,
     ProfileTimelineRow,
@@ -24,7 +26,10 @@ const COMMON_QUERIES = [
 @ApiTags('Profiles')
 @Controller('profiles')
 export default class RestProfileController {
-    constructor(private readonly profileService: ProfileService) {}
+    constructor(
+        private readonly profileService: ProfileService,
+        private readonly searchIndexService: SearchIndexService,
+    ) {}
 
     @Get(':type/:id')
     @ApiOperation({summary: 'Combat totals per bracket, win rate and alert counts for a character or outfit'})
@@ -89,6 +94,36 @@ export default class RestProfileController {
             page ?? 1,
             pageSize ?? 20,
             sortBy ?? 'instance',
+            order === 'asc' ? 'asc' : 'desc',
+        );
+    }
+
+    @Get('outfit/:id/members')
+    @ApiOperation({summary: 'A page of the characters whose last known outfit is this one'})
+    @ApiQuery(COMMON_QUERIES[0])
+    @ApiQuery({name: 'page', required: false, type: Number})
+    @ApiQuery({name: 'pageSize', required: false, type: Number, description: 'Default 20, max 100'})
+    @ApiQuery({name: 'sortBy', required: false, type: String, description: 'kills, deaths, headshots, teamKills, suicides, character.name or character.adjustedBattleRank'})
+    @ApiQuery({name: 'order', required: false, enum: ['asc', 'desc']})
+    @ApiResponse({status: 200, description: 'Items plus the total member count', type: Object})
+    @ApiResponse({status: 503, description: 'The members index is still being built'})
+    async members(
+        @Param('id') id: string,
+            @Query('world', OptionalIntPipe) world?: World,
+            @Query('page', OptionalIntPipe) page?: number,
+            @Query('pageSize', OptionalIntPipe) pageSize?: number,
+            @Query('sortBy') sortBy?: string,
+            @Query('order') order?: string,
+    ): Promise<ProfileMembersPage> {
+        if (!this.searchIndexService.isReady(['outfitMembers'])) {
+            throw new ServiceUnavailableException('Outfit members are unavailable while their index is being built');
+        }
+
+        return await this.profileService.members(
+            this.query('outfit', id, world),
+            page ?? 1,
+            pageSize ?? 20,
+            sortBy ?? 'kills',
             order === 'asc' ? 'asc' : 'desc',
         );
     }

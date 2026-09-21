@@ -2,7 +2,7 @@ import {BadRequestException, Controller, Get, Inject, Query, ServiceUnavailableE
 import {ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {RedisCacheService} from '../../../services/cache/redis.cache.service';
-import SearchIndexService, {SEARCH_COLLATION, SEARCH_INDEXES} from '../../../services/search.index.service';
+import SearchIndexService, {SEARCH_COLLATION} from '../../../services/search.index.service';
 import GlobalCharacterAggregateEntity from '../../data/entities/aggregate/global/global.character.aggregate.entity';
 import GlobalOutfitAggregateEntity from '../../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
@@ -58,7 +58,7 @@ export default class RestSearchController {
             return cached;
         }
 
-        const results = await this.prefixQuery<GlobalCharacterAggregateEntity>(GlobalCharacterAggregateEntity, SEARCH_INDEXES.characterName.field, term, limit, world);
+        const results = await this.prefixQuery<GlobalCharacterAggregateEntity>(GlobalCharacterAggregateEntity, 'character.name', term, limit, world);
 
         return await this.cacheService.set(key, results, this.cacheTtl);
     }
@@ -86,8 +86,8 @@ export default class RestSearchController {
         }
 
         const [byTag, byName] = await Promise.all([
-            this.prefixQuery<GlobalOutfitAggregateEntity>(GlobalOutfitAggregateEntity, SEARCH_INDEXES.outfitTag.field, term, limit, world),
-            this.prefixQuery<GlobalOutfitAggregateEntity>(GlobalOutfitAggregateEntity, SEARCH_INDEXES.outfitName.field, term, limit, world),
+            this.prefixQuery<GlobalOutfitAggregateEntity>(GlobalOutfitAggregateEntity, 'outfit.tag', term, limit, world),
+            this.prefixQuery<GlobalOutfitAggregateEntity>(GlobalOutfitAggregateEntity, 'outfit.name', term, limit, world),
         ]);
 
         // Tag hits lead, then name hits. The same id can legitimately exist on more than one world, so dedupe on both.
