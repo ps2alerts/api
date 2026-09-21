@@ -4,18 +4,13 @@ export default class Pagination {
     private readonly order: {[k: string]: string} | undefined;
 
     public constructor(pageQuery: {sortBy?: string, order?: string, pageSize?: number, page?: number}, limited = false) {
-        this.take = 100;
+        const requested = pageQuery.pageSize && pageQuery.pageSize > 0 ? Math.min(pageQuery.pageSize, 1000) : undefined;
 
-        if (!limited) {
-            if (pageQuery.pageSize) {
-                this.take = pageQuery.pageSize;
-            } else {
-                this.take = undefined;
-            }
-        }
+        // Limited endpoints always cap; unlimited ones return everything unless a size was asked for
+        this.take = requested ?? (limited ? 100 : undefined);
 
-        if (pageQuery.pageSize && pageQuery.page) {
-            this.skip = (pageQuery.page - 1) * pageQuery.pageSize;
+        if (requested && pageQuery.page && pageQuery.page > 1) {
+            this.skip = (pageQuery.page - 1) * requested;
         }
 
         if (pageQuery.sortBy) {
