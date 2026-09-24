@@ -84,23 +84,20 @@ export class ClientTrafficTracker {
         const merged = new Map<string, ClientStats>();
         const totals = {requests: 0, bytes: 0, clients: 0, overflowRequests: 0};
 
-        for (const bucket of this.buckets) {
-            if (bucket.minute < oldest) {
-                continue;
-            }
+        // Oldest first, so each client keeps the user agent of its newest request. These become
+        // alert labels, and a label that flips between evaluations restarts the alert.
+        const buckets = this.buckets.filter((b) => b.minute >= oldest).sort((a, b) => a.minute - b.minute);
 
+        for (const bucket of buckets) {
             totals.overflowRequests += bucket.overflowRequests;
 
             for (const [client, s] of bucket.clients) {
-                const m = merged.get(client) ?? {requests: 0, bytes: 0, durationMs: 0, userAgent: s.userAgent, country: s.country, routes: new Map<string, number>()};
+                const m = merged.get(client) ?? {requests: 0, bytes: 0, durationMs: 0, userAgent: '', country: '', routes: new Map<string, number>()};
                 m.requests += s.requests;
                 m.bytes += s.bytes;
                 m.durationMs += s.durationMs;
-
-                if (bucket.minute === this.minuteNow()) {
-                    m.userAgent = s.userAgent;
-                    m.country = s.country;
-                }
+                m.userAgent = s.userAgent;
+                m.country = s.country;
 
                 for (const [route, n] of s.routes) {
                     m.routes.set(route, (m.routes.get(route) ?? 0) + n);
