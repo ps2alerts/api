@@ -1188,6 +1188,96 @@
           }
         }
       },
+      "panel-26": {
+        "kind": "Panel",
+        "spec": {
+          "id": 26,
+          "title": "Liveness data age",
+          "description": "Minutes since the two alert gauges beside this last refreshed. They refresh every 5 minutes; anything older means the Mongo query is failing and those figures are stale.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "(time() - ps2alerts_alerts_liveness_refreshed_timestamp_seconds{job=\"ps2alerts-api\"}) / 60",
+                        "legendFormat": "",
+                        "range": true
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.2",
+            "spec": {
+              "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "m",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 11,
+                        "color": "#EAB839"
+                      },
+                      {
+                        "value": 20,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "decimals": 0
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
       "panel-23": {
         "kind": "Panel",
         "spec": {
@@ -1217,27 +1307,6 @@
                       }
                     },
                     "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "prometheus"
-                      },
-                      "spec": {
-                        "editorMode": "code",
-                        "expr": "ps2alerts_alerts_active{job=\"ps2alerts-api\"} * 10",
-                        "legendFormat": "alerts running (x10)",
-                        "range": true
-                      }
-                    },
-                    "refId": "B",
                     "hidden": false
                   }
                 }
@@ -1329,7 +1398,7 @@
         "spec": {
           "id": 24,
           "title": "Most viewed alerts (5 min)",
-          "description": "Distinct viewers per alert across its page and aggregate endpoints.",
+          "description": "Distinct viewers per alert across its page and aggregate endpoints. The alert ID sits in exported_instance because Prometheus reserves instance for the scrape target.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1348,7 +1417,7 @@
                       "spec": {
                         "editorMode": "code",
                         "expr": "topk(15, ps2alerts_api_alert_viewers{job=\"ps2alerts-api\"})",
-                        "legendFormat": "{{instance}}",
+                        "legendFormat": "{{exported_instance}}",
                         "instant": true,
                         "range": false
                       }
@@ -1864,8 +1933,8 @@
         "kind": "Panel",
         "spec": {
           "id": 33,
-          "title": "Deepest queues",
-          "description": "Top 10 queues by depth.",
+          "title": "Aggregator queues",
+          "description": "Messages waiting in the aggregators' queues: the per-world MetagameEvent queues and each running alert's event queues.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1883,7 +1952,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "topk(10, sum by (queue) (rabbitmq_queue_messages{job=\"ps2alerts-rabbitmq\"}))",
+                        "expr": "sum by (queue) (rabbitmq_queue_messages{job=\"ps2alerts-rabbitmq\",queue=~\"aggregator-.*\"})",
                         "legendFormat": "{{queue}}",
                         "range": true
                       }
@@ -5001,7 +5070,7 @@
                       "spec": {
                         "x": 0,
                         "y": 0,
-                        "width": 8,
+                        "width": 6,
                         "height": 4,
                         "element": {
                           "kind": "ElementReference",
@@ -5012,9 +5081,9 @@
                     {
                       "kind": "GridLayoutItem",
                       "spec": {
-                        "x": 8,
+                        "x": 6,
                         "y": 0,
-                        "width": 8,
+                        "width": 6,
                         "height": 4,
                         "element": {
                           "kind": "ElementReference",
@@ -5025,13 +5094,26 @@
                     {
                       "kind": "GridLayoutItem",
                       "spec": {
-                        "x": 16,
+                        "x": 12,
                         "y": 0,
-                        "width": 8,
+                        "width": 6,
                         "height": 4,
                         "element": {
                           "kind": "ElementReference",
                           "name": "panel-22"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 18,
+                        "y": 0,
+                        "width": 6,
+                        "height": 4,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-26"
                         }
                       }
                     },

@@ -203,13 +203,16 @@ add(22, "Hours since last alert",
     "Since the newest recorded alert started. The host healthcheck pages at 12h.",
     [query('(time() - ps2alerts_last_alert_started_timestamp_seconds{%s}) / 3600' % API)],
     stat([{"value": 0, "color": "green"}, {"value": 6, "color": "#EAB839"}, {"value": 12, "color": "red"}], unit="h", decimals=1))
+add(26, "Liveness data age",
+    "Minutes since the two alert gauges beside this last refreshed. They refresh every 5 minutes; anything older means the Mongo query is failing and those figures are stale.",
+    [query('(time() - ps2alerts_alerts_liveness_refreshed_timestamp_seconds{%s}) / 60' % API)],
+    stat([{"value": 0, "color": "green"}, {"value": 11, "color": "#EAB839"}, {"value": 20, "color": "red"}], unit="m", decimals=0))
 add(23, "Active users over time", "",
-    [query('ps2alerts_api_active_users{%s}' % API, "active users"),
-     query('ps2alerts_alerts_active{%s} * 10' % API, "alerts running (x10)", "B")],
+    [query('ps2alerts_api_active_users{%s}' % API, "active users")],
     timeseries())
 add(24, "Most viewed alerts (5 min)",
-    "Distinct viewers per alert across its page and aggregate endpoints.",
-    [query('topk(15, ps2alerts_api_alert_viewers{%s})' % API, "{{instance}}", instant=True)],
+    "Distinct viewers per alert across its page and aggregate endpoints. The alert ID sits in exported_instance because Prometheus reserves instance for the scrape target.",
+    [query('topk(15, ps2alerts_api_alert_viewers{%s})' % API, "{{exported_instance}}", instant=True)],
     bargauge())
 add(25, "Alerts tracked by aggregators",
     "The aggregators' own view of alert instances, by platform.",
@@ -230,9 +233,9 @@ add(32, "API queue",
     [query('sum(rabbitmq_queue_messages_ready{%s,queue="api-queue-production"})' % RMQ, "ready"),
      query('sum(rabbitmq_queue_messages_unacked{%s,queue="api-queue-production"})' % RMQ, "unacked", "B")],
     timeseries())
-add(33, "Deepest queues",
-    "Top 10 queues by depth.",
-    [query('topk(10, sum by (queue) (rabbitmq_queue_messages{%s}))' % RMQ, "{{queue}}")],
+add(33, "Aggregator queues",
+    "Messages waiting in the aggregators' queues: the per-world MetagameEvent queues and each running alert's event queues.",
+    [query('sum by (queue) (rabbitmq_queue_messages{%s,queue=~"aggregator-.*"})' % RMQ, "{{queue}}")],
     timeseries())
 add(34, "Broker throughput",
     "Messages entering, delivered and acknowledged per second.",
@@ -341,7 +344,7 @@ rows = [
         item(0, 20, 24, 8, 8),
     ]),
     row("👥 Visitors & Alerts", [
-        item(0, 0, 8, 4, 20), item(8, 0, 8, 4, 21), item(16, 0, 8, 4, 22),
+        item(0, 0, 6, 4, 20), item(6, 0, 6, 4, 21), item(12, 0, 6, 4, 22), item(18, 0, 6, 4, 26),
         item(0, 4, 12, 9, 23), item(12, 4, 12, 9, 24),
         item(0, 13, 24, 7, 25),
     ]),

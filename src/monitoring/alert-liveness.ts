@@ -7,6 +7,8 @@ import {Ps2AlertsEventState} from '../modules/data/ps2alerts-constants/ps2Alerts
 export function startAlertLiveness(em: MongoEntityManager, intervalMs = 300000): void {
     const active = new Gauge({name: 'ps2alerts_alerts_active', help: 'Metagame alerts currently running'});
     const lastStarted = new Gauge({name: 'ps2alerts_last_alert_started_timestamp_seconds', help: 'Start time of the newest recorded metagame alert'});
+    // The two gauges above keep their last value when Mongo fails; this is what shows they went stale.
+    const refreshed = new Gauge({name: 'ps2alerts_alerts_liveness_refreshed_timestamp_seconds', help: 'When the alert liveness gauges last refreshed successfully'});
 
     const refresh = async (): Promise<void> => {
         active.set(await em.count(InstanceMetagameTerritoryEntity, {state: Ps2AlertsEventState.STARTED}));
@@ -21,6 +23,8 @@ export function startAlertLiveness(em: MongoEntityManager, intervalMs = 300000):
         if (newest) {
             lastStarted.set(new Date(newest.timeStarted).getTime() / 1000);
         }
+
+        refreshed.setToCurrentTime();
     };
 
     const tick = (): void => {
