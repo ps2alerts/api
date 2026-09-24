@@ -184,11 +184,11 @@ add(8, "Heaviest clients (last 5 min)",
     "The ten busiest clients right now. This is what the heavy-client alert reads.",
     [query('sort_desc(ps2alerts_api_client_requests{%s})' % API, instant=True, table=True)],
     table(), hide_columns("Time", "__name__", "app", "instance", "job"))
-add(9, "Heaviest client over time",
-    "Requests in the trailing five minutes from whichever client is busiest. The alert threshold sits on this line.",
-    [query('max(ps2alerts_api_client_requests{%s})' % API, "busiest client"),
-     query('quantile(0.5, ps2alerts_api_client_requests{%s})' % API, "median of top 10", "B")],
-    timeseries(unit="short"))
+add(9, "Busiest client, busiest minute",
+    "The most requests any single client made in one 60-second span, looking back five minutes. The heavy-client alert fires above 200.",
+    [query('max(ps2alerts_api_client_peak_requests_per_minute{%s})' % API, "busiest minute"),
+     query('vector(200)', "alert threshold", "B")],
+    timeseries(unit="short", fill=0))
 
 # ---------------------------------------------------------------- visitors and alerts
 add(20, "Active users",

@@ -800,8 +800,8 @@
         "kind": "Panel",
         "spec": {
           "id": 9,
-          "title": "Heaviest client over time",
-          "description": "Requests in the trailing five minutes from whichever client is busiest. The alert threshold sits on this line.",
+          "title": "Busiest client, busiest minute",
+          "description": "The most requests any single client made in one 60-second span, looking back five minutes. The heavy-client alert fires above 200.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -819,8 +819,8 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "max(ps2alerts_api_client_requests{job=\"ps2alerts-api\"})",
-                        "legendFormat": "busiest client",
+                        "expr": "max(ps2alerts_api_client_peak_requests_per_minute{job=\"ps2alerts-api\"})",
+                        "legendFormat": "busiest minute",
                         "range": true
                       }
                     },
@@ -840,8 +840,8 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "quantile(0.5, ps2alerts_api_client_requests{job=\"ps2alerts-api\"})",
-                        "legendFormat": "median of top 10",
+                        "expr": "vector(200)",
+                        "legendFormat": "alert threshold",
                         "range": true
                       }
                     },
@@ -900,7 +900,7 @@
                     "barAlignment": 0,
                     "barWidthFactor": 0.6,
                     "drawStyle": "line",
-                    "fillOpacity": 10,
+                    "fillOpacity": 0,
                     "gradientMode": "opacity",
                     "hideFrom": {
                       "legend": false,
