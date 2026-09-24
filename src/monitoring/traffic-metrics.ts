@@ -92,7 +92,7 @@ export function registerTrafficMetrics(fastify: FastifyInstance, allowedCidrs: s
     fastify.addHook('onRequest', (request, reply, done) => {
         started.set(request, process.hrtime.bigint());
 
-        if (request.url.split('?')[0] === '/metrics' && !isMetricsRequestAllowed(allowList, request.ip, request.headers)) {
+        if (request.routerPath === '/metrics' && !isMetricsRequestAllowed(allowList, request.ip, request.headers)) {
             void reply.code(403).send({error: 'Forbidden'});
             return;
         }
