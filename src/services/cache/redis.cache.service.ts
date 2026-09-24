@@ -1,6 +1,9 @@
 import {CACHE_MANAGER, Inject, Injectable} from '@nestjs/common';
 import {Cache} from 'cache-manager';
 
+// Bumped whenever a victory is recorded, so the cached victories responses stop matching at once.
+export const GLOBAL_VICTORIES_GENERATION_KEY = '/global/victories/generation';
+
 @Injectable()
 export class RedisCacheService {
 

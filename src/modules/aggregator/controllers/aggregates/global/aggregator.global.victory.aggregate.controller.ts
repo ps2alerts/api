@@ -4,12 +4,16 @@ import {MqAcceptedPatterns} from '../../../../data/ps2alerts-constants/mqAccepte
 import AggregatorDataHandler from '../../../aggregator.data.handler';
 import GlobalVictoryAggregateEntity from '../../../../data/entities/aggregate/global/global.victory.aggregate.entity';
 import GlobalAggregatorMessageInterface from '../../../interfaces/global.aggregator.message.interface';
+import {GLOBAL_VICTORIES_GENERATION_KEY, RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 
 @Controller()
 export default class AggregatorGlobalVictoryAggregateController {
     private readonly logger = new Logger(AggregatorGlobalVictoryAggregateController.name);
 
-    constructor(private readonly aggregatorDataHandler: AggregatorDataHandler) {}
+    constructor(
+        private readonly aggregatorDataHandler: AggregatorDataHandler,
+        private readonly cacheService: RedisCacheService,
+    ) {}
 
     @EventPattern(MqAcceptedPatterns.GLOBAL_VICTORY_AGGREGATE)
     public async process(@Payload() data: GlobalAggregatorMessageInterface, @Ctx() context: RmqContext): Promise<void> {
@@ -19,6 +23,7 @@ export default class AggregatorGlobalVictoryAggregateController {
                 context,
                 GlobalVictoryAggregateEntity,
             );
+            await this.cacheService.set(GLOBAL_VICTORIES_GENERATION_KEY, Date.now(), 2592000);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions

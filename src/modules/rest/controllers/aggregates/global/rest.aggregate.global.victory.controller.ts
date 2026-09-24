@@ -13,7 +13,7 @@ import {BRACKET_IMPLICIT_QUERY} from '../../common/rest.bracket.query';
 import {OptionalDatePipe} from '../../../pipes/OptionalDatePipe';
 import Range from '../../../../../services/mongo/range';
 import {DATE_IMPLICIT_QUERIES} from '../../common/rest.date.query';
-import {RedisCacheService} from '../../../../../services/cache/redis.cache.service';
+import {GLOBAL_VICTORIES_GENERATION_KEY, RedisCacheService} from '../../../../../services/cache/redis.cache.service';
 import Pagination from '../../../../../services/mongo/pagination';
 import {BaseGlobalAggregateController} from './BaseGlobalAggregateController';
 import {PS2ALERTS_EVENT_TYPE_QUERY} from '../../common/rest.ps2AlertsEventType.query';
@@ -64,16 +64,17 @@ export default class RestGlobalVictoryAggregateController extends BaseGlobalAggr
             date: new Range('date', dateFrom, dateTo).build(),
         };
 
+        const generation = await this.cacheService.get<number>(GLOBAL_VICTORIES_GENERATION_KEY) ?? 0;
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const key = `/global/victories/W:${world}-Z:${zone}-B:${bracket}-ET:${ps2AlertsEventType}?DF:${dateFrom}-DT:${dateTo}`;
+        const key = `/global/victories/G:${generation}/W:${world}-Z:${zone}-B:${bracket}-ET:${ps2AlertsEventType}?DF:${dateFrom}-DT:${dateTo}`;
         const pagination = new Pagination({sortBy: 'date', order: 'desc'});
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
             await this.mongoOperationsService.findMany(GlobalVictoryAggregate, filter, pagination),
-            // Totals only move when an alert ends, and this is the heaviest route by far.
-            900,
+            // Safe to hold long: recording a victory bumps the generation in the key.
+            3600,
         );
     }
 }

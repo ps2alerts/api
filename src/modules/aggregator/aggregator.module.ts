@@ -1,4 +1,9 @@
-import {Module} from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {CacheModule, Module} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import * as redisStore from 'cache-manager-ioredis';
+import ConfigModule from '../../config/config.module';
+import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import {DataModule} from '../data/data.module';
 // Global Aggregates
 import AggregatorGlobalCharacterAggregateController from './controllers/aggregates/global/aggregator.global.character.aggregate.controller';
@@ -33,6 +38,19 @@ import AggregatorDataHandler from './aggregator.data.handler';
 @Module({
     imports: [
         DataModule,
+        CacheModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => {
+                return {
+                    store: redisStore,
+                    host: config.get('redis.host'),
+                    port: config.get('redis.port'),
+                    db: config.get('redis.db'),
+                    password: config.get('redis.password'),
+                };
+            },
+        }),
     ],
     controllers: [
         // Global Aggregates
@@ -63,6 +81,7 @@ import AggregatorDataHandler from './aggregator.data.handler';
     providers: [
         AggregatorDataHandler,
         MongoOperationsService,
+        RedisCacheService,
     ],
 })
 export class AggregatorModule {}
