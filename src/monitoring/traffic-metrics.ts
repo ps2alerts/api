@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {FastifyInstance, FastifyRequest} from 'fastify';
 import {Counter, Gauge, GaugeConfiguration, Histogram} from 'prom-client';
-import {ClientTrafficTracker} from './client-traffic.tracker';
+import {ClientTrafficTracker, TrafficSnapshot} from './client-traffic.tracker';
 import {RollingDistinct} from './rolling-distinct';
 import {isMetricsRequestAllowed, metricsAllowList} from './metrics-access';
 
@@ -52,7 +52,26 @@ export function registerTrafficMetrics(fastify: FastifyInstance, allowedCidrs: s
         },
     });
 
-    const snapshot = (): ReturnType<ClientTrafficTracker['snapshot']> => clients.snapshot();
+    // Every gauge below reads the same snapshot during one scrape; build it once per second at most.
+    let cached: {at: number, value: TrafficSnapshot} | undefined;
+
+    const snapshot = (): TrafficSnapshot => {
+        if (!cached || Date.now() - cached.at > 1000) {
+            cached = {at: Date.now(), value: clients.snapshot()};
+        }
+
+        return cached.value;
+    };
+
+    gauge({
+        name: 'ps2alerts_api_client_peak_requests_per_minute',
+        help: 'Each client\'s busiest 60 seconds within the last 5 minutes, top 10 by that peak',
+        labelNames: ['client', 'country', 'user_agent'],
+        collect(): void {
+            this.reset();
+            snapshot().topByPeak.forEach((c) => this.set({client: c.client, country: c.country, user_agent: c.userAgent}, c.peakPerMinute));
+        },
+    });
     gauge({
         name: 'ps2alerts_api_client_requests',
         help: 'Requests in the last 5 minutes, top 10 clients',
