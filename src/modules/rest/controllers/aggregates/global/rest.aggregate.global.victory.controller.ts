@@ -72,7 +72,8 @@ export default class RestGlobalVictoryAggregateController extends BaseGlobalAggr
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
             await this.mongoOperationsService.findMany(GlobalVictoryAggregate, filter, pagination),
-            60,
+            // Totals only move when an alert ends, and this is the heaviest route by far.
+            900,
         );
     }
 }
