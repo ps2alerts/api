@@ -334,11 +334,17 @@ add(76, "Expired and evicted keys / s", "Expired is TTLs running out, which is n
     [query('rate(redis_expired_keys_total{%s}[%s])' % (RED, RI), "expired"),
      query('rate(redis_evicted_keys_total{%s}[%s])' % (RED, RI), "evicted", "B")],
     timeseries())
+add(80, "Redis memory vs available",
+    "Redis has no maxmemory set, so its ceiling is whatever the box has free. Used is Redis's own data; resident is what the process holds from the OS.",
+    [query('redis_memory_used_bytes{%s}' % RED, "used"),
+     query('redis_memory_used_rss_bytes{%s}' % RED, "resident", "B"),
+     query('node_memory_MemAvailable_bytes{%s}' % NODE, "available on the box", "C")],
+    timeseries(unit="bytes", fill=0))
 add(77, "API cache hit rate by route family", "How often the API found a cached answer, by cache-key family.",
-    [query('sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s,result="hit"}[%s])) / sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s}[%s]))' % (API, RI, API, RI), "{{family}}")],
+    [query('sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s,result="hit",family!~"/healthcheck.*"}[%s])) / sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s,family!~"/healthcheck.*"}[%s]))' % (API, RI, API, RI), "{{family}}")],
     timeseries(unit="percentunit", fill=0, minmax=(0, 1)))
 add(78, "API cache lookups / s", "Hits and misses per cache-key family.",
-    [query('sum by (family, result) (rate(ps2alerts_api_cache_lookups_total{%s}[%s]))' % (API, RI), "{{family}} {{result}}")],
+    [query('sum by (family, result) (rate(ps2alerts_api_cache_lookups_total{%s,family!~"/healthcheck.*"}[%s]))' % (API, RI), "{{family}} {{result}}")],
     timeseries(stack="normal", fill=70, gradient="none"))
 add(79, "Aggregator broker cache", "Character, item and facility lookups the aggregators answered from Redis against those that went to Census.",
     [query('sum by (broker) (rate(aggregator_broker_count{%s,result="cache_hit"}[%s])) / sum by (broker) (rate(aggregator_broker_count{%s,result=~"cache_hit|cache_miss"}[%s]))' % (AGG, RI, AGG, RI), "{{broker}}")],
@@ -441,7 +447,7 @@ rows = [
         item(0, 4, 12, 8, 74), item(12, 4, 12, 8, 75),
         item(0, 12, 12, 8, 77), item(12, 12, 12, 8, 78),
         item(0, 20, 8, 8, 63), item(8, 20, 8, 8, 79), item(16, 20, 8, 8, 45),
-        item(0, 28, 24, 6, 76),
+        item(0, 28, 12, 8, 80), item(12, 28, 12, 8, 76),
     ]),
     row("🖥️ System Health", [
         item(0, 0, 12, 8, 50), item(12, 0, 6, 8, 51), item(18, 0, 6, 4, 52), item(18, 4, 6, 4, 53),
