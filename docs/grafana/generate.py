@@ -343,12 +343,42 @@ add(80, "Redis memory vs available",
 add(77, "API cache hit rate by route family", "How often the API found a cached answer, by cache-key family.",
     [query('sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s,result="hit",family!~"/healthcheck.*"}[%s])) / sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s,family!~"/healthcheck.*"}[%s]))' % (API, RI, API, RI), "{{family}}")],
     timeseries(unit="percentunit", fill=0, minmax=(0, 1)))
-add(78, "API cache lookups / s", "Hits and misses per cache-key family.",
-    [query('sum by (family, result) (rate(ps2alerts_api_cache_lookups_total{%s,family!~"/healthcheck.*"}[%s]))' % (API, RI), "{{family}} {{result}}")],
+add(78, "API cache hits / s", "Cached answers the API served, per cache-key family.",
+    [query('sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s,result="hit",family!~"/healthcheck.*"}[%s]))' % (API, RI), "{{family}}")],
+    timeseries(stack="normal", fill=70, gradient="none"))
+add(81, "API cache misses / s", "Lookups that went on to Mongo, per cache-key family.",
+    [query('sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s,result="miss",family!~"/healthcheck.*"}[%s]))' % (API, RI), "{{family}}")],
     timeseries(stack="normal", fill=70, gradient="none"))
 add(79, "Aggregator broker cache", "Character, item and facility lookups the aggregators answered from Redis against those that went to Census.",
     [query('sum by (broker) (rate(aggregator_broker_count{%s,result="cache_hit"}[%s])) / sum by (broker) (rate(aggregator_broker_count{%s,result=~"cache_hit|cache_miss"}[%s]))' % (AGG, RI, AGG, RI), "{{broker}}")],
     timeseries(unit="percentunit", fill=0, minmax=(0, 1)))
+
+# ---------------------------------------------------------------- census
+CEN = AGG + ',provider="census"'
+add(90, "Census requests / min", "Calls the aggregators made to Daybreak's Census API.",
+    [query('sum(rate(aggregator_external_requests_count{%s}[5m])) * 60' % CEN)],
+    stat(BLUE, graph="area", decimals=0))
+add(91, "Census error rate", "Errors as a share of Census calls. Before 2026-09-25 ~05:30 UTC an aggregator bug added a fake error every 15s per endpoint, so older figures are inflated.",
+    [query('sum(rate(aggregator_external_requests_count{%s,result="error"}[5m])) / sum(rate(aggregator_external_requests_count{%s}[5m]))' % (CEN, CEN))],
+    stat([{"value": 0, "color": "green"}, {"value": 0.05, "color": "#EAB839"}, {"value": 0.2, "color": "red"}], unit="percentunit", graph="area", decimals=1))
+add(92, "Census p95 response", "",
+    [query('histogram_quantile(0.95, sum by (le) (rate(aggregator_external_requests_histogram_bucket{%s}[5m])))' % CEN)],
+    stat([{"value": 0, "color": "green"}, {"value": 1, "color": "#EAB839"}, {"value": 3, "color": "red"}], unit="s", graph="area", decimals=2))
+add(93, "Falcon fallbacks / min", "Lookups sent to Falcon, the secondary source used when Census cannot answer.",
+    [query('sum(rate(aggregator_external_requests_count{%s,provider="falcon"}[5m])) * 60 or vector(0)' % AGG)],
+    stat(BLUE, graph="area", decimals=0))
+add(94, "Census requests by endpoint", "",
+    [query('sum by (endpoint) (rate(aggregator_external_requests_count{%s}[%s])) * 60' % (CEN, RI), "{{endpoint}}")],
+    timeseries(unit="short", stack="normal", fill=70, gradient="none"))
+add(95, "Census results", "success, retry_success (worked after a retry), retry, empty (answered with nothing) and error.",
+    [query('sum by (result) (rate(aggregator_external_requests_count{%s}[%s])) * 60' % (CEN, RI), "{{result}}")],
+    timeseries(unit="short", stack="normal", fill=70, gradient="none"))
+add(96, "Census response time by endpoint", "p95 per endpoint. Lines, not stacked.",
+    [query('histogram_quantile(0.95, sum by (le, endpoint) (rate(aggregator_external_requests_histogram_bucket{%s}[%s])))' % (CEN, RI), "{{endpoint}}")],
+    timeseries(unit="s", fill=0))
+add(97, "Where lookups were answered", "Character, item and facility lookups by source: Redis cache, Census, Falcon, or not found anywhere.",
+    [query('sum by (result) (rate(aggregator_broker_count{%s,result=~"cache_hit|census_item_found|census_item_missing|falcon_item_found|falcon_item_missing|max_retries"}[%s])) * 60' % (AGG, RI), "{{result}}")],
+    timeseries(unit="short", stack="normal", fill=70, gradient="none"))
 
 # ---------------------------------------------------------------- system health
 add(50, "Host CPU", "By mode, across both cores.",
@@ -445,9 +475,14 @@ rows = [
     row("🧠 Redis & Caching", [
         item(0, 0, 6, 4, 70), item(6, 0, 6, 4, 71), item(12, 0, 6, 4, 72), item(18, 0, 6, 4, 73),
         item(0, 4, 12, 8, 74), item(12, 4, 12, 8, 75),
-        item(0, 12, 12, 8, 77), item(12, 12, 12, 8, 78),
+        item(0, 12, 12, 8, 77), item(12, 12, 6, 8, 78), item(18, 12, 6, 8, 81),
         item(0, 20, 8, 8, 63), item(8, 20, 8, 8, 79), item(16, 20, 8, 8, 45),
         item(0, 28, 12, 8, 80), item(12, 28, 12, 8, 76),
+    ]),
+    row("🎮 Census", [
+        item(0, 0, 6, 4, 90), item(6, 0, 6, 4, 91), item(12, 0, 6, 4, 92), item(18, 0, 6, 4, 93),
+        item(0, 4, 12, 8, 94), item(12, 4, 12, 8, 95),
+        item(0, 12, 12, 8, 96), item(12, 12, 12, 8, 97),
     ]),
     row("🖥️ System Health", [
         item(0, 0, 12, 8, 50), item(12, 0, 6, 8, 51), item(18, 0, 6, 4, 52), item(18, 4, 6, 4, 53),
