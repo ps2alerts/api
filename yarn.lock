@@ -1751,9 +1751,9 @@
     "@xtuc/long" "4.2.2"
 
 "@willsoto/nestjs-prometheus@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@willsoto/nestjs-prometheus/-/nestjs-prometheus-6.0.0.tgz#6ef4d5d5dfb04ebe982aab6f3a7893974e89a669"
-  integrity sha512-Krmda5CT9xDPjab8Eqdqiwi7xkZSX60A5rEGVLEDjUG6J6Rw5SCZ/BPaRk+MxNGWzUrRkM7K5FtTg38vWIOt1Q==
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@willsoto/nestjs-prometheus/-/nestjs-prometheus-6.1.1.tgz#575096a7dd2d32d69333b04367cda423d92d38fb"
+  integrity sha512-2nq5kpdnDjPTada0lFW8zpvAvBb/J5RnXquk1Abk7T1hj0paGZbseTT3eiWWJW2mVTbDKJjYTtcmvlQ/oOUC8Q==
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
