@@ -312,13 +312,13 @@ add(53, "IO pressure", "Share of time some task was stalled on IO (PSI). The bac
     timeseries(unit="percentunit", fill=20))
 add(54, "CPU by container", "",
     [query('topk(8, sum by (name) (rate(container_cpu_usage_seconds_total{%s}[%s])))' % (CADV, RI), "{{name}}")],
-    timeseries(unit="short", stack="normal", fill=20))
+    timeseries(unit="short", stack="normal", fill=70, gradient="none"))
 add(55, "Memory by container", "Working set.",
     [query('topk(8, sum by (name) (container_memory_working_set_bytes{%s}))' % CADV, "{{name}}")],
-    timeseries(unit="bytes", stack="normal", fill=20))
+    timeseries(unit="bytes", stack="normal", fill=70, gradient="none"))
 add(56, "Disk writes by container", "What the hourly backups pay for.",
     [query('topk(6, sum by (name) (rate(container_blkio_device_usage_total{%s,operation="Write"}[%s])))' % (CADV, RI), "{{name}}")],
-    timeseries(unit="Bps", stack="normal", fill=20))
+    timeseries(unit="Bps", stack="normal", fill=70, gradient="none"))
 add(57, "Network (ens18)", "",
     [query('rate(node_network_transmit_bytes_total{%s,device="ens18"}[%s]) * 8' % (NODE, RI), "out"),
      query('rate(node_network_receive_bytes_total{%s,device="ens18"}[%s]) * 8' % (NODE, RI), "in", "B")],
