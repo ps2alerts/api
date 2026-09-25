@@ -2427,7 +2427,7 @@
         "spec": {
           "id": 37,
           "title": "Messages received by type",
-          "description": "Census events published into the aggregators' queues per second, by event type. Per-alert queues only exist while an alert runs.",
+          "description": "Census events published into the aggregators' queues per second, stacked by type with the largest on top. Per-alert queues only exist while an alert runs.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2445,12 +2445,96 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum by (event) (label_replace(rate(rabbitmq_queue_messages_published_total{job=\"ps2alerts-rabbitmq\",queue=~\"aggregator-.*\",queue!~\".*admin.*\"}[$__rate_interval]), \"event\", \"$1\", \"queue\", \"aggregator-(?:[0-9]+-)+(.+)\"))",
-                        "legendFormat": "{{event}}",
+                        "expr": "sum(rate(rabbitmq_queue_messages_published_total{job=\"ps2alerts-rabbitmq\",queue=~\"aggregator-(?:[0-9]+-)+MetagameEvent\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "MetagameEvent",
                         "range": true
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(rabbitmq_queue_messages_published_total{job=\"ps2alerts-rabbitmq\",queue=~\"aggregator-(?:[0-9]+-)+FacilityControl\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "FacilityControl",
+                        "range": true
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(rabbitmq_queue_messages_published_total{job=\"ps2alerts-rabbitmq\",queue=~\"aggregator-(?:[0-9]+-)+VehicleDestroy\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "VehicleDestroy",
+                        "range": true
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(rabbitmq_queue_messages_published_total{job=\"ps2alerts-rabbitmq\",queue=~\"aggregator-(?:[0-9]+-)+Death\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "Death",
+                        "range": true
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(rabbitmq_queue_messages_published_total{job=\"ps2alerts-rabbitmq\",queue=~\"aggregator-(?:[0-9]+-)+GainExperience\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "GainExperience",
+                        "range": true
+                      }
+                    },
+                    "refId": "E",
                     "hidden": false
                   }
                 }
@@ -2505,8 +2589,8 @@
                     "barAlignment": 0,
                     "barWidthFactor": 0.6,
                     "drawStyle": "line",
-                    "fillOpacity": 20,
-                    "gradientMode": "opacity",
+                    "fillOpacity": 70,
+                    "gradientMode": "none",
                     "hideFrom": {
                       "legend": false,
                       "tooltip": false,
@@ -2531,7 +2615,83 @@
                     }
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "MetagameEvent"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "orange"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "FacilityControl"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "yellow"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "VehicleDestroy"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "red"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Death"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "green"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "GainExperience"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "blue"
+                        }
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }
@@ -2542,7 +2702,7 @@
         "spec": {
           "id": 38,
           "title": "Messages processed by type",
-          "description": "What the aggregators successfully processed per second, by event type and platform.",
+          "description": "What the aggregators successfully processed per second across all platforms, stacked by type with the largest on top.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2560,12 +2720,96 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum by (event_type, platform) (rate(aggregator_queue_messages_count{job=\"ps2alerts-aggregator\",type=\"success\"}[$__rate_interval]))",
-                        "legendFormat": "{{event_type}} ({{platform}})",
+                        "expr": "sum(rate(aggregator_queue_messages_count{job=\"ps2alerts-aggregator\",type=\"success\",event_type=\"MetagameEvent\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "MetagameEvent",
                         "range": true
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(aggregator_queue_messages_count{job=\"ps2alerts-aggregator\",type=\"success\",event_type=\"FacilityControl\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "FacilityControl",
+                        "range": true
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(aggregator_queue_messages_count{job=\"ps2alerts-aggregator\",type=\"success\",event_type=\"VehicleDestroy\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "VehicleDestroy",
+                        "range": true
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(aggregator_queue_messages_count{job=\"ps2alerts-aggregator\",type=\"success\",event_type=\"Death\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "Death",
+                        "range": true
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(aggregator_queue_messages_count{job=\"ps2alerts-aggregator\",type=\"success\",event_type=\"GainExperience\"}[$__rate_interval])) or vector(0)",
+                        "legendFormat": "GainExperience",
+                        "range": true
+                      }
+                    },
+                    "refId": "E",
                     "hidden": false
                   }
                 }
@@ -2620,8 +2864,8 @@
                     "barAlignment": 0,
                     "barWidthFactor": 0.6,
                     "drawStyle": "line",
-                    "fillOpacity": 20,
-                    "gradientMode": "opacity",
+                    "fillOpacity": 70,
+                    "gradientMode": "none",
                     "hideFrom": {
                       "legend": false,
                       "tooltip": false,
@@ -2646,7 +2890,83 @@
                     }
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "MetagameEvent"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "orange"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "FacilityControl"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "yellow"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "VehicleDestroy"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "red"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Death"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "green"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "GainExperience"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "blue"
+                        }
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }

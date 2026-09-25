@@ -71,7 +71,7 @@ def stat(steps, unit="short", graph="none", color_mode="background", decimals=No
     }
 
 
-def timeseries(unit="short", fill=10, stack="none", minmax=None, decimals=None):
+def timeseries(unit="short", fill=10, stack="none", minmax=None, decimals=None, overrides=None, gradient="opacity"):
     defaults = {
         "unit": unit,
         "thresholds": {"mode": "absolute", "steps": [{"value": 0, "color": "green"}]},
@@ -79,7 +79,7 @@ def timeseries(unit="short", fill=10, stack="none", minmax=None, decimals=None):
         "custom": {
             "axisBorderShow": False, "axisCenteredZero": False, "axisColorMode": "text", "axisLabel": "",
             "axisPlacement": "auto", "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line",
-            "fillOpacity": fill, "gradientMode": "opacity",
+            "fillOpacity": fill, "gradientMode": gradient,
             "hideFrom": {"legend": False, "tooltip": False, "viz": False},
             "insertNulls": False, "lineInterpolation": "linear", "lineWidth": 2, "pointSize": 5,
             "scaleDistribution": {"type": "linear"}, "showPoints": "never", "showValues": False,
@@ -100,7 +100,7 @@ def timeseries(unit="short", fill=10, stack="none", minmax=None, decimals=None):
                 "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": True},
                 "tooltip": {"hideZeros": True, "mode": "multi", "sort": "desc"},
             },
-            "fieldConfig": {"defaults": defaults, "overrides": []},
+            "fieldConfig": {"defaults": defaults, "overrides": overrides or []},
         },
     }
 
@@ -141,6 +141,21 @@ def table():
 
 def hide_columns(*names):
     return [{"kind": "organize", "spec": {"id": "organize", "options": {"excludeByName": {n: True for n in names}}}}]
+
+
+# Stack order is draw order: small types first, GainExperience last so the biggest band sits on top.
+EVENT_ORDER = [("MetagameEvent", "orange"), ("FacilityControl", "yellow"), ("VehicleDestroy", "red"),
+               ("Death", "green"), ("GainExperience", "blue")]
+
+
+def event_colours():
+    return [{"matcher": {"id": "byName", "options": name},
+             "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": colour}}]}
+            for name, colour in EVENT_ORDER]
+
+
+def event_queries(expr_for):
+    return [query(expr_for(name), name, chr(65 + i)) for i, (name, _) in enumerate(EVENT_ORDER)]
 
 
 BLUE = [{"value": 0, "color": "blue"}]
@@ -253,13 +268,13 @@ add(36, "RabbitMQ memory",
      query('sum(rabbitmq_resident_memory_limit_bytes{%s})' % RMQ, "high watermark", "B")],
     timeseries(unit="bytes"))
 add(37, "Messages received by type",
-    "Census events published into the aggregators' queues per second, by event type. Per-alert queues only exist while an alert runs.",
-    [query('sum by (event) (label_replace(rate(rabbitmq_queue_messages_published_total{%s,queue=~"aggregator-.*",queue!~".*admin.*"}[%s]), "event", "$1", "queue", "aggregator-(?:[0-9]+-)+(.+)"))' % (RMQ, RI), "{{event}}")],
-    timeseries(unit="short", stack="normal", fill=20))
+    "Census events published into the aggregators' queues per second, stacked by type with the largest on top. Per-alert queues only exist while an alert runs.",
+    event_queries(lambda e: 'sum(rate(rabbitmq_queue_messages_published_total{%s,queue=~"aggregator-(?:[0-9]+-)+%s"}[%s])) or vector(0)' % (RMQ, e, RI)),
+    timeseries(unit="short", stack="normal", fill=70, gradient="none", overrides=event_colours()))
 add(38, "Messages processed by type",
-    "What the aggregators successfully processed per second, by event type and platform.",
-    [query('sum by (event_type, platform) (rate(aggregator_queue_messages_count{%s,type="success"}[%s]))' % (AGG, RI), "{{event_type}} ({{platform}})")],
-    timeseries(unit="short", stack="normal", fill=20))
+    "What the aggregators successfully processed per second across all platforms, stacked by type with the largest on top.",
+    event_queries(lambda e: 'sum(rate(aggregator_queue_messages_count{%s,type="success",event_type="%s"}[%s])) or vector(0)' % (AGG, e, RI)),
+    timeseries(unit="short", stack="normal", fill=70, gradient="none", overrides=event_colours()))
 
 # ---------------------------------------------------------------- datastores
 add(40, "Mongo operations / s", "",
