@@ -4119,7 +4119,7 @@
         "spec": {
           "id": 54,
           "title": "CPU by container",
-          "description": "",
+          "description": "Cores used by every container, stacked, so the top edge is the stack's total. The box has 2 cores.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4137,12 +4137,33 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "topk(8, sum by (name) (rate(container_cpu_usage_seconds_total{job=\"ps2alerts-cadvisor\",name!=\"\"}[$__rate_interval])))",
+                        "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{job=\"ps2alerts-cadvisor\",name!=\"\"}[$__rate_interval]))",
                         "legendFormat": "{{name}}",
                         "range": true
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(container_cpu_usage_seconds_total{job=\"ps2alerts-cadvisor\",name!=\"\"}[$__rate_interval]))",
+                        "legendFormat": "total",
+                        "range": true
+                      }
+                    },
+                    "refId": "B",
                     "hidden": false
                   }
                 }
@@ -4223,7 +4244,48 @@
                     }
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "total"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.stacking",
+                        "value": {
+                          "group": "A",
+                          "mode": "none"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 2
+                      },
+                      {
+                        "id": "custom.lineStyle",
+                        "value": {
+                          "fill": "dash",
+                          "dash": [
+                            8,
+                            4
+                          ]
+                        }
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "text"
+                        }
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }
@@ -4349,7 +4411,7 @@
         "spec": {
           "id": 56,
           "title": "Disk writes by container",
-          "description": "What the hourly backups pay for.",
+          "description": "Every container's disk writes, stacked, with the total outlined. What the hourly backups pay for.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4367,12 +4429,33 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "topk(6, sum by (name) (rate(container_blkio_device_usage_total{job=\"ps2alerts-cadvisor\",name!=\"\",operation=\"Write\"}[$__rate_interval])))",
+                        "expr": "sum by (name) (rate(container_blkio_device_usage_total{job=\"ps2alerts-cadvisor\",name!=\"\",operation=\"Write\"}[$__rate_interval]))",
                         "legendFormat": "{{name}}",
                         "range": true
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(rate(container_blkio_device_usage_total{job=\"ps2alerts-cadvisor\",name!=\"\",operation=\"Write\"}[$__rate_interval]))",
+                        "legendFormat": "total",
+                        "range": true
+                      }
+                    },
+                    "refId": "B",
                     "hidden": false
                   }
                 }
@@ -4453,7 +4536,48 @@
                     }
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "total"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.stacking",
+                        "value": {
+                          "group": "A",
+                          "mode": "none"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 2
+                      },
+                      {
+                        "id": "custom.lineStyle",
+                        "value": {
+                          "fill": "dash",
+                          "dash": [
+                            8,
+                            4
+                          ]
+                        }
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "text"
+                        }
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }

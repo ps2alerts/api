@@ -158,6 +158,16 @@ def event_queries(expr_for):
     return [query(expr_for(name), name, chr(65 + i)) for i, (name, _) in enumerate(EVENT_ORDER)]
 
 
+def total_line(name="total"):
+    """Draw one series as an unstacked outline, so a stacked panel also shows its total."""
+    return [{"matcher": {"id": "byName", "options": name}, "properties": [
+        {"id": "custom.stacking", "value": {"group": "A", "mode": "none"}},
+        {"id": "custom.fillOpacity", "value": 0},
+        {"id": "custom.lineWidth", "value": 2},
+        {"id": "custom.lineStyle", "value": {"fill": "dash", "dash": [8, 4]}},
+        {"id": "color", "value": {"mode": "fixed", "fixedColor": "text"}}]}]
+
+
 BLUE = [{"value": 0, "color": "blue"}]
 elements = {}
 
@@ -310,15 +320,18 @@ add(52, "Memory available", "",
 add(53, "IO pressure", "Share of time some task was stalled on IO (PSI). The backup stalls show here.",
     [query('rate(node_pressure_io_waiting_seconds_total{%s}[%s])' % (NODE, RI), "io waiting")],
     timeseries(unit="percentunit", fill=20))
-add(54, "CPU by container", "",
-    [query('topk(8, sum by (name) (rate(container_cpu_usage_seconds_total{%s}[%s])))' % (CADV, RI), "{{name}}")],
-    timeseries(unit="short", stack="normal", fill=70, gradient="none"))
+add(54, "CPU by container",
+    "Cores used by every container, stacked, so the top edge is the stack's total. The box has 2 cores.",
+    [query('sum by (name) (rate(container_cpu_usage_seconds_total{%s}[%s]))' % (CADV, RI), "{{name}}"),
+     query('sum(rate(container_cpu_usage_seconds_total{%s}[%s]))' % (CADV, RI), "total", "B")],
+    timeseries(unit="short", stack="normal", fill=70, gradient="none", overrides=total_line()))
 add(55, "Memory by container", "Working set.",
     [query('topk(8, sum by (name) (container_memory_working_set_bytes{%s}))' % CADV, "{{name}}")],
     timeseries(unit="bytes", stack="normal", fill=70, gradient="none"))
-add(56, "Disk writes by container", "What the hourly backups pay for.",
-    [query('topk(6, sum by (name) (rate(container_blkio_device_usage_total{%s,operation="Write"}[%s])))' % (CADV, RI), "{{name}}")],
-    timeseries(unit="Bps", stack="normal", fill=70, gradient="none"))
+add(56, "Disk writes by container", "Every container's disk writes, stacked, with the total outlined. What the hourly backups pay for.",
+    [query('sum by (name) (rate(container_blkio_device_usage_total{%s,operation="Write"}[%s]))' % (CADV, RI), "{{name}}"),
+     query('sum(rate(container_blkio_device_usage_total{%s,operation="Write"}[%s]))' % (CADV, RI), "total", "B")],
+    timeseries(unit="Bps", stack="normal", fill=70, gradient="none", overrides=total_line()))
 add(57, "Network (ens18)", "",
     [query('rate(node_network_transmit_bytes_total{%s,device="ens18"}[%s]) * 8' % (NODE, RI), "out"),
      query('rate(node_network_receive_bytes_total{%s,device="ens18"}[%s]) * 8' % (NODE, RI), "in", "B")],
