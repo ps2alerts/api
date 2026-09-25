@@ -448,8 +448,8 @@
                     "barAlignment": 0,
                     "barWidthFactor": 0.6,
                     "drawStyle": "line",
-                    "fillOpacity": 20,
-                    "gradientMode": "opacity",
+                    "fillOpacity": 70,
+                    "gradientMode": "none",
                     "hideFrom": {
                       "legend": false,
                       "tooltip": false,
@@ -485,7 +485,7 @@
         "spec": {
           "id": 6,
           "title": "p95 response time by endpoint",
-          "description": "Slow routes are usually unpaginated Mongo reads.",
+          "description": "The 8 slowest route patterns. Lines, not stacked: adding percentiles together would show latencies no request had.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -503,7 +503,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "histogram_quantile(0.95, sum by (le, route) (rate(ps2alerts_api_http_request_duration_seconds_bucket{job=\"ps2alerts-api\"}[$__rate_interval])))",
+                        "expr": "topk(8, histogram_quantile(0.95, sum by (le, route) (rate(ps2alerts_api_http_request_duration_seconds_bucket{job=\"ps2alerts-api\"}[$__rate_interval]))))",
                         "legendFormat": "{{route}}",
                         "range": true
                       }
@@ -678,8 +678,8 @@
                     "barAlignment": 0,
                     "barWidthFactor": 0.6,
                     "drawStyle": "line",
-                    "fillOpacity": 20,
-                    "gradientMode": "opacity",
+                    "fillOpacity": 70,
+                    "gradientMode": "none",
                     "hideFrom": {
                       "legend": false,
                       "tooltip": false,

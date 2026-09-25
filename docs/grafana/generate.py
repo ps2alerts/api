@@ -186,15 +186,15 @@ add(4, "Bandwidth out",
 add(5, "Requests by endpoint",
     "Top 12 route patterns by request rate.",
     [query('topk(12, sum by (route) (rate(ps2alerts_api_http_requests_total{%s}[%s])))' % (API, RI), "{{route}}")],
-    timeseries(unit="reqps", stack="normal", fill=20))
+    timeseries(unit="reqps", stack="normal", fill=70, gradient="none"))
 add(6, "p95 response time by endpoint",
-    "Slow routes are usually unpaginated Mongo reads.",
-    [query('histogram_quantile(0.95, sum by (le, route) (rate(ps2alerts_api_http_request_duration_seconds_bucket{%s}[%s])))' % (API, RI), "{{route}}")],
+    "The 8 slowest route patterns. Lines, not stacked: adding percentiles together would show latencies no request had.",
+    [query('topk(8, histogram_quantile(0.95, sum by (le, route) (rate(ps2alerts_api_http_request_duration_seconds_bucket{%s}[%s]))))' % (API, RI), "{{route}}")],
     timeseries(unit="s", fill=0))
 add(7, "Bandwidth by endpoint",
     "Which routes send the most data.",
     [query('topk(8, sum by (route) (rate(ps2alerts_api_http_response_bytes_total{%s}[%s])))' % (API, RI), "{{route}}")],
-    timeseries(unit="Bps", stack="normal", fill=20))
+    timeseries(unit="Bps", stack="normal", fill=70, gradient="none"))
 add(8, "Heaviest clients (last 5 min)",
     "The ten busiest clients right now. This is what the heavy-client alert reads.",
     [query('sort_desc(ps2alerts_api_client_requests{%s})' % API, instant=True, table=True)],
