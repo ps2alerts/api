@@ -4119,7 +4119,7 @@
         "spec": {
           "id": 54,
           "title": "CPU by container",
-          "description": "Cores used by every container, stacked, so the top edge is the stack's total. The box has 2 cores.",
+          "description": "Each container's share of the whole box (100% = every core busy), stacked, with the containers' total outlined.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4137,7 +4137,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{job=\"ps2alerts-cadvisor\",name!=\"\"}[$__rate_interval]))",
+                        "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{job=\"ps2alerts-cadvisor\",name!=\"\"}[$__rate_interval])) / scalar(count(count by (cpu) (node_cpu_seconds_total{job=\"ps2alerts-node\"})))",
                         "legendFormat": "{{name}}",
                         "range": true
                       }
@@ -4158,7 +4158,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum(rate(container_cpu_usage_seconds_total{job=\"ps2alerts-cadvisor\",name!=\"\"}[$__rate_interval]))",
+                        "expr": "sum(rate(container_cpu_usage_seconds_total{job=\"ps2alerts-cadvisor\",name!=\"\"}[$__rate_interval])) / scalar(count(count by (cpu) (node_cpu_seconds_total{job=\"ps2alerts-node\"})))",
                         "legendFormat": "total",
                         "range": true
                       }
@@ -4196,7 +4196,7 @@
               },
               "fieldConfig": {
                 "defaults": {
-                  "unit": "short",
+                  "unit": "percentunit",
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [

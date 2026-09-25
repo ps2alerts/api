@@ -320,11 +320,13 @@ add(52, "Memory available", "",
 add(53, "IO pressure", "Share of time some task was stalled on IO (PSI). The backup stalls show here.",
     [query('rate(node_pressure_io_waiting_seconds_total{%s}[%s])' % (NODE, RI), "io waiting")],
     timeseries(unit="percentunit", fill=20))
+# Share of the whole box: divide by its core count, so 100% means every core busy.
+CORES = 'scalar(count(count by (cpu) (node_cpu_seconds_total{%s})))' % NODE
 add(54, "CPU by container",
-    "Cores used by every container, stacked, so the top edge is the stack's total. The box has 2 cores.",
-    [query('sum by (name) (rate(container_cpu_usage_seconds_total{%s}[%s]))' % (CADV, RI), "{{name}}"),
-     query('sum(rate(container_cpu_usage_seconds_total{%s}[%s]))' % (CADV, RI), "total", "B")],
-    timeseries(unit="short", stack="normal", fill=70, gradient="none", overrides=total_line()))
+    "Each container's share of the whole box (100% = every core busy), stacked, with the containers' total outlined.",
+    [query('sum by (name) (rate(container_cpu_usage_seconds_total{%s}[%s])) / %s' % (CADV, RI, CORES), "{{name}}"),
+     query('sum(rate(container_cpu_usage_seconds_total{%s}[%s])) / %s' % (CADV, RI, CORES), "total", "B")],
+    timeseries(unit="percentunit", stack="normal", fill=70, gradient="none", overrides=total_line()))
 add(55, "Memory by container", "Working set.",
     [query('topk(8, sum by (name) (container_memory_working_set_bytes{%s}))' % CADV, "{{name}}")],
     timeseries(unit="bytes", stack="normal", fill=70, gradient="none"))
