@@ -247,9 +247,19 @@ add(35, "Queues without consumers",
     "Queues holding messages with nobody reading them, excluding the delay queues, which never have consumers.",
     [query('count((rabbitmq_queue_consumers{%s,queue!~".*delay.*"} == 0) and (rabbitmq_queue_messages{%s} > 0)) or vector(0)' % (RMQ, RMQ))],
     stat([{"value": 0, "color": "green"}, {"value": 1, "color": "red"}]))
-add(36, "RabbitMQ memory", "",
-    [query('sum(rabbitmq_process_resident_memory_bytes{%s})' % RMQ, "resident")],
+add(36, "RabbitMQ memory",
+    "Resident memory against the high watermark, above which RabbitMQ blocks publishers.",
+    [query('sum(rabbitmq_process_resident_memory_bytes{%s})' % RMQ, "resident"),
+     query('sum(rabbitmq_resident_memory_limit_bytes{%s})' % RMQ, "high watermark", "B")],
     timeseries(unit="bytes"))
+add(37, "Messages received by type",
+    "Census events published into the aggregators' queues per second, by event type. Per-alert queues only exist while an alert runs.",
+    [query('sum by (event) (label_replace(rate(rabbitmq_queue_messages_published_total{%s,queue=~"aggregator-.*",queue!~".*admin.*"}[%s]), "event", "$1", "queue", "aggregator-(?:[0-9]+-)+(.+)"))' % (RMQ, RI), "{{event}}")],
+    timeseries(unit="short", stack="normal", fill=20))
+add(38, "Messages processed by type",
+    "What the aggregators successfully processed per second, by event type and platform.",
+    [query('sum by (event_type, platform) (rate(aggregator_queue_messages_count{%s,type="success"}[%s]))' % (AGG, RI), "{{event_type}} ({{platform}})")],
+    timeseries(unit="short", stack="normal", fill=20))
 
 # ---------------------------------------------------------------- datastores
 add(40, "Mongo operations / s", "",
@@ -349,10 +359,11 @@ rows = [
         item(0, 13, 24, 7, 25),
     ]),
     row("📬 Queues", [
-        item(0, 0, 8, 4, 30), item(8, 0, 8, 4, 35),
-        item(16, 0, 8, 4, 36),
+        item(0, 0, 12, 4, 30), item(12, 0, 12, 4, 35),
         item(0, 4, 12, 8, 31), item(12, 4, 12, 8, 32),
         item(0, 12, 12, 8, 33), item(12, 12, 12, 8, 34),
+        item(0, 20, 12, 9, 37), item(12, 20, 12, 9, 38),
+        item(0, 29, 24, 9, 36),
     ]),
     row("🗄️ Datastores", [
         item(0, 0, 12, 8, 40), item(12, 0, 12, 8, 41),
