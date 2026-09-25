@@ -307,6 +307,43 @@ add(45, "Aggregator Redis keys", "Cached entities held by the aggregators.",
     [query('sum by (type) (aggregator_cache_keys_gauge{%s})' % AGG, "{{type}}")],
     timeseries())
 
+# ---------------------------------------------------------------- redis and caching
+RED = 'job="ps2alerts-redis"'
+add(70, "Redis hit rate",
+    "Share of Redis key lookups that found the key, all clients, over the last 5 minutes.",
+    [query('sum(rate(redis_keyspace_hits_total{%s}[5m])) / (sum(rate(redis_keyspace_hits_total{%s}[5m])) + sum(rate(redis_keyspace_misses_total{%s}[5m])))' % (RED, RED, RED))],
+    stat([{"value": 0, "color": "red"}, {"value": 0.7, "color": "#EAB839"}, {"value": 0.9, "color": "green"}], unit="percentunit", graph="area", decimals=1))
+add(71, "Redis memory", "No maxmemory is set, so Redis can grow until the box runs out.",
+    [query('redis_memory_used_bytes{%s}' % RED)],
+    stat(BLUE, unit="bytes", graph="area"))
+add(72, "Redis clients", "",
+    [query('redis_connected_clients{%s}' % RED)],
+    stat(BLUE, graph="area"))
+add(73, "Since last save", "Time since Redis last wrote its RDB snapshot to disk (AOF is off). A crash loses changes since then.",
+    [query('time() - redis_rdb_last_save_timestamp_seconds{%s}' % RED)],
+    stat([{"value": 0, "color": "green"}, {"value": 3600, "color": "#EAB839"}, {"value": 7200, "color": "red"}], unit="s"))
+add(74, "Redis commands / s", "",
+    [query('rate(redis_commands_processed_total{%s}[%s])' % (RED, RI), "commands"),
+     query('rate(redis_keyspace_hits_total{%s}[%s])' % (RED, RI), "key hits", "B"),
+     query('rate(redis_keyspace_misses_total{%s}[%s])' % (RED, RI), "key misses", "C")],
+    timeseries(unit="ops"))
+add(75, "Redis keys by database", "The API caches in one database, the aggregators in another.",
+    [query('redis_db_keys{%s} > 0' % RED, "{{db}}")],
+    timeseries(stack="normal", fill=70, gradient="none"))
+add(76, "Expired and evicted keys / s", "Expired is TTLs running out, which is normal. Evicted means Redis threw keys away for lack of memory, and should be zero.",
+    [query('rate(redis_expired_keys_total{%s}[%s])' % (RED, RI), "expired"),
+     query('rate(redis_evicted_keys_total{%s}[%s])' % (RED, RI), "evicted", "B")],
+    timeseries())
+add(77, "API cache hit rate by route family", "How often the API found a cached answer, by cache-key family.",
+    [query('sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s,result="hit"}[%s])) / sum by (family) (rate(ps2alerts_api_cache_lookups_total{%s}[%s]))' % (API, RI, API, RI), "{{family}}")],
+    timeseries(unit="percentunit", fill=0, minmax=(0, 1)))
+add(78, "API cache lookups / s", "Hits and misses per cache-key family.",
+    [query('sum by (family, result) (rate(ps2alerts_api_cache_lookups_total{%s}[%s]))' % (API, RI), "{{family}} {{result}}")],
+    timeseries(stack="normal", fill=70, gradient="none"))
+add(79, "Aggregator broker cache", "Character, item and facility lookups the aggregators answered from Redis against those that went to Census.",
+    [query('sum by (broker) (rate(aggregator_broker_count{%s,result="cache_hit"}[%s])) / sum by (broker) (rate(aggregator_broker_count{%s,result=~"cache_hit|cache_miss"}[%s]))' % (AGG, RI, AGG, RI), "{{broker}}")],
+    timeseries(unit="percentunit", fill=0, minmax=(0, 1)))
+
 # ---------------------------------------------------------------- system health
 add(50, "Host CPU", "By mode, across both cores.",
     [query('sum by (mode) (rate(node_cpu_seconds_total{%s,mode!="idle"}[%s])) / scalar(count(count by (cpu) (node_cpu_seconds_total{%s})))' % (NODE, RI, NODE), "{{mode}}")],
@@ -352,7 +389,7 @@ add(61, "Event processing p95", "",
 add(62, "Failed or unmatched messages", "",
     [query('sum by (type, event_type) (rate(aggregator_queue_messages_count{%s,type!="success"}[%s]))' % (AGG, RI), "{{type}} {{event_type}}")],
     timeseries())
-add(63, "Cache hit rate", "",
+add(63, "Aggregator cache hit rate", "Aggregator Redis cache hits by data type.",
     [query('sum by (type) (rate(aggregator_cache_hitmiss_count{%s,result="cache_hit"}[%s])) / sum by (type) (rate(aggregator_cache_hitmiss_count{%s}[%s]))' % (AGG, RI, AGG, RI), "{{type}}")],
     timeseries(unit="percentunit", fill=0, minmax=(0, 1)))
 add(64, "External requests", "Census and PS2Alerts API calls made by the aggregators.",
@@ -397,8 +434,14 @@ rows = [
     ]),
     row("🗄️ Datastores", [
         item(0, 0, 12, 8, 40), item(12, 0, 12, 8, 41),
-        item(0, 8, 12, 8, 42), item(12, 8, 6, 8, 43), item(18, 8, 6, 4, 44),
-        item(18, 12, 6, 4, 45),
+        item(0, 8, 12, 8, 42), item(12, 8, 6, 8, 43), item(18, 8, 6, 8, 44),
+    ]),
+    row("🧠 Redis & Caching", [
+        item(0, 0, 6, 4, 70), item(6, 0, 6, 4, 71), item(12, 0, 6, 4, 72), item(18, 0, 6, 4, 73),
+        item(0, 4, 12, 8, 74), item(12, 4, 12, 8, 75),
+        item(0, 12, 12, 8, 77), item(12, 12, 12, 8, 78),
+        item(0, 20, 8, 8, 63), item(8, 20, 8, 8, 79), item(16, 20, 8, 8, 45),
+        item(0, 28, 24, 6, 76),
     ]),
     row("🖥️ System Health", [
         item(0, 0, 12, 8, 50), item(12, 0, 6, 8, 51), item(18, 0, 6, 4, 52), item(18, 4, 6, 4, 53),
@@ -407,7 +450,7 @@ rows = [
     ]),
     row("⚙️ Aggregators", [
         item(0, 0, 12, 8, 60), item(12, 0, 12, 8, 61),
-        item(0, 8, 12, 8, 62), item(12, 8, 12, 8, 63),
+        item(0, 8, 24, 8, 62),
         item(0, 16, 12, 8, 64), item(12, 16, 6, 8, 65), item(18, 16, 6, 8, 66),
     ], collapse=True),
 ]
