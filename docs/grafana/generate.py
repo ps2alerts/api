@@ -16,6 +16,8 @@ RMQ = 'job="ps2alerts-rabbitmq"'
 MONGO = 'job="ps2alerts-mongodb"'
 NODE = 'job="ps2alerts-node"'
 CADV = 'job="ps2alerts-cadvisor",name!=""'
+# Private and loopback callers are our own containers (the aggregators call the API directly).
+PUBLIC = r'client!~"10\\..*|172\\.(1[6-9]|2[0-9]|3[01])\\..*|192\\.168\\..*|127\\..*|::1|f[cd][0-9a-f]{2}:.*"'
 RI = "$__rate_interval"
 
 
@@ -206,12 +208,12 @@ add(7, "Bandwidth by endpoint",
     [query('topk(8, sum by (route) (rate(ps2alerts_api_http_response_bytes_total{%s}[%s])))' % (API, RI), "{{route}}")],
     timeseries(unit="Bps", stack="normal", fill=70, gradient="none"))
 add(8, "Heaviest clients (last 5 min)",
-    "The ten busiest clients right now. This is what the heavy-client alert reads.",
-    [query('sort_desc(ps2alerts_api_client_requests{%s})' % API, instant=True, table=True)],
+    "The busiest public clients right now; internal callers on private ranges are left out.",
+    [query('sort_desc(ps2alerts_api_client_requests{%s,%s})' % (API, PUBLIC), instant=True, table=True)],
     table(), hide_columns("Time", "__name__", "app", "instance", "job"))
 add(9, "Busiest client, busiest minute",
     "The most requests any single client made in one 60-second span, looking back five minutes. The heavy-client alert fires above 200.",
-    [query('max(ps2alerts_api_client_peak_requests_per_minute{%s})' % API, "busiest minute"),
+    [query('max(ps2alerts_api_client_peak_requests_per_minute{%s,%s})' % (API, PUBLIC), "busiest minute"),
      query('vector(200)', "alert threshold", "B")],
     timeseries(unit="short", fill=0))
 

@@ -715,7 +715,7 @@
         "spec": {
           "id": 8,
           "title": "Heaviest clients (last 5 min)",
-          "description": "The ten busiest clients right now. This is what the heavy-client alert reads.",
+          "description": "The busiest public clients right now; internal callers on private ranges are left out.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -733,7 +733,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sort_desc(ps2alerts_api_client_requests{job=\"ps2alerts-api\"})",
+                        "expr": "sort_desc(ps2alerts_api_client_requests{job=\"ps2alerts-api\",client!~\"10\\\\..*|172\\\\.(1[6-9]|2[0-9]|3[01])\\\\..*|192\\\\.168\\\\..*|127\\\\..*|::1|f[cd][0-9a-f]{2}:.*\"})",
                         "legendFormat": "",
                         "instant": true,
                         "range": false,
@@ -819,7 +819,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "max(ps2alerts_api_client_peak_requests_per_minute{job=\"ps2alerts-api\"})",
+                        "expr": "max(ps2alerts_api_client_peak_requests_per_minute{job=\"ps2alerts-api\",client!~\"10\\\\..*|172\\\\.(1[6-9]|2[0-9]|3[01])\\\\..*|192\\\\.168\\\\..*|127\\\\..*|::1|f[cd][0-9a-f]{2}:.*\"})",
                         "legendFormat": "busiest minute",
                         "range": true
                       }
