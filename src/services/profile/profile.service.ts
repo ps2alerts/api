@@ -86,10 +86,6 @@ const ALERT_PROJECTION = {
     },
 };
 
-/**
- * Computes player and outfit profiles server-side from the per-alert aggregates, so the website receives a few
- * kilobytes of summaries and one page of history rather than every alert the subject has ever played.
- */
 interface Slots {
     max: number;
     running: number;
@@ -109,6 +105,10 @@ const VEHICLE_SUMS = {
     suicides: {$sum: {$ifNull: ['$suicides', 0]}},
 };
 
+/**
+ * Computes player and outfit profiles server-side from the per-alert aggregates, so the website receives a few
+ * kilobytes of summaries and one page of history rather than every alert the subject has ever played.
+ */
 @Injectable()
 export default class ProfileService {
     private readonly cacheTtl = 60 * 15;
