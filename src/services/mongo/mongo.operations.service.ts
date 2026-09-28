@@ -79,38 +79,10 @@ export default class MongoOperationsService {
     }
 
     public async upsert(entity: any, docs: any[], conditionals: any[]): Promise<boolean> {
-        docs = this.transform(docs);
-        const operations: any[] = [];
-
-        // Gather operations, setOnInserts etc should be first and will create the record correctly to then subsequently update.
-        docs.forEach((doc) => {
-            operations.push({
-                updateMany: {
-                    filter: conditionals[0],
-                    update: doc,
-                    upsert: true,
-                },
-            });
-        });
-
-        try {
-            const result = await this.em.bulkWrite(entity, operations, {ordered: true});
-
-            return result.upsertedCount
-                ? result.upsertedCount > 0
-                : result.modifiedCount
-                    ? result.modifiedCount > 0
-                    : false;
-
-        } catch (error: any) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            if (!error.message.includes('E11000')) {
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
-                throw new Error(`Upsert failed! E: ${error.message}`);
-            }
-
-            return true;
-        }
+        // One update per doc, in order: a message's $setOnInsert must create the row before its $inc and $set apply
+        return await this.runUpserts(entity, (this.transform(docs) as any[]).map((doc: any) => ({
+            updateOne: {filter: conditionals[0], update: doc, upsert: true},
+        })));
     }
 
     /**
@@ -125,32 +97,9 @@ export default class MongoOperationsService {
             throw new Error('UpsertMany requires equal lengths of documents and conditionals!');
         }
 
-        docs = this.transform(docs);
-        const operations: any[] = [];
-
-        // Gather operations, setOnInserts etc should be first and will create the record correctly to then subsequently update.
-        docs.forEach((doc, index) => {
-            operations.push({
-                updateMany: {
-                    filter: conditionals[index],
-                    update: doc,
-                    upsert: true,
-                },
-            });
-        });
-
-        try {
-            const result = await this.em.bulkWrite(entity, operations, {ordered: true});
-            return result.upsertedCount ? result.upsertedCount > 0 : result.modifiedCount ? result.modifiedCount > 0 : false;
-        } catch (error: any) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            if (!error.message.includes('E11000')) {
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions,@typescript-eslint/no-unsafe-member-access
-                throw new Error(`UpsertMany failed! E: ${error.message}`);
-            }
-
-            return true;
-        }
+        return await this.runUpserts(entity, (this.transform(docs) as any[]).map((doc: any, index: number) => ({
+            updateOne: {filter: conditionals[index], update: doc, upsert: true},
+        })));
     }
 
     public async deleteOne(entity: any, conditional: any): Promise<boolean> {
@@ -191,6 +140,37 @@ export default class MongoOperationsService {
     }
 
     /* eslint-disable */
+    /**
+     * Two consumers can insert the same new row at once; the loser gets a duplicate-key error. Its operation is retried
+     * once, now matching the winner's row, and the operations after it still run. Anything else is thrown.
+     */
+    private async runUpserts(entity: any, operations: any[]): Promise<boolean> {
+        let start = 0;
+        let retried = -1;
+        let changed = false;
+
+        while (start < operations.length) {
+            try {
+                const result = await this.em.bulkWrite(entity, operations.slice(start), {ordered: true});
+                changed = changed || result.upsertedCount > 0 || result.modifiedCount > 0;
+                break;
+            } catch (error: any) {
+                const writeErrors = error.writeErrors === undefined ? [] : [error.writeErrors].flat();
+                const failed = writeErrors[0];
+
+                if (!failed || failed.code !== 11000 || start + Number(failed.index) === retried) {
+                    throw new Error(`Upsert failed! E: ${error.message}`);
+                }
+
+                changed = changed || Number(failed.index) > 0;
+                retried = start + Number(failed.index);
+                start = retried;
+            }
+        }
+
+        return changed;
+    }
+
     private transform(docs: any): any {
         if (docs.constructor === Array) {
             docs.map((doc: any) => {

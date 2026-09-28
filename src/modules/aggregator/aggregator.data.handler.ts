@@ -41,12 +41,9 @@ export default class AggregatorDataHandler {
                 data.docs,
                 data.conditionals,
             );
-        } catch (err: any) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            if (err.message && !err.message.includes('E11000')) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-                this.logger.error(`Unable to upsert data for Aggregation! E: ${err.message}`);
-            }
+        } catch (err) {
+            this.retryOnce(context, `Unable to upsert data for Aggregation! E: ${err instanceof Error ? err.message : String(err)}`);
+            return;
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
@@ -70,12 +67,9 @@ export default class AggregatorDataHandler {
                 data.docs,
                 data.conditionals,
             );
-        } catch (err: any) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
-            if (err.message && !err.message.includes('E11000')) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-                throw new Error(`Unable to upsert data for Global Aggregation! E: ${err.message}`);
-            }
+        } catch (err) {
+            this.retryOnce(context, `Unable to upsert data for Global Aggregation of instance ${data.instance}! E: ${err instanceof Error ? err.message : String(err)}`);
+            return;
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
@@ -136,5 +130,24 @@ export default class AggregatorDataHandler {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return conditional;
+    }
+
+    // A failed write is requeued once, since most failures are a Mongo blip; a second failure is logged and dropped
+    private retryOnce(context: RmqContext, reason: string): void {
+        const message = context.getMessage();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const channel = context.getChannelRef();
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if (!message.fields.redelivered) {
+            this.logger.warn(`${reason}. Requeueing once.`);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            channel.nack(message, false, true);
+            return;
+        }
+
+        this.logger.error(`${reason}. Failed on redelivery too, dropping the message.`);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+        channel.ack(message);
     }
 }
