@@ -92,8 +92,8 @@ interface Slots {
     waiting: Array<() => void>;
 }
 
-// v4.3.2 reinstated per-player vehicle stats; rows before it never recorded the killer's side
-export const VEHICLE_TRACKING_START = new Date('2022-09-10T00:00:00Z');
+// No alert before this date has any per-player vehicle rows, on any server checked
+export const VEHICLE_TRACKING_START = new Date('2023-01-07T00:00:00Z');
 
 const VEHICLE_SUMS = {
     vehicleKills: {$sum: {$ifNull: ['$vehicles.kills', 0]}},
