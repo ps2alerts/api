@@ -96,6 +96,9 @@ interface Slots {
     waiting: Array<() => void>;
 }
 
+// v4.3.2 reinstated per-player vehicle stats; rows before it never recorded the killer's side
+export const VEHICLE_TRACKING_START = new Date('2022-09-10T00:00:00Z');
+
 const VEHICLE_SUMS = {
     vehicleKills: {$sum: {$ifNull: ['$vehicles.kills', 0]}},
     infantryKills: {$sum: {$ifNull: ['$infantry.kills', 0]}},
@@ -460,6 +463,7 @@ export default class ProfileService {
                     firstAlert,
                     lastAlert,
                     firstTrackedAlert,
+                    vehiclesTrackedSince: VEHICLE_TRACKING_START,
                 },
                 daily,
             };
@@ -579,6 +583,7 @@ export default class ProfileService {
             // Per-minute figures only exist for alerts tracked since the feature launched, and a few are stored as NaN
             xpmAlerts: {$sum: {$cond: [this.isFinite(`$xPerMinutes.${xpm.kpm}`), 1, 0]}},
             timeInAlerts: {$sum: {$cond: [this.isFinite('$durationInAlert'), '$durationInAlert', 0]}},
+            vehicleAlerts: {$sum: {$cond: [{$gte: ['$details.timeStarted', VEHICLE_TRACKING_START]}, 1, 0]}},
             // Victor 0 or null means nobody won; draws are flagged separately
             decided: {$sum: {$cond: [{$and: [{$gt: ['$details.result.victor', 0]}, {$ne: ['$details.result.draw', true]}]}, 1, 0]}},
             wins: {$sum: {$cond: [{$and: [{$ne: ['$details.result.draw', true]}, {$eq: ['$details.result.victor', faction ?? -1]}]}, 1, 0]}},
@@ -619,6 +624,7 @@ export default class ProfileService {
             participants: row.participants ?? 0,
             xpmAlerts: row.xpmAlerts ?? 0,
             timeInAlerts: row.timeInAlerts ?? 0,
+            vehicleAlerts: row.vehicleAlerts ?? 0,
             kpm: row.kpmTotal ?? 0,
             dpm: row.dpmTotal ?? 0,
             tkpm: row.tkpmTotal ?? 0,
@@ -646,6 +652,7 @@ export default class ProfileService {
             participants: 0,
             xpmAlerts: 0,
             timeInAlerts: 0,
+            vehicleAlerts: 0,
             kpm: 0,
             dpm: 0,
             tkpm: 0,
