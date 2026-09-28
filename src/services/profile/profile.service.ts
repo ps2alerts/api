@@ -410,8 +410,15 @@ export default class ProfileService {
                 }
 
                 this.addTotals(totals, entry);
-                firstAlert = !firstAlert || row.firstAlert < firstAlert ? row.firstAlert : firstAlert;
-                lastAlert = !lastAlert || row.lastAlert > lastAlert ? row.lastAlert : lastAlert;
+
+                // Alerts with no instance record group under a null bracket with null dates, which must not win
+                if (row.firstAlert && (!firstAlert || row.firstAlert < firstAlert)) {
+                    firstAlert = row.firstAlert;
+                }
+
+                if (row.lastAlert && (!lastAlert || row.lastAlert > lastAlert)) {
+                    lastAlert = row.lastAlert;
+                }
 
                 if (row.firstTrackedAlert && (!firstTrackedAlert || row.firstTrackedAlert < firstTrackedAlert)) {
                     firstTrackedAlert = row.firstTrackedAlert;
