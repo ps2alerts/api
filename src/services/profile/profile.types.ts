@@ -35,6 +35,8 @@ export interface ProfileBracketTotals {
     xpmAlerts: number;
     // Seconds spent in the alerts that recorded it, tracked from the same point as the per-minute figures
     timeInAlerts: number;
+    // Alerts since per-player vehicle tracking began
+    vehicleAlerts: number;
     // Per-minute averages over the alerts that have them (per participant for outfits)
     kpm: number;
     dpm: number;
@@ -65,6 +67,7 @@ export interface ProfileSummary {
     lastAlert: Date | null;
     // Per-minute tracking arrived mid-2022; alerts before this have no KPM/DPM
     firstTrackedAlert: Date | null;
+    vehiclesTrackedSince: Date;
 }
 
 export interface ProfileTimelineRow {

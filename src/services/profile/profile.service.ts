@@ -86,15 +86,14 @@ const ALERT_PROJECTION = {
     },
 };
 
-/**
- * Computes player and outfit profiles server-side from the per-alert aggregates, so the website receives a few
- * kilobytes of summaries and one page of history rather than every alert the subject has ever played.
- */
 interface Slots {
     max: number;
     running: number;
     waiting: Array<() => void>;
 }
+
+// v4.3.2 reinstated per-player vehicle stats; rows before it never recorded the killer's side
+export const VEHICLE_TRACKING_START = new Date('2022-09-10T00:00:00Z');
 
 const VEHICLE_SUMS = {
     vehicleKills: {$sum: {$ifNull: ['$vehicles.kills', 0]}},
@@ -106,6 +105,10 @@ const VEHICLE_SUMS = {
     suicides: {$sum: {$ifNull: ['$suicides', 0]}},
 };
 
+/**
+ * Computes player and outfit profiles server-side from the per-alert aggregates, so the website receives a few
+ * kilobytes of summaries and one page of history rather than every alert the subject has ever played.
+ */
 @Injectable()
 export default class ProfileService {
     private readonly cacheTtl = 60 * 15;
@@ -407,8 +410,15 @@ export default class ProfileService {
                 }
 
                 this.addTotals(totals, entry);
-                firstAlert = !firstAlert || row.firstAlert < firstAlert ? row.firstAlert : firstAlert;
-                lastAlert = !lastAlert || row.lastAlert > lastAlert ? row.lastAlert : lastAlert;
+
+                // Alerts with no instance record group under a null bracket with null dates, which must not win
+                if (row.firstAlert && (!firstAlert || row.firstAlert < firstAlert)) {
+                    firstAlert = row.firstAlert;
+                }
+
+                if (row.lastAlert && (!lastAlert || row.lastAlert > lastAlert)) {
+                    lastAlert = row.lastAlert;
+                }
 
                 if (row.firstTrackedAlert && (!firstTrackedAlert || row.firstTrackedAlert < firstTrackedAlert)) {
                     firstTrackedAlert = row.firstTrackedAlert;
@@ -460,6 +470,7 @@ export default class ProfileService {
                     firstAlert,
                     lastAlert,
                     firstTrackedAlert,
+                    vehiclesTrackedSince: VEHICLE_TRACKING_START,
                 },
                 daily,
             };
@@ -579,6 +590,7 @@ export default class ProfileService {
             // Per-minute figures only exist for alerts tracked since the feature launched, and a few are stored as NaN
             xpmAlerts: {$sum: {$cond: [this.isFinite(`$xPerMinutes.${xpm.kpm}`), 1, 0]}},
             timeInAlerts: {$sum: {$cond: [this.isFinite('$durationInAlert'), '$durationInAlert', 0]}},
+            vehicleAlerts: {$sum: {$cond: [{$gte: ['$details.timeStarted', VEHICLE_TRACKING_START]}, 1, 0]}},
             // Victor 0 or null means nobody won; draws are flagged separately
             decided: {$sum: {$cond: [{$and: [{$gt: ['$details.result.victor', 0]}, {$ne: ['$details.result.draw', true]}]}, 1, 0]}},
             wins: {$sum: {$cond: [{$and: [{$ne: ['$details.result.draw', true]}, {$eq: ['$details.result.victor', faction ?? -1]}]}, 1, 0]}},
@@ -619,6 +631,7 @@ export default class ProfileService {
             participants: row.participants ?? 0,
             xpmAlerts: row.xpmAlerts ?? 0,
             timeInAlerts: row.timeInAlerts ?? 0,
+            vehicleAlerts: row.vehicleAlerts ?? 0,
             kpm: row.kpmTotal ?? 0,
             dpm: row.dpmTotal ?? 0,
             tkpm: row.tkpmTotal ?? 0,
@@ -646,6 +659,7 @@ export default class ProfileService {
             participants: 0,
             xpmAlerts: 0,
             timeInAlerts: 0,
+            vehicleAlerts: 0,
             kpm: 0,
             dpm: 0,
             tkpm: 0,
