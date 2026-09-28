@@ -8,8 +8,12 @@ import {ValidationPipe} from '@nestjs/common';
 import {TypeOrmFilter} from './filters/type-orm.filter';
 import compression from '@fastify/compress';
 import {fastifyHelmet} from '@fastify/helmet';
+import {FastifyInstance} from 'fastify';
 import './instrument.js';
 import * as Sentry from '@sentry/node';
+import {registerTrafficMetrics} from './monitoring/traffic-metrics';
+import {startAlertLiveness} from './monitoring/alert-liveness';
+import MongoOperationsService from './services/mongo/mongo.operations.service';
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -41,6 +45,13 @@ async function bootstrap(): Promise<void> {
         },
     });
     void app.register(compression, {encodings: ['gzip', 'deflate']});
+
+    // Monitoring stuff
+    registerTrafficMetrics(app.getHttpAdapter().getInstance() as FastifyInstance, process.env.METRICS_ALLOWED_CIDRS);
+
+    if (process.env.REST_ENABLED === 'true') {
+        startAlertLiveness(app.get(MongoOperationsService).em);
+    }
 
     // Type ORM stuff
     app.useGlobalFilters(new TypeOrmFilter());

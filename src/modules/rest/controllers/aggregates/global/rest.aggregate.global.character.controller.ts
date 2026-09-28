@@ -75,7 +75,7 @@ export default class RestGlobalCharacterAggregateController extends BaseGlobalAg
         bracket = this.correctBracket(bracket, ps2AlertsEventType);
 
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const key = `cache:endpoints:character:${character}-B:${bracket}-ET:${ps2AlertsEventType}`;
+        const key = `/global/character/${character}/B:${bracket}-ET:${ps2AlertsEventType}`;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return await this.cacheService.get(key) ?? await this.cacheService.set(

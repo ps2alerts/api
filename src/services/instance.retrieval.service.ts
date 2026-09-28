@@ -14,7 +14,7 @@ export default class InstanceRetrievalService {
     ) {}
 
     public async findOne(instanceId: string): Promise<InstanceMetagameTerritoryEntity | ObjectLiteral> {
-        const key = `cache:instances:${instanceId}`;
+        const key = `/instances/${instanceId}`;
 
         const data = await this.cacheService.get(key);
 
@@ -36,6 +36,6 @@ export default class InstanceRetrievalService {
 
     // Corrections and purges must not serve the week-old copy
     public async forget(instanceId: string): Promise<void> {
-        await this.cacheService.del(`cache:instances:${instanceId}`);
+        await this.cacheService.del(`/instances/${instanceId}`);
     }
 }

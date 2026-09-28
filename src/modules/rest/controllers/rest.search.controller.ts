@@ -50,7 +50,7 @@ export default class RestSearchController {
     ): Promise<GlobalCharacterAggregateEntity[]> {
         const term = this.normaliseTerm(searchTerm);
         const limit = this.limit(pageSize);
-        const key = `cache:search:characters:${world ?? 0}:${limit}:${term}`;
+        const key = `/search/characters/W:${world ?? 0}-L:${limit}?T:${term}`;
 
         const cached = await this.cacheService.get<GlobalCharacterAggregateEntity[]>(key);
 
@@ -77,7 +77,7 @@ export default class RestSearchController {
     ): Promise<GlobalOutfitAggregateEntity[]> {
         const term = this.normaliseTerm(searchTerm);
         const limit = this.limit(pageSize);
-        const key = `cache:search:outfits:${world ?? 0}:${limit}:${term}`;
+        const key = `/search/outfits/W:${world ?? 0}-L:${limit}?T:${term}`;
 
         const cached = await this.cacheService.get<GlobalOutfitAggregateEntity[]>(key);
 

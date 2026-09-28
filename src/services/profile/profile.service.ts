@@ -145,7 +145,7 @@ export default class ProfileService {
 
         query = await this.withWorld(query);
 
-        return await this.cached(`alerts:${this.keyOf(query)}:${pageNumber}:${size}:${sortField}:${direction}`, async () => {
+        return await this.cached(`alerts/${this.keyOf(query)}:${pageNumber}:${size}:${sortField}:${direction}`, async () => {
             // Instance ids sort chronologically within a world, which keeps the default order cheap; the tiebreak must not
             // overwrite the requested direction when the sort field is the instance itself
             const sort = {$sort: sortField === 'instance' ? {instance: direction} : {[sortField]: direction, instance: -1}};
@@ -161,7 +161,7 @@ export default class ProfileService {
             // The total is the same for every page and sort of one query, so it is cached on its own
             const [items, total] = await Promise.all([
                 this.mongoOperationsService.aggregate<ProfileAlertRow>(this.instanceEntity(query), pipeline, this.queryOptions),
-                this.cached(`alertsCount:${this.keyOf(query)}`, async () => (needsJoinFirst
+                this.cached(`alertsCount/${this.keyOf(query)}`, async () => (needsJoinFirst
                     ? await this.mongoOperationsService.aggregate<Record<string, any>>(this.instanceEntity(query), [...this.matchAndJoin(query), {$count: 'count'}], this.queryOptions).then((rows) => Number(rows[0]?.count ?? 0))
                     : await this.mongoOperationsService.em.count(this.instanceEntity(query), (this.matchStage(query) as {$match: Record<string, unknown>}).$match))),
             ]);
@@ -187,7 +187,7 @@ export default class ProfileService {
 
         query = await this.withWorld(query);
 
-        return await this.cached(`members:${query.id}:W${query.world ?? 0}:${pageNumber}:${size}:${sortField}:${direction}:${term}`, async () => {
+        return await this.cached(`members/${query.id}:W${query.world ?? 0}:${pageNumber}:${size}:${sortField}:${direction}:${term}`, async () => {
             const match: Record<string, unknown> = {
                 bracket: Bracket.TOTAL,
                 ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME,
@@ -211,7 +211,7 @@ export default class ProfileService {
                     {$limit: size},
                     {$project: {_id: 0, character: 1, kills: 1, deaths: 1, headshots: 1, teamKills: 1, suicides: 1}},
                 ], this.queryOptions),
-                this.cached(`membersCount:${query.id}:W${query.world ?? 0}:${term}`, async () => await this.mongoOperationsService.em.count(GlobalCharacterAggregateEntity, match)),
+                this.cached(`membersCount/${query.id}:W${query.world ?? 0}:${term}`, async () => await this.mongoOperationsService.em.count(GlobalCharacterAggregateEntity, match)),
             ]);
 
             return {items, total, page: pageNumber, pageSize: size};
@@ -222,7 +222,7 @@ export default class ProfileService {
     public async vehicles(query: ProfileQuery): Promise<ProfileVehicleRow[]> {
         query = await this.withWorld(query);
 
-        return await this.cached(`vehicles:${this.keyOf(query)}`, async () => {
+        return await this.cached(`vehicles/${this.keyOf(query)}`, async () => {
             const sums = {
                 vehicleKills: {$sum: {$ifNull: ['$vehicles.kills', 0]}},
                 infantryKills: {$sum: {$ifNull: ['$infantry.kills', 0]}},
@@ -282,7 +282,7 @@ export default class ProfileService {
      * expensive part (an outfit can have tens of thousands) and every coarser timeline derives from the daily one.
      */
     private async base(query: ProfileQuery): Promise<{summary: ProfileSummary, daily: ProfileTimelineRow[]}> {
-        return await this.cached(`base:${this.keyOf(query)}`, async () => {
+        return await this.cached(`base/${this.keyOf(query)}`, async () => {
             const globals: Array<Record<string, any>> = await this.mongoOperationsService.findMany(
                 this.globalEntity(query),
                 {[`${query.type}.id`]: query.id, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME, world: query.world},
@@ -433,7 +433,7 @@ export default class ProfileService {
             return query;
         }
 
-        const world = await this.cached(`world:${query.type}:${query.id}`, async () => {
+        const world = await this.cached(`world/${query.type}:${query.id}`, async () => {
             const docs: Array<Record<string, any>> = await this.mongoOperationsService.findMany(
                 this.globalEntity(query),
                 {[`${query.type}.id`]: query.id, bracket: Bracket.TOTAL, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME},
@@ -640,7 +640,7 @@ export default class ProfileService {
     }
 
     private async cached<T>(key: string, produce: () => Promise<T>): Promise<T> {
-        const cacheKey = `cache:profiles:${key}`;
+        const cacheKey = `/profiles/${key}`;
         const hit = await this.cacheService.get<T>(cacheKey);
 
         if (hit) {
