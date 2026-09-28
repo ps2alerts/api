@@ -3,6 +3,7 @@ import AggregatorMessageInterface from '../../modules/aggregator/interfaces/aggr
 import {RmqContext} from '@nestjs/microservices';
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import MongoOperationsService from '../../services/mongo/mongo.operations.service';
+import {UpsertError} from '../../services/mongo/upsert.error';
 import GlobalAggregatorMessageInterface from './interfaces/global.aggregator.message.interface';
 import InstanceMetagameTerritoryEntity from '../data/entities/instance/instance.metagame.territory.entity';
 import {Ps2AlertsEventState} from '../data/ps2alerts-constants/ps2AlertsEventState';
@@ -22,12 +23,10 @@ export default class AggregatorDataHandler {
                 entity,
                 data.docs,
             );
-        } catch (err: any) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
-            if (err.message && !err.message.includes('E11000')) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-                this.logger.error(`Unable to create data for Aggregation! E: ${err.message}`);
-            }
+        } catch (err) {
+            // Every collection written here has a unique index, so a replayed insert cannot duplicate rows
+            this.retryOnce(context, `Unable to create data for Aggregation! E: ${err instanceof Error ? err.message : String(err)}`);
+            return;
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
@@ -42,7 +41,7 @@ export default class AggregatorDataHandler {
                 data.conditionals,
             );
         } catch (err) {
-            this.retryOnce(context, `Unable to upsert data for Aggregation! E: ${err instanceof Error ? err.message : String(err)}`);
+            this.settleFailedUpsert(context, err, 'Unable to upsert data for Aggregation!');
             return;
         }
 
@@ -68,7 +67,7 @@ export default class AggregatorDataHandler {
                 data.conditionals,
             );
         } catch (err) {
-            this.retryOnce(context, `Unable to upsert data for Global Aggregation of instance ${data.instance}! E: ${err instanceof Error ? err.message : String(err)}`);
+            this.settleFailedUpsert(context, err, `Unable to upsert data for Global Aggregation of instance ${data.instance}!`);
             return;
         }
 
@@ -99,7 +98,11 @@ export default class AggregatorDataHandler {
                         {instanceId: data.instance},
                     );
                 } catch (e) {
-                    throw new Error(`Instance ${data.instance} does not exist.`);
+                    if (e instanceof Error && e.name === 'EntityNotFoundError') {
+                        throw new Error(`Instance ${data.instance} does not exist.`);
+                    }
+
+                    throw e;
                 }
 
                 if (instance.state === Ps2AlertsEventState.ENDED) {
@@ -118,6 +121,24 @@ export default class AggregatorDataHandler {
         return data;
     }
 
+    // Called by global controllers when the message failed before anything was written
+    public async settleGlobalFailure(context: RmqContext, err: unknown, pattern: string, instance: string): Promise<void> {
+        const reason = err instanceof Error ? err.message : String(err);
+
+        // A deleted alert, or a bracket message for an alert not yet ended, cannot succeed on a retry
+        if (reason.includes('does not exist') || reason.includes('unfinished instance')) {
+            if (!reason.includes('does not exist')) {
+                this.logger.error(`Unable to process ${pattern} message for instance ${instance}! Error: ${reason}`);
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+            await context.getChannelRef().ack(context.getMessage());
+            return;
+        }
+
+        this.retryOnce(context, `Unable to process ${pattern} message for instance ${instance}! Error: ${reason}`);
+    }
+
     private transformDateConditional(conditional: any): any {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (conditional.date) {
@@ -130,6 +151,20 @@ export default class AggregatorDataHandler {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return conditional;
+    }
+
+    // A replay after a partial write would count its increments twice, so only a write that provably did nothing is retried
+    private settleFailedUpsert(context: RmqContext, err: unknown, reason: string): void {
+        const message = `${reason} E: ${err instanceof Error ? err.message : String(err)}`;
+
+        if (err instanceof UpsertError && err.nothingWritten) {
+            this.retryOnce(context, message);
+            return;
+        }
+
+        this.logger.error(`${message}. Part of it may have been written, so it is not retried.`);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+        context.getChannelRef().ack(context.getMessage());
     }
 
     // A failed write is requeued once, since most failures are a Mongo blip; a second failure is logged and dropped

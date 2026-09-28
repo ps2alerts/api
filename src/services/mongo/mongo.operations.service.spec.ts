@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import MongoOperationsService from './mongo.operations.service';
+import {UpsertError} from './upsert.error';
 
 const duplicateAt = (index: number): Error => Object.assign(new Error('E11000 duplicate key error'), {writeErrors: [{code: 11000, index}]});
 const ok = {upsertedCount: 0, modifiedCount: 1};
@@ -45,11 +46,32 @@ describe('MongoOperationsService.upsert', () => {
         expect(bulkWrite).toHaveBeenCalledTimes(2);
     });
 
-    it('throws any other error instead of swallowing it', async () => {
+    it('throws any other error, marked as possibly written when it could have half-applied', async () => {
         const bulkWrite = jest.fn().mockRejectedValue(new Error('connection reset'));
         const service = new MongoOperationsService({bulkWrite} as never);
 
-        await expect(service.upsert('Entity', docs(), [{id: 1}])).rejects.toThrow('connection reset');
+        const error = await service.upsert('Entity', docs(), [{id: 1}]).catch((e: UpsertError) => e);
+
+        expect(error).toBeInstanceOf(UpsertError);
+        expect((error as UpsertError).nothingWritten).toBe(false);
         expect(bulkWrite).toHaveBeenCalledTimes(1);
+    });
+
+    it('marks a failure on the very first operation as nothing written', async () => {
+        const failedFirst = Object.assign(new Error('validation'), {writeErrors: [{code: 121, index: 0}]});
+        const service = new MongoOperationsService({bulkWrite: jest.fn().mockRejectedValue(failedFirst)} as never);
+
+        const error = await service.upsert('Entity', docs(), [{id: 1}]).catch((e: UpsertError) => e);
+
+        expect((error as UpsertError).nothingWritten).toBe(true);
+    });
+
+    it('marks a failure after earlier operations applied as possibly written', async () => {
+        const failedLater = Object.assign(new Error('validation'), {writeErrors: [{code: 121, index: 2}]});
+        const service = new MongoOperationsService({bulkWrite: jest.fn().mockRejectedValue(failedLater)} as never);
+
+        const error = await service.upsert('Entity', docs(), [{id: 1}]).catch((e: UpsertError) => e);
+
+        expect((error as UpsertError).nothingWritten).toBe(false);
     });
 });

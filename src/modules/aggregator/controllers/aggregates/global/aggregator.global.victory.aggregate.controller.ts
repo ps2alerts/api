@@ -23,13 +23,8 @@ export default class AggregatorGlobalVictoryAggregateController {
                 context,
                 GlobalVictoryAggregateEntity,
             );
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-            this.logger.error(`Unable to process ${MqAcceptedPatterns.GLOBAL_VICTORY_AGGREGATE} message for instance ${data.instance}! Error: ${err.message}`);
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            await context.getChannelRef().ack(context.getMessage());
+        } catch (err) {
+            await this.aggregatorDataHandler.settleGlobalFailure(context, err, MqAcceptedPatterns.GLOBAL_VICTORY_AGGREGATE, data.instance);
             return;
         }
 

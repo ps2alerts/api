@@ -4,6 +4,7 @@ import {AggregateOptions} from 'typeorm/driver/mongodb/typings';
 import {InjectEntityManager} from '@nestjs/typeorm';
 import {Injectable} from '@nestjs/common';
 import Pagination from './pagination';
+import {UpsertError} from './upsert.error';
 
 @Injectable()
 export default class MongoOperationsService {
@@ -64,7 +65,8 @@ export default class MongoOperationsService {
         docs = this.transform(docs);
 
         try {
-            const result = await this.em.insertMany(entity, docs);
+            // Unordered, so on a replay the rows already inserted do not stop the rest
+            const result = await this.em.insertMany(entity, docs, {ordered: false});
 
             return Object.values(result.insertedIds);
         } catch (error: any) {
@@ -159,7 +161,9 @@ export default class MongoOperationsService {
                 const failed = writeErrors[0];
 
                 if (!failed || failed.code !== 11000 || start + Number(failed.index) === retried) {
-                    throw new Error(`Upsert failed! E: ${error.message}`);
+                    // Only provable when the first operation of the first attempt failed, or no server was reached at all
+                    const nothingWritten = error.name === 'MongoServerSelectionError' || (start === 0 && failed !== undefined && Number(failed.index) === 0);
+                    throw new UpsertError(`Upsert failed! E: ${String(error.message)}`, nothingWritten);
                 }
 
                 changed = changed || Number(failed.index) > 0;
