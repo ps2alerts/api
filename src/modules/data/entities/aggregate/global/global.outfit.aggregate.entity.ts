@@ -108,4 +108,5 @@ export default class GlobalOutfitAggregateEntity {
         default: Ps2AlertsEventType.LIVE_METAGAME,
     })
     ps2AlertsEventType: Ps2AlertsEventType;
+
 }

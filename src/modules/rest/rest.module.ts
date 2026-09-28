@@ -59,6 +59,11 @@ import {ConfigService} from '@nestjs/config';
 import * as redisStore from 'cache-manager-ioredis';
 import {RedisCacheService} from '../../services/cache/redis.cache.service';
 import {AuthModule} from '../../auth/auth.module';
+import RestSearchController from './controllers/rest.search.controller';
+import InstanceRetrievalService from '../../services/instance.retrieval.service';
+import SearchIndexService from '../../services/search.index.service';
+import ProfileService from '../../services/profile/profile.service';
+import RestProfileController from './controllers/rest.profile.controller';
 
 /**
  * Handles incoming requests to the API via HTTP, CRUD environment.
@@ -136,11 +141,16 @@ import {AuthModule} from '../../auth/auth.module';
         RestInstanceFacilityControlController,
         RestInstanceMetagameController,
         RestOutfitwarsController,
+        RestSearchController,
+        RestProfileController,
     ],
     providers: [
         {provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor},
         MongoOperationsService,
         RedisCacheService,
+        InstanceRetrievalService,
+        SearchIndexService,
+        ProfileService,
     ],
 })
 export class RestModule {}

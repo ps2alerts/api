@@ -56,7 +56,7 @@ export default class RestGlobalCharacterAggregateController extends BaseGlobalAg
         return await this.cacheService.get(key) ?? await this.cacheService.set(
             key,
             await this.mongoOperationsService.findMany(GlobalCharacterAggregateEntity, {world, bracket, ps2AlertsEventType}, pagination),
-            900);
+            60 * 15);
     }
 
     @Get('global/character/:character')
