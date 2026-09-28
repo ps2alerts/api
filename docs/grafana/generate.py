@@ -305,9 +305,14 @@ add(43, "Mongo connections", "",
 add(44, "WiredTiger cache used", "Cache fill against its configured maximum.",
     [query('mongodb_ss_wt_cache_bytes_currently_in_the_cache{%s} / mongodb_ss_wt_cache_maximum_bytes_configured{%s}' % (MONGO, MONGO))],
     stat([{"value": 0, "color": "green"}, {"value": 0.8, "color": "#EAB839"}, {"value": 0.95, "color": "red"}], unit="percentunit", graph="area"))
-add(45, "Aggregator Redis keys", "Cached entities held by the aggregators.",
-    [query('sum by (type) (aggregator_cache_keys_gauge{%s})' % AGG, "{{type}}")],
-    timeseries())
+# Every aggregator counts the shared families in full, so those take the max; item and facility keys are per environment
+SHARED_KEYS = 'type=~"cache_character|character_presence|outfit_participants"'
+OWN_KEYS = 'type=~"cache_item|cache_facility_data"'
+add(45, "Aggregator Redis keys", "Aggregator cache keys by family. The total should sit just under the aggregators' database in Redis keys by database; the gap is a handful of lists and sets.",
+    [query('max by (type) (aggregator_cache_keys_gauge{%s,%s})' % (AGG, SHARED_KEYS), "{{type}}"),
+     query('sum by (type) (aggregator_cache_keys_gauge{%s,%s})' % (AGG, OWN_KEYS), "{{type}}", "B"),
+     query('sum(max by (type) (aggregator_cache_keys_gauge{%s,%s})) + sum(aggregator_cache_keys_gauge{%s,%s})' % (AGG, SHARED_KEYS, AGG, OWN_KEYS), "total", "C")],
+    timeseries(stack="normal", overrides=total_line()))
 
 # ---------------------------------------------------------------- redis and caching
 RED = 'job="ps2alerts-redis"'
@@ -329,9 +334,11 @@ add(74, "Redis commands / s", "",
      query('rate(redis_keyspace_hits_total{%s}[%s])' % (RED, RI), "key hits", "B"),
      query('rate(redis_keyspace_misses_total{%s}[%s])' % (RED, RI), "key misses", "C")],
     timeseries(unit="ops"))
-add(75, "Redis keys by database", "The API caches in one database, the aggregators in another.",
-    [query('redis_db_keys{%s} > 0' % RED, "{{db}}")],
-    timeseries(stack="normal", fill=70, gradient="none"))
+add(75, "Redis keys by database", "The aggregators share db0; the API caches in db10, on the right-hand axis because it holds only a few keys.",
+    [query('redis_db_keys{%s,db="db0"}' % RED, "aggregators (db0)"),
+     query('redis_db_keys{%s,db="db10"}' % RED, "API cache (db10)", "B")],
+    timeseries(overrides=[{"matcher": {"id": "byName", "options": "API cache (db10)"},
+                           "properties": [{"id": "custom.axisPlacement", "value": "right"}]}]))
 add(76, "Expired and evicted keys / s", "Expired is TTLs running out, which is normal. Evicted means Redis threw keys away for lack of memory, and should be zero.",
     [query('rate(redis_expired_keys_total{%s}[%s])' % (RED, RI), "expired"),
      query('rate(redis_evicted_keys_total{%s}[%s])' % (RED, RI), "evicted", "B")],
@@ -437,7 +444,7 @@ add(65, "External request errors", "",
     [query('sum by (provider, result) (rate(aggregator_external_requests_count{%s,result=~"error|retry|empty"}[%s]))' % (AGG, RI), "{{provider}} {{result}}")],
     timeseries())
 add(66, "Unknown facilities / items", "Census IDs the aggregators could not resolve.",
-    [query('sum by (type) (aggregator_cache_keys_gauge{%s,type=~"unknown_facilities|unknown_items"})' % AGG, "{{type}}")],
+    [query('sum by (type) (aggregator_cache_keys_gauge{%s,type=~"unknown_.*"})' % AGG, "{{type}}")],
     timeseries())
 
 

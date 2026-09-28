@@ -3547,7 +3547,7 @@
         "spec": {
           "id": 45,
           "title": "Aggregator Redis keys",
-          "description": "Cached entities held by the aggregators.",
+          "description": "Aggregator cache keys by family. The total should sit just under the aggregators' database in Redis keys by database; the gap is a handful of lists and sets.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3565,12 +3565,54 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum by (type) (aggregator_cache_keys_gauge{job=\"ps2alerts-aggregator\"})",
+                        "expr": "max by (type) (aggregator_cache_keys_gauge{job=\"ps2alerts-aggregator\",type=~\"cache_character|character_presence|outfit_participants\"})",
                         "legendFormat": "{{type}}",
                         "range": true
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum by (type) (aggregator_cache_keys_gauge{job=\"ps2alerts-aggregator\",type=~\"cache_item|cache_facility_data\"})",
+                        "legendFormat": "{{type}}",
+                        "range": true
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(max by (type) (aggregator_cache_keys_gauge{job=\"ps2alerts-aggregator\",type=~\"cache_character|character_presence|outfit_participants\"})) + sum(aggregator_cache_keys_gauge{job=\"ps2alerts-aggregator\",type=~\"cache_item|cache_facility_data\"})",
+                        "legendFormat": "total",
+                        "range": true
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -3644,14 +3686,55 @@
                     "spanNulls": false,
                     "stacking": {
                       "group": "A",
-                      "mode": "none"
+                      "mode": "normal"
                     },
                     "thresholdsStyle": {
                       "mode": "off"
                     }
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "total"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.stacking",
+                        "value": {
+                          "group": "A",
+                          "mode": "none"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 2
+                      },
+                      {
+                        "id": "custom.lineStyle",
+                        "value": {
+                          "fill": "dash",
+                          "dash": [
+                            8,
+                            4
+                          ]
+                        }
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "fixed",
+                          "fixedColor": "text"
+                        }
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }
@@ -4160,7 +4243,7 @@
         "spec": {
           "id": 75,
           "title": "Redis keys by database",
-          "description": "The API caches in one database, the aggregators in another.",
+          "description": "The aggregators share db0; the API caches in db10, on the right-hand axis because it holds only a few keys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4178,12 +4261,33 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "redis_db_keys{job=\"ps2alerts-redis\"} > 0",
-                        "legendFormat": "{{db}}",
+                        "expr": "redis_db_keys{job=\"ps2alerts-redis\",db=\"db0\"}",
+                        "legendFormat": "aggregators (db0)",
                         "range": true
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "prometheus"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "redis_db_keys{job=\"ps2alerts-redis\",db=\"db10\"}",
+                        "legendFormat": "API cache (db10)",
+                        "range": true
+                      }
+                    },
+                    "refId": "B",
                     "hidden": false
                   }
                 }
@@ -4238,8 +4342,8 @@
                     "barAlignment": 0,
                     "barWidthFactor": 0.6,
                     "drawStyle": "line",
-                    "fillOpacity": 70,
-                    "gradientMode": "none",
+                    "fillOpacity": 10,
+                    "gradientMode": "opacity",
                     "hideFrom": {
                       "legend": false,
                       "tooltip": false,
@@ -4257,14 +4361,27 @@
                     "spanNulls": false,
                     "stacking": {
                       "group": "A",
-                      "mode": "normal"
+                      "mode": "none"
                     },
                     "thresholdsStyle": {
                       "mode": "off"
                     }
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "API cache (db10)"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }
@@ -7697,7 +7814,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "sum by (type) (aggregator_cache_keys_gauge{job=\"ps2alerts-aggregator\",type=~\"unknown_facilities|unknown_items\"})",
+                        "expr": "sum by (type) (aggregator_cache_keys_gauge{job=\"ps2alerts-aggregator\",type=~\"unknown_.*\"})",
                         "legendFormat": "{{type}}",
                         "range": true
                       }
