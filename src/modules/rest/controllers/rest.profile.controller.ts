@@ -11,6 +11,7 @@ import {
     ProfileType,
     ProfileVehicleRow,
     TimelineGranularity,
+    ProfileOutfitVehicles,
 } from '../../../services/profile/profile.types';
 import {OptionalIntPipe} from '../pipes/OptionalIntPipe';
 import {World} from '../../data/ps2alerts-constants/world';
@@ -110,6 +111,22 @@ export default class RestProfileController {
             @Query('days', OptionalIntPipe) days?: number,
     ): Promise<ProfileVehicleRow[]> {
         return await this.profileService.vehicles(this.query('character', id, world, days));
+    }
+
+    @Get('outfit/:id/vehicles')
+    @ApiOperation({summary: 'Lifetime vehicle combat summed over an outfit\'s current members, cached for a day'})
+    @ApiQuery(COMMON_QUERIES[0])
+    @ApiResponse({status: 200, description: 'Member count and one row per vehicle', type: Object})
+    @ApiResponse({status: 503, description: 'An index it needs is still being built'})
+    async outfitVehicles(
+        @Param('id') id: string,
+            @Query('world', OptionalIntPipe) world?: World,
+    ): Promise<ProfileOutfitVehicles> {
+        if (!this.searchIndexService.isReady(['outfitMembers', 'memberVehicles'])) {
+            throw new ServiceUnavailableException('Outfit vehicles are unavailable while their index is being built');
+        }
+
+        return await this.profileService.outfitVehicles(this.query('outfit', id, world));
     }
 
     @Get('outfit/:id/members')

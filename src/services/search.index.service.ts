@@ -5,6 +5,7 @@ import GlobalCharacterAggregateEntity from '../modules/data/entities/aggregate/g
 import GlobalOutfitAggregateEntity from '../modules/data/entities/aggregate/global/global.outfit.aggregate.entity';
 import InstanceCharacterAggregateEntity from '../modules/data/entities/aggregate/instance/instance.character.aggregate.entity';
 import InstanceOutfitAggregateEntity from '../modules/data/entities/aggregate/instance/instance.outfit.aggregate.entity';
+import GlobalVehicleCharacterAggregateEntity from '../modules/data/entities/aggregate/global/global.vehicle.character.aggregate.entity';
 import {Bracket} from '../modules/data/ps2alerts-constants/bracket';
 import {Ps2AlertsEventType} from '../modules/data/ps2alerts-constants/ps2AlertsEventType';
 
@@ -14,7 +15,8 @@ type IndexedEntity =
     | typeof GlobalCharacterAggregateEntity
     | typeof GlobalOutfitAggregateEntity
     | typeof InstanceCharacterAggregateEntity
-    | typeof InstanceOutfitAggregateEntity;
+    | typeof InstanceOutfitAggregateEntity
+    | typeof GlobalVehicleCharacterAggregateEntity;
 
 interface ManagedIndex {
     entity: IndexedEntity;
@@ -55,6 +57,13 @@ export const MANAGED_INDEXES = {
         entity: GlobalCharacterAggregateEntity,
         name: 'profile_outfit_members_v3',
         keys: {'character.outfit.id': 1, world: 1, kills: -1},
+        partialFilterExpression: TOTAL_LIVE_ONLY,
+    },
+    // Outfit vehicle totals look up every member's bracket-total rows at once
+    memberVehicles: {
+        entity: GlobalVehicleCharacterAggregateEntity,
+        name: 'profile_member_vehicles',
+        keys: {character: 1, world: 1},
         partialFilterExpression: TOTAL_LIVE_ONLY,
     },
     // Alert history pages default to newest first; instance ids sort chronologically within a world

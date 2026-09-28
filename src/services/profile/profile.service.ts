@@ -17,6 +17,7 @@ import {
     ProfileAlertRow,
     ProfileAlertsPage,
     ProfileMemberRow,
+    ProfileOutfitVehicles,
     ProfileBracketTotals,
     ProfileMembersPage,
     ProfileVehicleRow,
@@ -89,6 +90,16 @@ const ALERT_PROJECTION = {
  * Computes player and outfit profiles server-side from the per-alert aggregates, so the website receives a few
  * kilobytes of summaries and one page of history rather than every alert the subject has ever played.
  */
+const VEHICLE_SUMS = {
+    vehicleKills: {$sum: {$ifNull: ['$vehicles.kills', 0]}},
+    infantryKills: {$sum: {$ifNull: ['$infantry.kills', 0]}},
+    deaths: {$sum: {$add: [{$ifNull: ['$vehicles.deaths', 0]}, {$ifNull: ['$infantry.deaths', 0]}]}},
+    teamKills: {$sum: {$add: [{$ifNull: ['$vehicles.teamkills', 0]}, {$ifNull: ['$infantry.teamkills', 0]}]}},
+    teamKilled: {$sum: {$add: [{$ifNull: ['$vehicles.teamkilled', 0]}, {$ifNull: ['$infantry.teamkilled', 0]}]}},
+    roadkills: {$sum: {$ifNull: ['$roadkills', 0]}},
+    suicides: {$sum: {$ifNull: ['$suicides', 0]}},
+};
+
 @Injectable()
 export default class ProfileService {
     private readonly cacheTtl = 60 * 15;
@@ -98,6 +109,9 @@ export default class ProfileService {
     // Coalesces concurrent cold requests for the same key so an expensive pipeline runs once
     private readonly inFlight = new Map<string, Promise<unknown>>();
     private readonly maxConcurrentQueries = 4;
+    private readonly maxVehicleMembers = 20000;
+    // Lifetime member totals barely move in a day and cost thousands of index lookups to rebuild
+    private readonly memberVehiclesTtl = 60 * 60 * 24;
     private readonly waiting: Array<() => void> = [];
     private running = 0;
 
@@ -226,15 +240,7 @@ export default class ProfileService {
         query = await this.withWorld(query);
 
         return await this.cached(`vehicles/${this.keyOf(query)}`, async () => {
-            const sums = {
-                vehicleKills: {$sum: {$ifNull: ['$vehicles.kills', 0]}},
-                infantryKills: {$sum: {$ifNull: ['$infantry.kills', 0]}},
-                deaths: {$sum: {$add: [{$ifNull: ['$vehicles.deaths', 0]}, {$ifNull: ['$infantry.deaths', 0]}]}},
-                teamKills: {$sum: {$add: [{$ifNull: ['$vehicles.teamkills', 0]}, {$ifNull: ['$infantry.teamkills', 0]}]}},
-                teamKilled: {$sum: {$add: [{$ifNull: ['$vehicles.teamkilled', 0]}, {$ifNull: ['$infantry.teamkilled', 0]}]}},
-                roadkills: {$sum: {$ifNull: ['$roadkills', 0]}},
-                suicides: {$sum: {$ifNull: ['$suicides', 0]}},
-            };
+            const sums = VEHICLE_SUMS;
             const match: Record<string, unknown> = {character: query.id, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME};
             let rows: Array<Record<string, any>>;
 
@@ -265,19 +271,62 @@ export default class ProfileService {
                 ], this.queryOptions));
             }
 
-            const parsed: ProfileVehicleRow[] = rows.map((row) => ({
-                vehicle: Number(row._id),
-                vehicleKills: Number(row.vehicleKills ?? 0),
-                infantryKills: Number(row.infantryKills ?? 0),
-                deaths: Number(row.deaths ?? 0),
-                teamKills: Number(row.teamKills ?? 0),
-                teamKilled: Number(row.teamKilled ?? 0),
-                roadkills: Number(row.roadkills ?? 0),
-                suicides: Number(row.suicides ?? 0),
-            }));
-
-            return parsed.sort((a, b) => (b.vehicleKills + b.infantryKills) - (a.vehicleKills + a.infantryKills));
+            return this.parseVehicleRows(rows);
         });
+    }
+
+    // Summed over current members, so it follows people rather than the outfit: kills from before they joined count too
+    public async outfitVehicles(query: ProfileQuery): Promise<ProfileOutfitVehicles> {
+        query = await this.withWorld(query);
+
+        return await this.cached(`outfitVehicles/${query.id}:W${query.world ?? 0}`, async () => {
+            const memberMatch: Record<string, unknown> = {
+                bracket: Bracket.TOTAL,
+                ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME,
+                'character.outfit.id': query.id,
+            };
+            const vehicleMatch: Record<string, unknown> = {bracket: Bracket.TOTAL, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME};
+
+            if (query.world) {
+                memberMatch.world = query.world;
+                vehicleMatch.world = query.world;
+            }
+
+            const members: Array<{id: string}> = await this.limited(async () => await this.mongoOperationsService.aggregate(GlobalCharacterAggregateEntity, [
+                {$match: memberMatch},
+                {$limit: this.maxVehicleMembers + 1},
+                {$project: {_id: 0, id: '$character.id'}},
+            ], this.queryOptions));
+
+            // The "no outfit" placeholders hold over 100k players each
+            if (members.length > this.maxVehicleMembers) {
+                return {members: members.length, truncated: true, rows: []};
+            }
+
+            vehicleMatch.character = {$in: members.map((member) => member.id)};
+
+            const rows: Array<Record<string, any>> = await this.limited(async () => await this.mongoOperationsService.aggregate(GlobalVehicleCharacterAggregateEntity, [
+                {$match: vehicleMatch},
+                {$group: {_id: '$vehicle', ...VEHICLE_SUMS}},
+            ], this.queryOptions));
+
+            return {members: members.length, truncated: false, rows: this.parseVehicleRows(rows)};
+        }, this.memberVehiclesTtl);
+    }
+
+    private parseVehicleRows(rows: Array<Record<string, any>>): ProfileVehicleRow[] {
+        const parsed: ProfileVehicleRow[] = rows.map((row) => ({
+            vehicle: Number(row._id),
+            vehicleKills: Number(row.vehicleKills ?? 0),
+            infantryKills: Number(row.infantryKills ?? 0),
+            deaths: Number(row.deaths ?? 0),
+            teamKills: Number(row.teamKills ?? 0),
+            teamKilled: Number(row.teamKilled ?? 0),
+            roadkills: Number(row.roadkills ?? 0),
+            suicides: Number(row.suicides ?? 0),
+        }));
+
+        return parsed.sort((a, b) => (b.vehicleKills + b.infantryKills) - (a.vehicleKills + a.infantryKills));
     }
 
     /**
@@ -523,6 +572,7 @@ export default class ProfileService {
             participants: {$sum: {$ifNull: ['$participants', 0]}},
             // Per-minute figures only exist for alerts tracked since the feature launched, and a few are stored as NaN
             xpmAlerts: {$sum: {$cond: [this.isFinite(`$xPerMinutes.${xpm.kpm}`), 1, 0]}},
+            timeInAlerts: {$sum: {$cond: [this.isFinite('$durationInAlert'), '$durationInAlert', 0]}},
             // Victor 0 or null means nobody won; draws are flagged separately
             decided: {$sum: {$cond: [{$and: [{$gt: ['$details.result.victor', 0]}, {$ne: ['$details.result.draw', true]}]}, 1, 0]}},
             wins: {$sum: {$cond: [{$and: [{$ne: ['$details.result.draw', true]}, {$eq: ['$details.result.victor', faction ?? -1]}]}, 1, 0]}},
@@ -562,6 +612,7 @@ export default class ProfileService {
             captures: row.captures ?? 0,
             participants: row.participants ?? 0,
             xpmAlerts: row.xpmAlerts ?? 0,
+            timeInAlerts: row.timeInAlerts ?? 0,
             kpm: row.kpmTotal ?? 0,
             dpm: row.dpmTotal ?? 0,
             tkpm: row.tkpmTotal ?? 0,
@@ -588,6 +639,7 @@ export default class ProfileService {
             captures: 0,
             participants: 0,
             xpmAlerts: 0,
+            timeInAlerts: 0,
             kpm: 0,
             dpm: 0,
             tkpm: 0,
@@ -663,7 +715,7 @@ export default class ProfileService {
         }
     }
 
-    private async cached<T>(key: string, produce: () => Promise<T>): Promise<T> {
+    private async cached<T>(key: string, produce: () => Promise<T>, ttl = this.cacheTtl): Promise<T> {
         const cacheKey = `/profiles/${key}`;
         const hit = await this.cacheService.get<T>(cacheKey);
 
@@ -679,7 +731,7 @@ export default class ProfileService {
         }
 
         const promise = produce()
-            .then(async (value) => await this.cacheService.set(cacheKey, value, this.cacheTtl))
+            .then(async (value) => await this.cacheService.set(cacheKey, value, ttl))
             .finally(() => this.inFlight.delete(cacheKey));
 
         this.inFlight.set(cacheKey, promise);

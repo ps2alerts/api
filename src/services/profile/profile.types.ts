@@ -33,6 +33,8 @@ export interface ProfileBracketTotals {
     captures: number;
     participants: number;
     xpmAlerts: number;
+    // Seconds spent in the alerts that recorded it, tracked from the same point as the per-minute figures
+    timeInAlerts: number;
     // Per-minute averages over the alerts that have them (per participant for outfits)
     kpm: number;
     dpm: number;
@@ -143,4 +145,11 @@ export interface ProfileVehicleRow {
     teamKilled: number;
     roadkills: number;
     suicides: number;
+}
+
+// Lifetime vehicle combat summed over an outfit's current members; truncated when the outfit is too large to total
+export interface ProfileOutfitVehicles {
+    members: number;
+    truncated: boolean;
+    rows: ProfileVehicleRow[];
 }
