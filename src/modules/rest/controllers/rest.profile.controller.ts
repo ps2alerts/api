@@ -44,7 +44,7 @@ export default class RestProfileController {
             @Query('world', OptionalIntPipe) world?: World,
             @Query('days', OptionalIntPipe) days?: number,
     ): Promise<ProfileSummary> {
-        return await this.profileService.summary(this.query(type, id, world, days));
+        return await this.profileService.summary(this.historyQuery(type, id, world, days));
     }
 
     @Get(':type/:id/timeline')
@@ -67,7 +67,7 @@ export default class RestProfileController {
             throw new BadRequestException(`granularity must be one of ${GRANULARITIES.join(', ')}`);
         }
 
-        return await this.profileService.timeline(this.query(type, id, world, days), unit);
+        return await this.profileService.timeline(this.historyQuery(type, id, world, days), unit);
     }
 
     @Get(':type/:id/alerts')
@@ -91,7 +91,7 @@ export default class RestProfileController {
             @Query('order') order?: string,
     ): Promise<ProfileAlertsPage> {
         return await this.profileService.alerts(
-            this.query(type, id, world, days),
+            this.historyQuery(type, id, world, days),
             page ?? 1,
             pageSize ?? 20,
             sortBy ?? 'instance',
@@ -143,6 +143,17 @@ export default class RestProfileController {
             order === 'asc' ? 'asc' : 'desc',
             search ?? '',
         );
+    }
+
+    // Without its history index these would scan tens of millions of instance rows
+    private historyQuery(type: string, id: string, world?: World, days?: number): ProfileQuery {
+        const query = this.query(type, id, world, days);
+
+        if (!this.searchIndexService.isReady([query.type === 'character' ? 'characterHistory' : 'outfitHistory'])) {
+            throw new ServiceUnavailableException('Profiles are unavailable while their index is being built');
+        }
+
+        return query;
     }
 
     private query(type: string, id: string, world?: World, days?: number): ProfileQuery {

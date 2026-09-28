@@ -2,7 +2,7 @@ import {BadRequestException, Controller, Get, Inject, Query, ServiceUnavailableE
 import {ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import MongoOperationsService from '../../../services/mongo/mongo.operations.service';
 import {RedisCacheService} from '../../../services/cache/redis.cache.service';
-import SearchIndexService, {SEARCH_COLLATION} from '../../../services/search.index.service';
+import SearchIndexService, {ManagedIndexName, SEARCH_COLLATION} from '../../../services/search.index.service';
 import GlobalCharacterAggregateEntity from '../../data/entities/aggregate/global/global.character.aggregate.entity';
 import GlobalOutfitAggregateEntity from '../../data/entities/aggregate/global/global.outfit.aggregate.entity';
 import {Bracket} from '../../data/ps2alerts-constants/bracket';
@@ -21,6 +21,12 @@ const SEARCH_QUERIES = [
  * case-insensitive, so nothing is copied or maintained: an index range scan of at most `pageSize` keys per query.
  * Results come back in collated name order, which puts an exact match first; the website does the rest of the ranking.
  */
+
+const INDEX_FOR_FIELD: Record<string, ManagedIndexName> = {
+    'character.name': 'characterName',
+    'outfit.name': 'outfitName',
+    'outfit.tag': 'outfitTag',
+};
 @ApiTags('Search')
 @Controller('search')
 export default class RestSearchController {
@@ -131,7 +137,7 @@ export default class RestSearchController {
         limit: number,
         world?: World,
     ): Promise<T[]> {
-        if (!this.searchIndexService.isReady()) {
+        if (!this.searchIndexService.isReady([INDEX_FOR_FIELD[field]])) {
             throw new ServiceUnavailableException('Search is unavailable while its index is being built');
         }
 
@@ -154,7 +160,7 @@ export default class RestSearchController {
                 {$limit: limit},
                 {$project: {_id: 0}},
             ],
-            {collation: SEARCH_COLLATION},
+            {collation: SEARCH_COLLATION, maxTimeMS: 10000},
         );
     }
 }

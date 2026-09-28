@@ -5,6 +5,8 @@ import GlobalCharacterAggregateEntity from '../modules/data/entities/aggregate/g
 import GlobalOutfitAggregateEntity from '../modules/data/entities/aggregate/global/global.outfit.aggregate.entity';
 import InstanceCharacterAggregateEntity from '../modules/data/entities/aggregate/instance/instance.character.aggregate.entity';
 import InstanceOutfitAggregateEntity from '../modules/data/entities/aggregate/instance/instance.outfit.aggregate.entity';
+import {Bracket} from '../modules/data/ps2alerts-constants/bracket';
+import {Ps2AlertsEventType} from '../modules/data/ps2alerts-constants/ps2AlertsEventType';
 
 export const SEARCH_COLLATION = {locale: 'en', strength: 2};
 
@@ -19,33 +21,41 @@ interface ManagedIndex {
     name: string;
     keys: Record<string, 1 | -1>;
     collation?: typeof SEARCH_COLLATION;
+    partialFilterExpression?: Record<string, unknown>;
 }
+
+// Search and members only read bracket-total live rows, about a third of each global collection
+const TOTAL_LIVE_ONLY = {bracket: Bracket.TOTAL, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME};
 
 // Indexes on the big global aggregates that must not be built inside TypeORM's synchronize, which blocks startup
 export const MANAGED_INDEXES = {
     characterName: {
         entity: GlobalCharacterAggregateEntity,
-        name: 'search_character_name_ci',
-        keys: {bracket: 1, ps2AlertsEventType: 1, 'character.name': 1},
+        name: 'search_character_name_ci_v2',
+        keys: {'character.name': 1, world: 1},
         collation: SEARCH_COLLATION,
+        partialFilterExpression: TOTAL_LIVE_ONLY,
     },
     outfitName: {
         entity: GlobalOutfitAggregateEntity,
-        name: 'search_outfit_name_ci',
-        keys: {bracket: 1, ps2AlertsEventType: 1, 'outfit.name': 1},
+        name: 'search_outfit_name_ci_v2',
+        keys: {'outfit.name': 1, world: 1},
         collation: SEARCH_COLLATION,
+        partialFilterExpression: TOTAL_LIVE_ONLY,
     },
     outfitTag: {
         entity: GlobalOutfitAggregateEntity,
-        name: 'search_outfit_tag_ci',
-        keys: {bracket: 1, ps2AlertsEventType: 1, 'outfit.tag': 1},
+        name: 'search_outfit_tag_ci_v2',
+        keys: {'outfit.tag': 1, world: 1},
         collation: SEARCH_COLLATION,
+        partialFilterExpression: TOTAL_LIVE_ONLY,
     },
     // World sits in every profile index so a world-scoped count is a pure index scan
     outfitMembers: {
         entity: GlobalCharacterAggregateEntity,
-        name: 'profile_outfit_members_v2',
-        keys: {bracket: 1, ps2AlertsEventType: 1, 'character.outfit.id': 1, world: 1, kills: -1},
+        name: 'profile_outfit_members_v3',
+        keys: {'character.outfit.id': 1, world: 1, kills: -1},
+        partialFilterExpression: TOTAL_LIVE_ONLY,
     },
     // Alert history pages default to newest first; instance ids sort chronologically within a world
     characterHistory: {
@@ -60,27 +70,21 @@ export const MANAGED_INDEXES = {
     },
 } as const satisfies Record<string, ManagedIndex>;
 
-// Earlier shapes of the indexes above, dropped once found so they stop costing writes
-const RETIRED_INDEXES: Array<{entity: IndexedEntity, name: string}> = [
-    {entity: GlobalCharacterAggregateEntity, name: 'profile_outfit_members'},
-    {entity: InstanceCharacterAggregateEntity, name: 'profile_character_history'},
-    {entity: InstanceOutfitAggregateEntity, name: 'profile_outfit_history'},
-];
-
 export type ManagedIndexName = keyof typeof MANAGED_INDEXES;
 
 export const SEARCH_INDEXES: ManagedIndexName[] = ['characterName', 'outfitName', 'outfitTag'];
 
 /**
  * Builds the indexes above in the background at startup, so a first deploy against millions of rows never blocks
- * boot. Endpoints ask whether the index they range-scan exists and answer 503 until it does. TypeORM cannot declare
- * collation, and it never drops indexes it did not create, so these are safe from synchronize either way.
+ * boot. Endpoints answer 503 until the index they scan exists. INDEX_BUILDS_ENABLED=false stops the builds and
+ * only watches for indexes built by hand. Nothing here ever drops an index.
  */
 @Injectable()
 export default class SearchIndexService implements OnApplicationBootstrap {
     private readonly logger = new Logger(SearchIndexService.name);
     private readonly retryMs = 60 * 1000;
     private readonly ready = new Set<ManagedIndexName>();
+    private readonly buildsEnabled = process.env.INDEX_BUILDS_ENABLED !== 'false';
 
     constructor(private readonly mongoOperationsService: MongoOperationsService) {}
 
@@ -93,6 +97,8 @@ export default class SearchIndexService implements OnApplicationBootstrap {
     }
 
     private async ensureIndexes(): Promise<void> {
+        let pending = false;
+
         try {
             for (const [key, index] of Object.entries(MANAGED_INDEXES) as Array<[ManagedIndexName, ManagedIndex]>) {
                 if (this.ready.has(key)) {
@@ -102,13 +108,22 @@ export default class SearchIndexService implements OnApplicationBootstrap {
                 const existing = await this.mongoOperationsService.em.collectionIndexes(index.entity) as Array<{name: string}>;
 
                 if (!existing.some((candidate) => candidate.name === index.name)) {
+                    if (!this.buildsEnabled) {
+                        pending = true;
+                        continue;
+                    }
+
                     this.logger.log(`Building index ${index.name}, dependent endpoints stay unavailable until it finishes`);
                     const started = Date.now();
 
                     await this.mongoOperationsService.em.createCollectionIndex(
                         index.entity,
                         index.keys,
-                        {name: index.name, ...(index.collation ? {collation: index.collation} : {})},
+                        {
+                            name: index.name,
+                            ...(index.collation ? {collation: index.collation} : {}),
+                            ...(index.partialFilterExpression ? {partialFilterExpression: index.partialFilterExpression} : {}),
+                        },
                     );
 
                     this.logger.log(`Built ${index.name} in ${Date.now() - started}ms`);
@@ -117,15 +132,11 @@ export default class SearchIndexService implements OnApplicationBootstrap {
                 this.ready.add(key);
             }
 
-            // Only once every replacement exists: a failed build must leave the old index serving, and a rollback can still use it
-            for (const retired of RETIRED_INDEXES) {
-                const existing = await this.mongoOperationsService.em.collectionIndexes(retired.entity) as Array<{name: string}>;
-
-                if (existing.some((candidate) => candidate.name === retired.name)) {
-                    this.logger.log(`Dropping retired index ${retired.name}`);
-                    await this.mongoOperationsService.em.dropCollectionIndex(retired.entity, retired.name);
-                }
+            if (pending) {
+                this.logger.warn(`Index builds are disabled and some managed indexes are missing, checking again in ${this.retryMs / 1000}s`);
+                setTimeout(() => void this.ensureIndexes(), this.retryMs).unref();
             }
+
         } catch (err) {
             // A transient failure (Mongo restarting, a clashing index being dropped) must not leave endpoints dead until the next deploy
             this.logger.error(`Index build failed, retrying in ${this.retryMs / 1000}s: ${String(err)}`);

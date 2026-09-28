@@ -97,6 +97,9 @@ export default class ProfileService {
     private readonly queryOptions = {maxTimeMS: 30000};
     // Coalesces concurrent cold requests for the same key so an expensive pipeline runs once
     private readonly inFlight = new Map<string, Promise<unknown>>();
+    private readonly maxConcurrentQueries = 4;
+    private readonly waiting: Array<() => void> = [];
+    private running = 0;
 
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
@@ -160,10 +163,10 @@ export default class ProfileService {
 
             // The total is the same for every page and sort of one query, so it is cached on its own
             const [items, total] = await Promise.all([
-                this.mongoOperationsService.aggregate<ProfileAlertRow>(this.instanceEntity(query), pipeline, this.queryOptions),
+                this.limited(async () => await this.mongoOperationsService.aggregate<ProfileAlertRow>(this.instanceEntity(query), pipeline, this.queryOptions)),
                 this.cached(`alertsCount/${this.keyOf(query)}`, async () => (needsJoinFirst
-                    ? await this.mongoOperationsService.aggregate<Record<string, any>>(this.instanceEntity(query), [...this.matchAndJoin(query), {$count: 'count'}], this.queryOptions).then((rows) => Number(rows[0]?.count ?? 0))
-                    : await this.mongoOperationsService.em.count(this.instanceEntity(query), (this.matchStage(query) as {$match: Record<string, unknown>}).$match))),
+                    ? await this.limited(async () => await this.mongoOperationsService.aggregate<Record<string, any>>(this.instanceEntity(query), [...this.matchAndJoin(query), {$count: 'count'}], this.queryOptions)).then((rows) => Number(rows[0]?.count ?? 0))
+                    : await this.limited(async () => await this.mongoOperationsService.em.count(this.instanceEntity(query), (this.matchStage(query) as {$match: Record<string, unknown>}).$match, this.queryOptions)))),
             ]);
 
             return {items, total, page: pageNumber, pageSize: size};
@@ -204,14 +207,14 @@ export default class ProfileService {
             }
 
             const [items, total] = await Promise.all([
-                this.mongoOperationsService.aggregate<ProfileMemberRow>(GlobalCharacterAggregateEntity, [
+                this.limited(async () => await this.mongoOperationsService.aggregate<ProfileMemberRow>(GlobalCharacterAggregateEntity, [
                     {$match: match},
                     {$sort: {[sortField]: direction, 'character.id': 1}},
                     {$skip: (pageNumber - 1) * size},
                     {$limit: size},
                     {$project: {_id: 0, character: 1, kills: 1, deaths: 1, headshots: 1, teamKills: 1, suicides: 1}},
-                ], this.queryOptions),
-                this.cached(`membersCount/${query.id}:W${query.world ?? 0}:${term}`, async () => await this.mongoOperationsService.em.count(GlobalCharacterAggregateEntity, match)),
+                ], this.queryOptions)),
+                this.cached(`membersCount/${query.id}:W${query.world ?? 0}:${term}`, async () => await this.limited(async () => await this.mongoOperationsService.em.count(GlobalCharacterAggregateEntity, match, this.queryOptions))),
             ]);
 
             return {items, total, page: pageNumber, pageSize: size};
@@ -243,12 +246,12 @@ export default class ProfileService {
                     joined['details.world'] = query.world;
                 }
 
-                rows = await this.mongoOperationsService.aggregate(InstanceVehicleCharacterAggregateEntity, [
+                rows = await this.limited(async () => await this.mongoOperationsService.aggregate(InstanceVehicleCharacterAggregateEntity, [
                     {$match: match},
                     ...this.joinStages(),
                     {$match: joined},
                     {$group: {_id: '$vehicle', ...sums}},
-                ], this.queryOptions);
+                ], this.queryOptions));
             } else {
                 match.bracket = Bracket.TOTAL;
 
@@ -256,10 +259,10 @@ export default class ProfileService {
                     match.world = query.world;
                 }
 
-                rows = await this.mongoOperationsService.aggregate(GlobalVehicleCharacterAggregateEntity, [
+                rows = await this.limited(async () => await this.mongoOperationsService.aggregate(GlobalVehicleCharacterAggregateEntity, [
                     {$match: match},
                     {$group: {_id: '$vehicle', ...sums}},
-                ], this.queryOptions);
+                ], this.queryOptions));
             }
 
             const parsed: ProfileVehicleRow[] = rows.map((row) => ({
@@ -283,10 +286,10 @@ export default class ProfileService {
      */
     private async base(query: ProfileQuery): Promise<{summary: ProfileSummary, daily: ProfileTimelineRow[]}> {
         return await this.cached(`base/${this.keyOf(query)}`, async () => {
-            const globals: Array<Record<string, any>> = await this.mongoOperationsService.findMany(
+            const globals: Array<Record<string, any>> = await this.limited(async () => await this.mongoOperationsService.findMany(
                 this.globalEntity(query),
                 {[`${query.type}.id`]: query.id, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME, world: query.world},
-            );
+            ));
             // An id can exist on several worlds; without a requested world the busiest one wins, and everything below sticks to it
             const identity = [...globals]
                 .filter((doc) => doc.bracket === Bracket.TOTAL)
@@ -298,7 +301,7 @@ export default class ProfileService {
 
             const worldGlobals = globals.filter((doc) => doc.world === identity.world);
             const faction = Number(identity[query.type].faction);
-            const [facets]: Array<Record<string, any>> = await this.mongoOperationsService.aggregate(
+            const [facets]: Array<Record<string, any>> = await this.limited(async () => await this.mongoOperationsService.aggregate(
                 this.instanceEntity(query),
                 [
                     ...this.matchAndJoin(query, identity.world),
@@ -332,7 +335,7 @@ export default class ProfileService {
                     },
                 ],
                 this.queryOptions,
-            );
+            ));
 
             const brackets: Record<number, ProfileBracketTotals> = {};
             const totals = this.emptyTotals(Bracket.TOTAL);
@@ -434,11 +437,11 @@ export default class ProfileService {
         }
 
         const world = await this.cached(`world/${query.type}:${query.id}`, async () => {
-            const docs: Array<Record<string, any>> = await this.mongoOperationsService.findMany(
+            const docs: Array<Record<string, any>> = await this.limited(async () => await this.mongoOperationsService.findMany(
                 this.globalEntity(query),
                 {[`${query.type}.id`]: query.id, bracket: Bracket.TOTAL, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME},
                 new Pagination({sortBy: 'kills', order: 'desc', pageSize: 1}),
-            );
+            ));
 
             if (!docs[0]) {
                 throw new NotFoundException(`No ${query.type} found with ID ${query.id}`);
@@ -455,10 +458,10 @@ export default class ProfileService {
             return null;
         }
 
-        const docs: Array<Record<string, any>> = await this.mongoOperationsService.findMany(
+        const docs: Array<Record<string, any>> = await this.limited(async () => await this.mongoOperationsService.findMany(
             GlobalCharacterAggregateEntity,
             {'character.id': leaderId, bracket: Bracket.TOTAL, ps2AlertsEventType: Ps2AlertsEventType.LIVE_METAGAME, world},
-        );
+        ));
         const leader = docs[0]?.character;
 
         return leader ? {id: leader.id, name: leader.name, world: docs[0].world} : null;
@@ -639,11 +642,33 @@ export default class ProfileService {
         return `${query.type}:${query.id}:W${query.world ?? 0}:D${query.days ?? 0}`;
     }
 
+    // Distinct cold profiles would otherwise each run full-history aggregations at once on the shared database host
+    private async limited<T>(operation: () => Promise<T>): Promise<T> {
+        if (this.running >= this.maxConcurrentQueries) {
+            await new Promise<void>((resolve) => this.waiting.push(resolve));
+        } else {
+            this.running++;
+        }
+
+        try {
+            return await operation();
+        } finally {
+            const next = this.waiting.shift();
+
+            if (next) {
+                next();
+            } else {
+                this.running--;
+            }
+        }
+    }
+
     private async cached<T>(key: string, produce: () => Promise<T>): Promise<T> {
         const cacheKey = `/profiles/${key}`;
         const hit = await this.cacheService.get<T>(cacheKey);
 
-        if (hit) {
+        // A cached zero count is a hit
+        if (hit !== null && hit !== undefined) {
             return hit;
         }
 
