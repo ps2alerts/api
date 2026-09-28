@@ -109,35 +109,44 @@ export default class SearchIndexService implements OnApplicationBootstrap {
         let pending = false;
 
         try {
-            for (const [key, index] of Object.entries(MANAGED_INDEXES) as Array<[ManagedIndexName, ManagedIndex]>) {
+            const entries = Object.entries(MANAGED_INDEXES) as Array<[ManagedIndexName, ManagedIndex]>;
+            const missing: Array<[ManagedIndexName, ManagedIndex]> = [];
+
+            // Mark every index that already exists first, so one slow new build never holds up routes that are ready
+            for (const [key, index] of entries) {
                 if (this.ready.has(key)) {
                     continue;
                 }
 
                 const existing = await this.mongoOperationsService.em.collectionIndexes(index.entity) as Array<{name: string}>;
 
-                if (!existing.some((candidate) => candidate.name === index.name)) {
-                    if (!this.buildsEnabled) {
-                        pending = true;
-                        continue;
-                    }
+                if (existing.some((candidate) => candidate.name === index.name)) {
+                    this.ready.add(key);
+                } else {
+                    missing.push([key, index]);
+                }
+            }
 
-                    this.logger.log(`Building index ${index.name}, dependent endpoints stay unavailable until it finishes`);
-                    const started = Date.now();
-
-                    await this.mongoOperationsService.em.createCollectionIndex(
-                        index.entity,
-                        index.keys,
-                        {
-                            name: index.name,
-                            ...(index.collation ? {collation: index.collation} : {}),
-                            ...(index.partialFilterExpression ? {partialFilterExpression: index.partialFilterExpression} : {}),
-                        },
-                    );
-
-                    this.logger.log(`Built ${index.name} in ${Date.now() - started}ms`);
+            for (const [key, index] of missing) {
+                if (!this.buildsEnabled) {
+                    pending = true;
+                    continue;
                 }
 
+                this.logger.log(`Building index ${index.name}, dependent endpoints stay unavailable until it finishes`);
+                const started = Date.now();
+
+                await this.mongoOperationsService.em.createCollectionIndex(
+                    index.entity,
+                    index.keys,
+                    {
+                        name: index.name,
+                        ...(index.collation ? {collation: index.collation} : {}),
+                        ...(index.partialFilterExpression ? {partialFilterExpression: index.partialFilterExpression} : {}),
+                    },
+                );
+
+                this.logger.log(`Built ${index.name} in ${Date.now() - started}ms`);
                 this.ready.add(key);
             }
 

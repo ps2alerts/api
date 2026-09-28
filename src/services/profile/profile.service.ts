@@ -90,6 +90,12 @@ const ALERT_PROJECTION = {
  * Computes player and outfit profiles server-side from the per-alert aggregates, so the website receives a few
  * kilobytes of summaries and one page of history rather than every alert the subject has ever played.
  */
+interface Slots {
+    max: number;
+    running: number;
+    waiting: Array<() => void>;
+}
+
 const VEHICLE_SUMS = {
     vehicleKills: {$sum: {$ifNull: ['$vehicles.kills', 0]}},
     infantryKills: {$sum: {$ifNull: ['$infantry.kills', 0]}},
@@ -108,12 +114,12 @@ export default class ProfileService {
     private readonly queryOptions = {maxTimeMS: 30000};
     // Coalesces concurrent cold requests for the same key so an expensive pipeline runs once
     private readonly inFlight = new Map<string, Promise<unknown>>();
-    private readonly maxConcurrentQueries = 4;
+    private readonly querySlots: Slots = {max: 4, running: 0, waiting: []};
+    // Member vehicle totals read up to tens of thousands of rows, so they queue on their own and never take a profile slot
+    private readonly vehicleSlots: Slots = {max: 1, running: 0, waiting: []};
     private readonly maxVehicleMembers = 20000;
     // Lifetime member totals barely move in a day and cost thousands of index lookups to rebuild
     private readonly memberVehiclesTtl = 60 * 60 * 24;
-    private readonly waiting: Array<() => void> = [];
-    private running = 0;
 
     constructor(
         @Inject(MongoOperationsService) private readonly mongoOperationsService: MongoOperationsService,
@@ -296,7 +302,7 @@ export default class ProfileService {
                 {$match: memberMatch},
                 {$limit: this.maxVehicleMembers + 1},
                 {$project: {_id: 0, id: '$character.id'}},
-            ], this.queryOptions));
+            ], this.queryOptions), this.vehicleSlots);
 
             // The "no outfit" placeholders hold over 100k players each
             if (members.length > this.maxVehicleMembers) {
@@ -308,7 +314,7 @@ export default class ProfileService {
             const rows: Array<Record<string, any>> = await this.limited(async () => await this.mongoOperationsService.aggregate(GlobalVehicleCharacterAggregateEntity, [
                 {$match: vehicleMatch},
                 {$group: {_id: '$vehicle', ...VEHICLE_SUMS}},
-            ], this.queryOptions));
+            ], this.queryOptions), this.vehicleSlots);
 
             return {members: members.length, truncated: false, rows: this.parseVehicleRows(rows)};
         }, this.memberVehiclesTtl);
@@ -695,22 +701,22 @@ export default class ProfileService {
     }
 
     // Distinct cold profiles would otherwise each run full-history aggregations at once on the shared database host
-    private async limited<T>(operation: () => Promise<T>): Promise<T> {
-        if (this.running >= this.maxConcurrentQueries) {
-            await new Promise<void>((resolve) => this.waiting.push(resolve));
+    private async limited<T>(operation: () => Promise<T>, slots: Slots = this.querySlots): Promise<T> {
+        if (slots.running >= slots.max) {
+            await new Promise<void>((resolve) => slots.waiting.push(resolve));
         } else {
-            this.running++;
+            slots.running++;
         }
 
         try {
             return await operation();
         } finally {
-            const next = this.waiting.shift();
+            const next = slots.waiting.shift();
 
             if (next) {
                 next();
             } else {
-                this.running--;
+                slots.running--;
             }
         }
     }
