@@ -20,12 +20,7 @@ export default class AggregatorGlobalFactionCombatAggregateController {
                 GlobalFactionCombatAggregateEntity,
             );
         } catch (e) {
-            if (e instanceof Error && !e.message.includes('does not exist')) {
-                this.logger.error(`Unable to process ${MqAcceptedPatterns.GLOBAL_FACTION_COMBAT_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
-            }
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            await context.getChannelRef().ack(context.getMessage());
+            await this.aggregatorDataHandler.settleGlobalFailure(context, e, MqAcceptedPatterns.GLOBAL_FACTION_COMBAT_AGGREGATE, data.instance);
         }
     }
 }

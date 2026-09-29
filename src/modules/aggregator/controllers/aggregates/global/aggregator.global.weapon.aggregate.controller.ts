@@ -20,12 +20,7 @@ export default class AggregatorGlobalWeaponAggregateController {
                 GlobalWeaponAggregateEntity,
             );
         } catch (e) {
-            if (e instanceof Error && !e.message.includes('does not exist')) {
-                this.logger.error(`Unable to process ${MqAcceptedPatterns.GLOBAL_WEAPON_AGGREGATE} message for instance ${data.instance}! Error: ${e.message}`);
-            }
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            await context.getChannelRef().ack(context.getMessage());
+            await this.aggregatorDataHandler.settleGlobalFailure(context, e, MqAcceptedPatterns.GLOBAL_WEAPON_AGGREGATE, data.instance);
         }
     }
 }

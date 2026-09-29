@@ -23,14 +23,16 @@ export default class AggregatorGlobalVictoryAggregateController {
                 context,
                 GlobalVictoryAggregateEntity,
             );
-            await this.cacheService.set(GLOBAL_VICTORIES_GENERATION_KEY, Date.now(), 2592000);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/restrict-template-expressions
-            this.logger.error(`Unable to process ${MqAcceptedPatterns.GLOBAL_VICTORY_AGGREGATE} message for instance ${data.instance}! Error: ${err.message}`);
+        } catch (err) {
+            await this.aggregatorDataHandler.settleGlobalFailure(context, err, MqAcceptedPatterns.GLOBAL_VICTORY_AGGREGATE, data.instance);
+            return;
+        }
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            await context.getChannelRef().ack(context.getMessage());
+        // Outside the try: the message is already settled, so a cache failure must not ack it a second time
+        try {
+            await this.cacheService.set(GLOBAL_VICTORIES_GENERATION_KEY, Date.now(), 2592000);
+        } catch (err) {
+            this.logger.error(`Could not bump the victories cache generation: ${String(err)}`);
         }
     }
 }
